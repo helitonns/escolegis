@@ -1,0 +1,258 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:stella="http://stella.caelum.com.br/faces2"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Relatório</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;"></div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 10px">
+
+                            <div class="ui-g-12 ui-md-12">
+                                <p:outputLabel value="Parâmetros da consulta:"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <!--<p:message for="id-cpf" showSummary="true" showDetail="false"/>-->
+                            </div>
+                            <div class="ui-g-12 ui-md-8"/>
+
+                            <!-- ############ PRIMEIRA LINHA #############-->
+                            <div class="ui-g-12 ui-md-4">
+                                <p:selectOneMenu value="#{relatorioMB.parametroEscolhido}" style="width: 100%">
+                                    <f:selectItem itemLabel="Selecione..." itemValue="#{0}" />
+                                    <f:selectItems value="#{relatorioMB.parametros}"/>
+                                    <p:ajax update="@form"/>
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <!--NA DATA-->
+                                <p:calendar value="#{relatorioMB.naData}" pattern="dd/MM/yyyy" mask="99/99/9999" showOn="button" rendered="#{relatorioMB.parametroEscolhido eq 0 ? true : false}"/>
+
+                                <!--ANTES DA DATA-->
+                                <p:calendar value="#{relatorioMB.antesDaData}" pattern="dd/MM/yyyy" mask="99/99/9999" showOn="button" rendered="#{relatorioMB.parametroEscolhido eq 1 ? true : false}"/>
+
+                                <!--DEPOIS DA DATA-->
+                                <p:calendar value="#{relatorioMB.depoisDaData}" pattern="dd/MM/yyyy" mask="99/99/9999" showOn="button" rendered="#{relatorioMB.parametroEscolhido eq 2 ? true : false}"/>
+
+                                <!--INTERVALO ENTRE DATAS 1-->
+                                <p:calendar value="#{relatorioMB.data1}" pattern="dd/MM/yyyy" mask="99/99/9999" showOn="button" rendered="#{relatorioMB.parametroEscolhido eq 3 ? true : false}"/>
+
+                                <!--INTERVALO ENTRE DATAS 2-->
+                                <p:calendar value="#{relatorioMB.data2}" pattern="dd/MM/yyyy" mask="99/99/9999" showOn="button" rendered="#{relatorioMB.parametroEscolhido eq 4 ? true : false}"/>
+
+                                <!-- CPF -->
+                                <p:inputMask id="id-cpf" value="#{relatorioMB.cpf}" mask="999.999.999-99" style="width: 100%;" placeholder="Digite o CPF" rendered="#{relatorioMB.parametroEscolhido eq 5 ? true : false}">
+                                    <stella:validateCPF />
+                                </p:inputMask>
+
+                                <!--DATA DE NASCIMENTO-->
+                                <p:calendar id="diaDoMes1" value="#{relatorioMB.naData}" pattern="dd/MM/" mask="99/99" showOn="button" rendered="#{relatorioMB.parametroEscolhido eq 6 ? true : false}">
+                                    <p:tooltip for="diaDoMes1" value="Digite apenas o dia e o mês!"/>
+                                </p:calendar>
+
+                                <!--DATA DE NACIMENTO INTERVALO 1-->
+                                <p:calendar value="#{relatorioMB.data1}" pattern="dd/MM/" mask="99/99" showOn="button" rendered="#{relatorioMB.parametroEscolhido eq 7 ? true : false}">
+                                    <p:tooltip for="diaDoMes1" value="Digite apenas o dia e o mês!"/>
+                                </p:calendar>
+
+                                <!--DATA DE NASCIMENTO INTERVALO 2-->
+                                <p:calendar value="#{relatorioMB.data2}" pattern="dd/MM/" mask="99/99" showOn="button" rendered="#{relatorioMB.parametroEscolhido eq 8 ? true : false}">
+                                    <p:tooltip for="diaDoMes1" value="Digite apenas o dia e o mês!"/>
+                                </p:calendar>
+
+                                <!--SEXO -->
+                                <p:selectOneMenu value="#{relatorioMB.sexo}" rendered="#{relatorioMB.parametroEscolhido eq 9 ? true : false}" required="false">
+                                    <f:selectItem itemLabel="Selecione o sexo" />
+                                    <f:selectItems value="#{relatorioMB.sexoLista.lista}" var="varSexoLista" itemLabel="#{varSexoLista.value}" itemValue="#{varSexoLista.value}" />
+                                </p:selectOneMenu>
+
+                                <!--POSSUI FILHO -->
+                                <h:panelGrid columns="2" rendered="#{relatorioMB.parametroEscolhido eq 10 ? true : false}" style="width: 100%">
+                                    <!--<p:outputLabel value="Sim?"/>-->
+                                    <p:selectOneButton value="#{relatorioMB.simNao}" style="width: 100%">
+                                        <f:selectItem itemLabel="Sim" itemValue="#{true}"/>
+                                        <f:selectItem itemLabel="Não" itemValue="#{false}"/>
+                                    </p:selectOneButton>
+                                </h:panelGrid>
+
+                                <!--AINDA CURSANDO -->
+                                <h:panelGrid columns="2" rendered="#{relatorioMB.parametroEscolhido eq 11 ? true : false}" style="width: 100%">
+                                    <!--<p:outputLabel value="Sim?"/>-->
+                                    <p:selectOneButton value="#{relatorioMB.simNao}" style="width: 100%">
+                                        <f:selectItem itemLabel="Sim" itemValue="#{true}"/>
+                                        <f:selectItem itemLabel="Não" itemValue="#{false}"/>
+                                    </p:selectOneButton>
+                                </h:panelGrid>
+
+                                <!-- CURSO -->
+                                <p:selectOneMenu value="#{relatorioMB.idCS}" rendered="#{relatorioMB.parametroEscolhido eq 12 ? true : false}" required="false" style="width: 100%">
+                                    <f:selectItem itemLabel="Selecione o curso" />
+                                    <f:selectItems value="#{relatorioMB.cursos}" var="slc_curso" itemLabel="#{slc_curso.nomeComPeriodo}" itemValue="#{slc_curso.id}" />
+                                </p:selectOneMenu>
+
+                                <!-- MUNICIPIO -->
+                                <p:selectOneMenu value="#{relatorioMB.idMS}" rendered="#{relatorioMB.parametroEscolhido eq 13 ? true : false}" required="false">
+                                    <f:selectItem itemLabel="Selecione o município" />
+                                    <f:selectItems value="#{relatorioMB.municipios}" var="slc_municipio" itemLabel="#{slc_municipio.nome}" itemValue="#{slc_municipio.id}" />
+                                </p:selectOneMenu>
+
+                                <!-- BAIRRO -->
+                                <h:panelGrid columns="1" rendered="#{relatorioMB.parametroEscolhido eq 14 ? true : false}" style="width: 100%">
+                                    <p:selectOneMenu id="e-municipio" value="#{relatorioMB.idMS}" valueChangeListener="#{relatorioMB.valueChanged}" class="form-group form-control">
+                                        <p:ajax event="change" update="e-bairro" />
+                                        <f:selectItem itemLabel="Selecione o município" />
+                                        <f:selectItems value="#{relatorioMB.municipios}"	var="slc_municipio" itemLabel="#{slc_municipio.nome}" itemValue="#{slc_municipio.id}" />
+                                    </p:selectOneMenu>
+                                    <p:selectOneMenu id="e-bairro" value="#{relatorioMB.idBS}" class="form-group form-control">
+                                        <f:selectItem itemLabel="Selecione o bairro" />
+                                        <f:selectItems value="#{relatorioMB.bairros}" var="slc_bairro" itemLabel="#{slc_bairro.nome}" itemValue="#{slc_bairro.id}" />
+                                    </p:selectOneMenu>
+                                </h:panelGrid>
+
+                                <!-- PAIS -->
+                                <p:selectOneMenu value="#{relatorioMB.idPS}" rendered="#{relatorioMB.parametroEscolhido eq 15 ? true : false}" required="false">
+                                    <f:selectItem itemLabel="Selecione o país de origem" itemValue="0"/>
+                                    <f:selectItems value="#{relatorioMB.paises}" var="varPais" itemLabel="#{varPais.nome}" itemValue="#{varPais.id}" />
+                                </p:selectOneMenu>
+
+                                <!-- IDADE MAIOR-->
+                                <p:inputText id="id-idade-maior" value="#{relatorioMB.idade}" style="width: 100%;" placeholder="Digite a idade para o ano atual" rendered="#{relatorioMB.parametroEscolhido eq 16 ? true : false}"/>
+
+                                <!-- IDADE MENOR-->
+                                <p:inputText id="id-idade-menor" value="#{relatorioMB.idade}" style="width: 100%;" placeholder="Digite a idade para o ano atual" rendered="#{relatorioMB.parametroEscolhido eq 17 ? true : false}"/>
+
+                                <!-- IDADE INTERVALO 1-->
+                                <p:inputText id="id-idade-intervalo1" value="#{relatorioMB.idade}" style="width: 100%;" placeholder="Digite a idade l" rendered="#{relatorioMB.parametroEscolhido eq 18 ? true : false}"/>
+
+                                <!-- IDADE INTERVALO 2-->
+                                <p:inputText id="id-idade-intervalo2" value="#{relatorioMB.idade}" style="width: 100%;" placeholder="Digite a idade 2" rendered="#{relatorioMB.parametroEscolhido eq 19 ? true : false}"/>
+
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <p:selectOneMenu  value="#{relatorioMB.conectivoEscolhido}" style="width: 100%">
+                                        <!--<f:selectItem itemLabel="Conectivo" itemValue="0"/>-->
+                                        <f:selectItems value="#{relatorioMB.conectivos}"    />
+                                    </p:selectOneMenu>
+                                    <p:commandButton id="btnIncluirNaConsulta" icon="ui-icon-add" style=" float: right" action="#{relatorioMB.incluirNaConsulta}" ajax="true" update="@form">
+                                        <p:tooltip for="btnIncluirNaConsulta" value="Incluir na consulta"/>
+                                    </p:commandButton>
+                                </h:panelGrid>
+                            </div>
+
+
+
+                            <!-- MOSTRAR CONSULTA -->
+                            <div class="ui-g-12 ui-md-12">
+                                <h:panelGroup id="montar-consulta" rendered="#{relatorioMB.blocosSize}">
+                                    <p:panel style="width: 100%">
+                                        <h:outputText value="Pesquisar matrículas "/>
+                                        <c:forEach var="d" items="${relatorioMB.blocos}"  varStatus="status" >
+                                            <h:outputText value="${d.valor}"/>
+                                            <p:commandButton id="btnRemoverDaConculta" icon="ui-icon-remove" styleClass="orange-btn"  action="#{relatorioMB.removerDaConsulta}" style="float: right; margin-bottom: 2px;" ajax="false" update="@form">
+                                                <f:setPropertyActionListener target="#{relatorioMB.itemEscolhido}" value="#{d}"/>
+                                                <p:tooltip for="btnRemoverDaConculta" value="Remover da consulta"/>
+                                            </p:commandButton>
+                                            <br/><br/>   
+                                        </c:forEach>
+                                    </p:panel>
+                                </h:panelGroup>
+                            </div>
+
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Pesquisar" icon="ui-icon-search" action="#{relatorioMB.montarConsulta}" ajax="false" />
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Exportar PDF" icon="ui-icon-picture-as-pdf" ajax="false" action="#{relatorioMB.exportarPDF()}" styleClass="deep-orange-btn"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Limpar" icon="ui-icon-close" action="#{relatorioMB.reset}" immediate="true" ajax="false" styleClass="blue-grey-btn"/>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <h:form id="form2">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card card-w-title"> 
+                        <div style="margin-left: 20px">Resultado da pesquisa</div>
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable id="tbl_relatorio" var="m" value="#{relatorioMB.matriculas}" reflow="true" paginator="true" rows="10" emptyMessage=" ">
+                                    <p:column headerText="Curso" sortBy="#{m.curso.nome}" filterBy="#{m.curso.nome}">
+                                        <h:outputText value="#{m.curso.nome}"/>
+                                    </p:column>
+
+                                    <p:column headerText="CPF" style="width: 130px">
+                                        <h:outputText value="#{m.aluno.cpf}" />
+                                    </p:column>
+
+                                    <p:column headerText="Nome" sortBy="#{m.aluno.nome}" filterBy="#{m.aluno.nome}">
+                                        <h:outputText value="#{m.aluno.nome}" />
+                                    </p:column>
+                                    <p:column headerText="D. Nascimento" sortBy="#{m.aluno.dataNascimento}">
+                                        <h:outputText value="#{m.aluno.dataNascimento}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Contato" >
+                                        <h:outputText value="#{m.aluno.celular}" />
+                                        <h:outputText value=" - " rendered="#{(m.aluno.celular != '') and (m.aluno.fixo != '')}"/>
+                                        <h:outputText value="#{m.aluno.fixo}" />
+                                    </p:column>
+                                    <f:facet name="footer">
+                                        Total de alunos: #{fn:length(relatorioMB.matriculas)}
+                                    </f:facet>
+                                </p:dataTable>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-9"/>
+                            <div class="ui-g-12 ui-md-3">
+                                <p:commandButton value="EXCEL" ajax="false" icon="ui-icon-file-download" styleClass="green-btn">
+                                    <p:dataExporter type="xls" target="tbl_relatorio" fileName="relatorio-geral"/>
+                                </p:commandButton>    
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

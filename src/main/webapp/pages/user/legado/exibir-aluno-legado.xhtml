@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<h:panelGroup xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:h="http://java.sun.com/jsf/html"
+              xmlns:p="http://primefaces.org/ui"
+              xmlns:f="http://xmlns.jcp.org/jsf/core"
+              xmlns:stella="http://stella.caelum.com.br/faces2"
+              xmlns:b="http://bootsfaces.net/ui">
+    <ui:composition template="../../layout/layoutPrincipal.xhtml">
+        <ui:define name="conteudo">
+            <h:form>
+                <b:panel title="Dados do aluno" look="info">
+                    <b:panelGrid columns="4" style="width: 100%">
+                        <b:inputText label="CPF: " value="#{alunoLegadoMB.pessoa.cpf}" />
+                        <b:inputText label="RG:" value="#{alunoLegadoMB.pessoa.rg}" />     
+                        <b:inputText label="Nome:" value="#{alunoLegadoMB.pessoa.nome}" />
+                        <b:inputText label="Sexo:" value="#{alunoLegadoMB.pessoa.sexo}" />
+
+                        <b:inputText label="Data de Nascimento: " value=" #{alunoLegadoMB.pessoa.data_nascimento}">
+                            <f:convertDateTime pattern="dd-MM-yyyy" />
+                        </b:inputText>
+                        <b:inputText label="Celular:" value=" #{alunoLegadoMB.pessoa.celular}" />
+                        <b:inputText label="Fixo:" value=" #{alunoLegadoMB.pessoa.telefone}" />
+                    </b:panelGrid>
+                    <br/>
+                    <h:outputText value="Endereço:"/>
+                    <br/>
+                    <br/>
+                    <b:panelGrid columns="3">
+                        <b:inputText label="Rua: " value="#{alunoLegadoMB.pessoa.endereco_rua}" />
+                        <b:inputText label="Número:" value="#{alunoLegadoMB.pessoa.endereco_numero}" />
+                        <b:inputText label="Complemento:" value="#{alunoLegadoMB.pessoa.endereco_complemento}" />
+
+                        <b:inputText label="CEP:" value="#{alunoLegadoMB.pessoa.endereco_cep}" />
+                        <b:inputText label="Município:" value="#{alunoLegadoMB.pessoa.endereco_cidade}" />
+                        <b:inputText label="Bairro: " value="#{alunoLegadoMB.pessoa.endereco_bairro}" />
+                    </b:panelGrid>
+                    <b:commandButton value="Voltar" action="listar-aluno-legado" immediate="true" look="warning" icon-awesome="angle-double-left" style="width: 200px; float: right;" />
+                </b:panel>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</h:panelGroup>

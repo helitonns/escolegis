@@ -1,0 +1,76 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:sm="http://primefaces.org/sapphire">
+
+    <div id="layout-menu-container" class="layout-menu-container">
+        <div id="layout-nano" class="nano">
+            <div class="nano-content sidebar-scroll-content">
+                <div class="layout-menu-wrapper">
+                    <h:form id="menuform">
+                        <sm:menu>
+
+                            <p:submenu id="sub_menu_aluno" label="Aluno" icon="person" rendered="#{!startMB.usuarioRelatorio}">
+                                <p:menuitem id="sm_aluno_verificar_cpf" value="Verificar CPF" icon="search" outcome="/pages/user/verificar-cpf"/>
+                                <p:menuitem id="sm_aluno_aluno"         value="Aluno" icon="person" outcome="/pages/user/aluno"/>
+                                <p:menuitem id="sm_aluno_listar_editar" value="Listar / Editar Aluno" icon="list" outcome="/pages/user/listar-editar-aluno"/>
+                                <p:menuitem id="sm_aluno_meus_cursos"   value="Meus Cursos" icon="books" outcome="/pages/user/meus-cursos"/>
+                                <p:menuitem id="sm_aluno_declaracord"   value="Declarações" icon="assignment" outcome="/pages/user/declaracao"/>
+                            </p:submenu> 
+
+                            <p:submenu id="sub_menu_curso" label="Secretaria" icon="book" rendered="#{!startMB.usuarioRelatorio}">
+                                <p:menuitem id="sm_curso_horario" value="Horário" icon="access_time" outcome="/pages/user/horario" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                <p:menuitem id="sm_curso_grupo_disciplina" value="Grupo Disciplina" icon="collections_bookmark" outcome="/pages/user/grupo-disciplina" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                <p:menuitem id="sm_curso_disciplina" value="Disciplina" icon="bookmark" outcome="/pages/user/disciplina" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                <p:menuitem id="sm_curso_curso" value="Curso" icon="&#xE14F;" outcome="/pages/user/curso"/>
+                                <p:menuitem id="sm_curso_modulo" value="Módulo" icon="&#xE14D;" outcome="/pages/user/modulo" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                <p:menuitem id="sm_curso_matricula" value="Matrícula no curso" icon="contact_mail" outcome="/pages/user/matricula" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                <p:menuitem id="sm_curso_turma" value="Turma" icon="group" outcome="/pages/user/turma" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                <p:menuitem id="sm_curso_frequencia" value="Frequência" icon="event_available" outcome="/pages/user/frequencia" />
+                                <p:menuitem id="sm_curso_visualizar_frequencia" value="Visualizar frequência" icon="event" outcome="/pages/user/visualizar-frequencia" />
+                                <p:menuitem id="sm_curso_verificar_aprovacao" value="Verificar aprovação" icon="done_all" outcome="/pages/user/verificar-aprovacao" />
+                            </p:submenu>
+                            
+                            <p:submenu id="sub_menu_sistema_legado" label="Sistema Legado" icon="&#xE896;" rendered="false">
+                                <p:menuitem id="sm_sl_aluno" value="Aluno Legado" icon="&#xE30B;" outcome="/sample" />
+                                <p:menuitem id="sm_sl_listar" value="Listar aluno Legado" icon="&#xE890;" outcome="/forms" />
+                                <p:menuitem id="sm_sl_matricula" value="Matricula Legada" icon="&#xE3EC;" outcome="/data" />
+                                <p:menuitem id="sm_sl_relatorio" value="Relatório Legado" icon="&#xE14F;" outcome="/panel" />
+                            </p:submenu>
+                            
+                            <p:submenu id="sub_menu_configuracoes_gerais" label="Configurações Gerais" icon="settings" rendered="#{!startMB.usuarioRelatorio}">
+                                <p:menuitem id="sm_cg_pais" value="País" icon="flag" outcome="/pages/user/pais"/>
+                                <p:menuitem id="sm_cg_municipio" value="Município" icon="people" outcome="/pages/admin/municipio" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                <p:menuitem id="sm_cg_bairro" value="Bairro" icon="person_pin_circle" outcome="/pages/user/bairro" />
+                                <p:menuitem id="sm_cg_unidade" value="Unidade" icon="business" outcome="/pages/superadmin/unidade" rendered="#{startMB.superAdmin}"/>
+                                <p:menuitem id="sm_cg_diretor" value="Diretor" icon="person_outline" outcome="/pages/admin/diretor" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                <p:menuitem id="sm_cg_usuario" value="Usuário" icon="person" outcome="/pages/admin/usuario" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                <p:menuitem id="sm_cg_super_usuario" value="Super Usuário" icon="person_add" outcome="/pages/superadmin/superusuario" rendered="#{startMB.superAdmin}"/>
+                                <p:menuitem id="sm_cg_sistema" value="Sistemas" icon="settings" outcome="/pages/superadmin/sistema" rendered="#{startMB.superAdmin}"/>
+                                <p:menuitem id="sm_cg_permissao" value="Privilégio" icon="lock" outcome="/pages/superadmin/privilegio" rendered="#{startMB.superAdmin}"/>
+                                <p:menuitem id="sm_cg_autorizacao" value="Autorizações" icon="lock_outline" outcome="/pages/superadmin/autorizacao" rendered="#{startMB.superAdmin}"/>
+                            </p:submenu>
+                            
+                            <p:submenu id="sub_menu_aluno_r" label="Aluno" icon="person" rendered="#{startMB.usuarioRelatorio}">
+                                <p:menuitem id="sm_aluno_listar_editar_r" value="Listar / Editar Aluno" icon="list" outcome="/pages/relatorio/listar-editar-aluno"/>
+                            </p:submenu> 
+                            
+                            <p:submenu id="sub_menu_relatorio_usuario_relatorio" label="Relatório" icon="assignment" rendered="#{startMB.usuarioRelatorio}">
+                                <p:menuitem id="sm_ru_geral" value="Relatório Geral" icon="assignment" outcome="/pages/relatorio/relatorio-geral"/>
+                                <p:menuitem id="sm_ru_relatorio" value="Relatório por Matrícula" icon="assignment" outcome="/pages/relatorio/relatorio" />
+                            </p:submenu>
+                            
+                            <p:menuitem id="menu_relatorio" value="Relatórios " icon="assignment" outcome="/pages/user/relatorio" rendered="#{!startMB.usuarioRelatorio}"/>
+                            
+                        </sm:menu>
+                        
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ui:composition>

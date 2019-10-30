@@ -1,0 +1,56 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:stella="http://stella.caelum.com.br/faces2"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px;">Redefinir senha</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div class="ui-g ui-fluid form-group">
+
+                            <div class="ui-g-12 ui-md-6">
+                                <p:message for="idSenhaUsuario" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6"/>
+
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:password id="idSenhaUsuario" value="#{startMB.senha1}" required="true"  style="width: 100%" requiredMessage="Campo obrigatório" validatorMessage="A senha deve ter no mínimo 8 dígitos, com pelo menos um número, uma letra maiúscula e uma letra minúscula">
+                                            <p:tooltip value="A senha deve ter no mínimo 8 dígitos, com pelo menos um número, uma letra maiúscula e uma letra minúscula" for="idSenhaUsuario"/>
+                                            <f:validateLength minimum="8" />
+                                        </p:password>
+                                        <label>Digite a nova senha: </label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-6">
+                                <p:commandButton value="Confirmar"  action="#{startMB.trocarSenha}" ajax="false" icon="ui-icon-check" style="width: 100%;"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-12" style="min-height: 200px;"/>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

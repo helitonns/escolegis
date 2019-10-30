@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:stella="http://stella.caelum.com.br/faces2">
+
+    <ui:composition template="../../layout/layoutPrincipal.xhtml">
+        <ui:define name="nome-da-pagina">
+            Aluno Legado
+        </ui:define>
+
+        <ui:define name="conteudo">
+            <b:form id="form">
+                <b:row>
+                    <b:column col-lg="12">
+                        <b:messages global-only="true"/>
+                    </b:column>
+                </b:row>
+                <!-- oooooooooooooooooooooooooooooooo PAINEL DADOS PESSOAIS oooooooooooooooooooooooooooooooooooooo -->
+                <b:panel title="Dados do pessoa" look="info" iconAwesome="male">
+                    <!--MENSAGEM 1-->
+                    <b:row>
+                        <b:column col-lg="3">
+                            <b:message for="idCpfAluno" />
+                        </b:column>
+                        <b:column col-lg="3">
+                            <b:message for="idNomeAluno" />
+                        </b:column>
+                    </b:row>
+                    <!--LINHA 1-->
+                    <b:row>
+                        <b:column col-lg="3">
+                            <b:inputText id="idCpfAluno" label="CPF:" value="#{alunoLegadoMB.pessoa.cpf}" mask="999.999.999-99" style="width: 100%;" required="true">
+                                <stella:validateCPF/>
+                            </b:inputText>       
+                        </b:column>
+                        <b:column col-lg="3">
+                            <b:inputText id="idNomeAluno" value="#{alunoLegadoMB.pessoa.nome}" label="Nome:" style="width: 100%;" required="true" converter="upper"/>
+                        </b:column>
+                        <b:column col-lg="3">
+                            <b:inputText id="idRgAluno" label="RG:" value="#{alunoLegadoMB.pessoa.rg}" style="width: 100%;"/>     
+                        </b:column>
+                        <b:column col-lg="3">
+                            <b:selectOneMenu label="Sexo:" value="#{alunoLegadoMB.pessoa.sexo}">
+                                <f:selectItems value="#{alunoLegadoMB.sexo.lista}" var="s" itemLabel="#{s.value}" itemValue="#{s}" />
+                            </b:selectOneMenu>    
+                        </b:column>
+                    </b:row>
+                    <!--MENSAGEM 2-->
+                    <b:row>
+                        <b:column col-lg="4">
+                            <b:message for="idDataNascimentoAluno" />
+                        </b:column>
+                    </b:row>
+                    <!--LINHA 2-->
+                    <b:row>
+                        <b:column col-lg="4">
+                            <b:dateTimePicker id="idDataNascimentoAluno" label="Data de nascimento:" value="#{alunoLegadoMB.pessoa.data_nascimento}" show-time="false" format="DD/MM/YYYY"/>
+                        </b:column>
+                        <b:column col-lg="4">
+                            <b:inputText id="idCelularAluno" label="Celular:" value="#{alunoLegadoMB.pessoa.celular}" mask="(99) 99999-9999" style="width: 100%;"/>                              
+                        </b:column>
+                        <b:column col-lg="4">
+                            <b:inputText id="idFixoAluno" label="Fixo:" value="#{alunoLegadoMB.pessoa.telefone}" mask="(99) 9999-9999" style="width: 100%;"/>                              
+                        </b:column>
+                    </b:row>
+                    <!--LINHA 3-->
+                    <b:row>
+                        <b:column col-lg="12">
+                            <b:inputTextarea label="Informaçoes complementares" value="#{alunoLegadoMB.pessoa.observacao}" rows="1"/>
+                        </b:column>
+                    </b:row>
+                </b:panel>
+
+
+                <!-- ooooooooooooooooooooooooooooooooooooo PAINEL ENDERECO oooooooooooooooooooooooooooooooooooooooooooooo -->
+                <b:panel id="idPanelEndereco" title="Dados de endereço" look="info" icon-awesome="address-card-o">
+                    <b:row>
+                        <b:column col-lg="4">
+                            <b:message for="idRuaAluno"/>
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column col-lg="4">
+                            <b:inputText id="idRuaAluno" label="Rua:" value="#{alunoLegadoMB.pessoa.endereco_rua}" required="true"  converter="upperClean"/>
+                        </b:column>
+                        <b:column col-lg="4">
+                            <b:inputText id="idNumeroAluno" label="Número:"  value="#{alunoLegadoMB.pessoa.endereco_numero}" converter="upperClean"/>
+                        </b:column>
+                        <b:column col-lg="4">
+                            <b:inputText id="idComplementoAluno" label="Complemento:" value="#{alunoLegadoMB.pessoa.endereco_complemento}" converter="upperClean"/>
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column col-lg="4" offset="4">
+                            <b:message for="idEnderecoMunicipio"/>
+                        </b:column>
+                        <b:column col-lg="4">
+                            <b:message for="idEnderecoBairro"/>
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column col-lg="4">
+                            <b:inputText id="idCepAluno" label="CEP:" value="#{alunoLegadoMB.pessoa.endereco_cep}" mask="99.999-999" />
+                        </b:column>
+                        <b:column col-lg="4">
+                            <p:outputLabel value="Município: *"/>
+                            <p:selectOneMenu id="idEnderecoMunicipio" value="#{alunoLegadoMB.idMunicipio}" valueChangeListener="#{alunoLegadoMB.valueChanged}" required="true" class="form-control" >
+                                <p:ajax event="change" update="idEnderecoBairro" />
+                                <f:selectItem itemLabel="Selecione o município" />
+                                <f:selectItems value="#{alunoLegadoMB.municipios}" var="slc_municipio" itemValue="#{slc_municipio.id}" itemLabel="#{slc_municipio.nome}"/>
+                            </p:selectOneMenu>  
+                        </b:column>
+                        <b:column col-lg="4">
+                            <p:outputLabel value="Bairro: "/>
+                            <b:selectOneMenu id="idEnderecoBairro" value="#{alunoLegadoMB.pessoa.endereco_bairro}" required="true" style="width: 100%" requiredMessage="Campo obrigatório">
+                                <f:selectItem itemLabel="Selecione o bairro" itemValue="0"/>
+                                <f:selectItems value="#{alunoLegadoMB.bairros}" var="slc_bairro" itemValue="#{slc_bairro.nome}" itemLabel="#{slc_bairro.nome}"  />
+                                <f:facet name="append">
+                                    <b:button look="info" icon-awesome="plus-circle" onclick="$('.modalBairro').modal()" tooltip="Adicionar bairro"/>
+                                </f:facet>
+                            </b:selectOneMenu>
+                        </b:column>
+                    </b:row>
+                </b:panel>
+
+                <!-- oooooooooooooooooooooooooooooo BOTOES ooooooooooooooooooooooooooooooooooooooooooo -->
+                <b:row>
+                    <b:column col-lg="6"/>
+                    <b:column col-lg="3">
+                        <b:commandButton value="Salvar" action="#{alunoLegadoMB.salvarAluno()}" ajax="false" look="info" icon-awesome="save" style="width: 100%"/>
+                    </b:column>
+                    <b:column col-lg="3">
+                        <b:commandButton value="Cancelar" action="#{alunoLegadoMB.cancelar()}" immediate="true" look="warning" icon-awesome="close" style="width: 100%" />
+                    </b:column>
+                </b:row>
+
+            </b:form>
+
+
+            <!-- MODAL PARA INCLUIR BAIRRO-->
+            <b:form>
+                <b:modal title="Cadastrar bairro" styleClass="modalBairro" closable="true"  close-on-escape="false" backdrop="false">
+                    <b:row style="margin-top: 5px;">
+                        <b:inputText id="ipt-nb" placeholder="Digite o nome do bairro" value="#{alunoLegadoMB.bairro.nome}" required="true" converter="upperClean"  style="width: 100%" />                        
+
+                        <b:selectOneMenu id="slct-municipio" value="#{alunoLegadoMB.municipio}" required="true">
+                            <f:selectItem itemLabel="- escolha o município - " />
+                            <f:selectItems value="#{alunoLegadoMB.municipios}" var="slc_municipio" itemValue="#{slc_municipio}" itemLabel="#{slc_municipio.nome}" />
+                        </b:selectOneMenu>
+
+                        <b:commandButton value="Salvar" action="#{alunoLegadoMB.salvarBairro}" ajax="false" look="info" icon-awesome="save" style="width: 100%"/>
+                        <br/><br/>
+                        <b:commandButton value="Cancelar" action="#{alunoLegadoMB.cancelarBairro}" ajax="false" look="warning" icon-awesome="close" style="width: 100%" />
+                    </b:row>
+                </b:modal>
+            </b:form>
+
+        </ui:define>
+    </ui:composition>
+</html>  

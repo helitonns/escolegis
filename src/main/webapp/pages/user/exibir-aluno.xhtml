@@ -1,0 +1,231 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/listar-editar-aluno">Listar/Editar aluno</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Exibir aluno</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px">Dados do aluno</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px;">
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idCpfAluno" value="#{alunoMB.aluno.cpf}"/>
+                                        <label>CPF:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idNomeAluno" value="#{alunoMB.aluno.nome}"/>
+                                        <label>Nome:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idRgAluno" label="RG:" value="#{alunoMB.aluno.rg}"/>
+                                        <label>RG:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText value="#{alunoMB.aluno.sexo}"/>
+                                        <label>Sexo:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText label="Data de Nascimento: " value="#{alunoMB.aluno.dataNascimento}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" type="date"/>
+                                        </p:inputText>
+                                        <label>Data de nascimento:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idCelularAluno"  value="#{alunoMB.aluno.celular}" />
+                                        <label>Celular:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idFixoAluno"  value="#{alunoMB.aluno.fixo}" />
+                                        <label>Fixo:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idEMailAluno" value="#{alunoMB.aluno.email}" />
+                                        <label>E-mail:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idNomeResponsavelAluno" value="#{alunoMB.aluno.nomeDoResponsavel}"/>
+                                        <label>Nome do responsável:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText value="#{alunoMB.aluno.telefoneDoResponsavel}"/>
+                                        <label>Telefone do reponsável:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText  value="#{alunoMB.aluno.paisDeOrigem.nome}"/>
+                                        <label>País:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGrid columns="2">
+                                        <label>Possui filho?</label>
+                                        <p:outputLabel  value="#{alunoMB.aluno.possuiFilho ? 'Sim' : 'Não'}"/>
+                                    </h:panelGrid>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputTextarea  value="#{alunoMB.aluno.informacoesComplementares}" rows="1"/>
+                                        <label>Informações complementares:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card card-w-title">
+                        <div style="margin-left: 20px">Dados do endereço</div>
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px;">
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idRuaAluno" value="#{alunoMB.endereco.rua}"/>
+                                        <label>Rua:</label>
+                                    </h:panelGroup>
+
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idNumeroAluno" value="#{alunoMB.endereco.numero}"/>
+                                        <label>Número:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText value="#{alunoMB.endereco.complemento}"/>
+                                        <label>Complemento:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputMask id="idCepAluno" label="CEP:" value="#{alunoMB.endereco.cep}" mask="99.999-999"/>
+                                        <label>CEP:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText value="#{alunoMB.endereco.bairro.municipio.nome}"/>
+                                        <label>Município:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText  value="#{alunoMB.endereco.bairro.nome}"/>
+                                        <label>Bairro:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-w-title">
+                        <div class="ui-g ui-fluid form-group">
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Editar" action="#{alunoMB.editarAluno()}" ajax="false" icon="ui-icon-edit" style="width: 100%"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Matricular" action="#{alunoMB.enviarAlunoParaMatricula()}" styleClass="green-btn" immediate="true" icon="ui-icon-trending-flat" style="width: 100%" />
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Voltar" action="listar-editar-aluno" styleClass="orange-btn" immediate="true" icon="ui-icon-navigate-before" style="width: 100%" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

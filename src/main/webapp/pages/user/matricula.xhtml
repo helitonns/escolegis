@@ -1,0 +1,177 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:stella="http://stella.caelum.com.br/faces2"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Matrícula no curso</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages id="idMensagemGlobal" globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;">Gerenciar matrículas do curso</div>
+
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 10px">
+
+                            <!--################# PRIMEIRA LINHA ################-->
+                            <div class="ui-g-12 ui-md-12">
+                                <p:selectOneMenu id="idCursosMatricula" required="true" label="Curso"  value="#{matriculaMB.curso}" valueChangeListener="#{matriculaMB.selecionarCurso}" converter="entityConverter" style="width: 100%">
+                                    <p:ajax event="change" update="form" />
+                                    <f:selectItem itemLabel=" - Selecione o curso -" noSelectionOption="true"/>
+                                    <f:selectItems value="#{matriculaMB.cursos}" var="var_curso" itemValue="#{var_curso}" itemLabel="#{var_curso.nome}"/>
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12" style="margin-top: 20px;">
+                                <p:outputLabel value="Pesquisar Aluno por CPF ou Nome" />
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <p:message for="idCPFPesquisa" showSummary="true" showDetail="true"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <p:message for="idNomePesquisa" showSummary="true" showDetail="false"/>
+                            </div>
+
+
+                            <div class="ui-g-12 ui-md-6"/>
+                         
+                            <p:panel style="width: 100%; margin-left: 20px; margin-right: 20px;">
+
+                                <div class="ui-g-12 ui-md-3">
+                                    <div class="ui-inputgroup">
+                                        <h:panelGroup styleClass="md-inputfield">
+                                            <p:inputMask id="idCPFPesquisa" mask="999.999.999-99" value="#{matriculaMB.aluno.cpf}" converter="upperClean">
+                                                <stella:validateCPF/>
+                                            </p:inputMask>
+                                            <label>CPF</label>
+                                        </h:panelGroup>     
+                                    </div>
+                                </div>
+
+
+                                <div class="ui-g-12 ui-md-3">
+                                    <div class="ui-inputgroup">
+                                        <h:panelGroup styleClass="md-inputfield">
+                                            <p:inputText id="idNomePesquisa" label="Nome" value="#{matriculaMB.aluno.nome}"  converter="upper"/>
+                                            <label>Nome</label>
+                                        </h:panelGroup>     
+                                    </div>
+                                </div>
+
+
+                                <div class="ui-g-12 ui-md-3">
+                                    <p:commandButton value="Pesquisar" icon="ui-icon-search" action="#{matriculaMB.pesquisarAluno()}" update="idTabelaAlunos idMensagemGlobal" />
+                                </div>
+                                
+                                <div class="ui-g-12 ui-md-3">
+                                    <p:commandButton value="Cancelar" icon="ui-icon-cancel" styleClass="blue-grey-btn" action="#{matriculaMB.cancelar()}"  />
+                                </div>
+                            </p:panel>
+
+                            <div class="ui-g-12 ui-md-12" style="margin-top: 35px;">
+                                <p:dataTable id="idTabelaAlunos" value="#{matriculaMB.alunos}" var="var_aluno" reflow="true" rowKey="#{var_aluno.id}" emptyMessage="">
+                                    <p:column headerText="CPF" sortBy="#{var_aluno.cpf}" filterBy="#{var_aluno.cpf}" style="width: 130px;">
+                                        <h:outputText value="#{var_aluno.cpf}" />
+                                    </p:column>
+                                    <p:column headerText="Nome" sortBy="#{var_aluno.nome}" filterBy="#{var_aluno.nome}">
+                                        <h:outputText value="#{var_aluno.nome}" />
+                                    </p:column>
+                                    <p:column headerText="Celular" style="width: 140px;">
+                                        <h:outputText value="#{var_aluno.celular}" />
+                                    </p:column>
+                                    <p:column headerText="T. fixo" style="width: 140px;">
+                                        <h:outputText value="#{var_aluno.fixo}" />
+                                    </p:column>
+                                    <p:column headerText="E-mail" rendered="false">
+                                        <h:outputText value="#{var_aluno.email}"/>
+                                    </p:column>
+                                    <p:column headerText="Ação" style="width: 200px;">
+                                        <p:commandButton value="Matricular" icon="ui-icon-check" ajax="false" actionListener="#{matriculaMB.setAluno(var_aluno)}" action="#{matriculaMB.matricular()}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+                    <h:panelGroup id="idPanelAlunoMatriculados" rendered="#{matriculaMB.mostrarAlunosJaMatriculados}">
+
+
+
+                        <div class="card card-w-title" >
+                            <div style="margin-left: 20px;">Alunos já matriculados no curso</div>
+
+                            <div class="ui-g ui-fluid form-group">
+
+
+                                <div class="ui-g-12 ui-md-12" style="margin-top: 10px;">
+                                    <p:dataTable value="#{matriculaMB.alunosJaMatriculados}" var="varAlunoJaMatriculados" reflow="true" rowKey="#{varAlunoJaMatriculados.id}" emptyMessage=" ">
+                                        <p:column headerText="CPF" sortBy="#{varAlunoJaMatriculados.aluno.cpf}" filterBy="#{varAlunoJaMatriculados.aluno.cpf}"  style="width: 130px;">
+                                            <h:outputText value="#{varAlunoJaMatriculados.aluno.cpf}" />
+                                        </p:column>
+                                        <p:column headerText="Nome" sortBy="#{varAlunoJaMatriculados.aluno.nome}" filterBy="#{varAlunoJaMatriculados.aluno.nome}">
+                                            <h:outputText value="#{varAlunoJaMatriculados.aluno.nome}" />
+                                        </p:column>
+                                        <p:column headerText="Celular" style="width: 140px;">
+                                            <h:outputText value="#{varAlunoJaMatriculados.aluno.celular}" />
+                                        </p:column>
+                                        <p:column headerText="T. fixo" style="width: 140px;">
+                                            <h:outputText value="#{varAlunoJaMatriculados.aluno.fixo}" />
+                                        </p:column>
+                                        <p:column headerText="E-mail" rendered="false">
+                                            <h:outputText value="#{varAlunoJaMatriculados.aluno.email}" />
+                                        </p:column>
+                                        <p:column headerText="Ação" style="width: 200px;">
+                                            <p:commandButton id="btnCancelarMatricula" value="Cancelar Matrícula" icon="ui-icon-close" styleClass="red-btn" ajax="true" onclick="PF('modal_excluir').show();" actionListener="#{matriculaMB.setMatricula(varAlunoJaMatriculados)}">
+                                                <p:tooltip value="Irá cancelar a matrícula do aluno no curso e nas respectivas turmas" for="btnCancelarMatricula"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+
+                            <p:dialog header="Cancelar Matrícula" widgetVar="modal_excluir" modal="true" height="100" width="550">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <h:outputText value="Deseja cancelar a matrícula do aluno(a) ?" style="width: 100%"/>
+                                    <p:selectOneButton value="#{matriculaMB.cancelaMatricula}">
+                                        <f:selectItem itemLabel="Sim" itemValue="#{true}" />
+                                        <f:selectItem itemLabel="Não" itemValue="#{false}" />
+                                    </p:selectOneButton>
+                                </h:panelGrid>
+
+                                <f:facet name="footer">
+                                    <h:panelGrid columns="2" style="width: 100%">
+                                        <p:commandButton value="Excluir" icon="ui-icon-delete" ajax="false" action="#{matriculaMB.cancelarMatricula()}" style="width: 100%"/>
+                                        <p:button value="Cancelar" styleClass="blue-grey-btn" icon="ui-icon-cancel"  style="width: 100%"/>
+                                    </h:panelGrid>
+                                </f:facet>
+                            </p:dialog>
+                        </div>
+
+                    </h:panelGroup>
+
+
+
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,127 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+
+
+        <div class="ui-g">
+            <h:form id="form">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Visualizar frequência</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;">Gerenciar frequências</div>
+
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 10px">
+
+                            <!--OOOOOOOOOOOOOOOOOOOOO PAINEL DE EXIBIÇÃO DO CURSO, MÓDULO E DISCIPLINAS OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-->
+                            <div class="ui-g-12 ui-md-12">
+                                <p:selectOneMenu id="idCurso" value="#{frequenciaMB.idCurso}" required="true" valueChangeListener="#{frequenciaMB.selecionarCurso}" style="width: 100%">
+                                    <f:selectItem itemLabel="- Selecione o curso - " />
+                                    <f:selectItems value="#{frequenciaMB.cursos}" var="var_curso" itemLabel="#{var_curso.nome}" itemValue="#{var_curso.id}"/>
+                                    <p:ajax event="change" update="idTabelaCursoDoAlunos"/>
+                                </p:selectOneMenu>
+                            </div>
+
+                            <br/><br/>
+
+                            <!--TABELA DE MÓDULOS DO CURSO SELECIONADO-->
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable id="idTabelaCursoDoAlunos" value="#{frequenciaMB.turmas}" reflow="true" var="varTurma" style="width: 100%;" emptyMessage=" ">
+                                    <p:column headerText="Curso" groupRow="true">
+                                        <h:outputText value="#{varTurma.modulo.curso.nome}" />
+                                    </p:column>
+                                    <p:column headerText="Módulo" style="width: 150px">
+                                        <h:outputText value="#{varTurma.modulo.nome}" />
+                                    </p:column>
+                                    <p:column headerText="Turma">
+                                        <h:outputText value="#{varTurma.nome}"/>
+                                    </p:column>
+                                    <p:column headerText="Ação" style="width: 180px">
+                                        <p:commandButton value="Visualizar aulas" icon="ui-icon-assignment" actionListener="#{frequenciaMB.setTurma(varTurma)}" action="#{frequenciaMB.listarAulasDaTurma()}" ajax="false" style="width: 100%;"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--AULAS DA TURMA-->
+                    <h:panelGroup rendered="#{frequenciaMB.exibirListaDeAulasDaTurma}">
+                        <div class="card card-w-title">
+                            <div style="margin-left: 20px;">Aulas da turma</div>
+                            <div class="ui-g ui-fluid form-group">
+                                <div class="ui-g-12 ui-md-12">
+                                    <p:dataTable id="idListaDeAulasDaTurma" value="#{frequenciaMB.frequencias}"  var="varAulasDaTurma" reflow="true" style="width: 100%;" emptyMessage=" ">
+                                        <p:column headerText="Turma">
+                                            <h:outputText value="#{varAulasDaTurma.turma.nome}" />
+                                        </p:column>
+                                        <p:column headerText="Data da aula" sortBy="#{varAulasDaTurma.dataFrequencia}">
+                                            <h:outputText value="#{varAulasDaTurma.dataFrequencia}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Ação" style="width: 180px">
+                                            <p:commandButton value="Visualiar Frequência" icon="ui-icon-view-list" actionListener="#{frequenciaMB.setFrequencia(varAulasDaTurma)}" action="#{frequenciaMB.listarFrequenciaDaAula()}" ajax="false" style="width: 100%; float: left"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <!--FREQÊNCIA DA AULA-->
+                    <h:panelGroup rendered="#{frequenciaMB.exibirFrequenciaDaAula}">
+                        <div class="card card-w-title">
+                            <div style="margin-left: 20px;">Frequência da aula</div>
+                            <div class="ui-g ui-fluid form-group">
+                                <div class="ui-g-12 ui-md-12">
+                                    <p:dataTable id="idListaFrequenciaDaAula" value="#{frequenciaMB.frequenciaDaAula}" var="varFrequenciaDaAula" reflow="true" style="width: 100%;" emptyMessage=" ">
+                                        <p:column headerText="Aluno">
+                                            <h:outputText value="#{varFrequenciaDaAula.aluno.nome}" />
+                                        </p:column>
+                                        <p:column headerText="Data da aula">
+                                            <h:outputText value="#{varFrequenciaDaAula.dataFrequencia}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Situação" style="width: 170px">
+                                            <h:outputText value="#{varFrequenciaDaAula.presenca ? 'Presente' : 'Ausente'}"  style="color:green" rendered="#{varFrequenciaDaAula.presenca}"/>
+                                            <h:outputText value="#{varFrequenciaDaAula.presenca ? 'Presente' : 'Ausente'}"  style="color:red" rendered="#{!varFrequenciaDaAula.presenca}"/>
+                                        </p:column>
+                                        <p:column headerText="Falta justificada"  style="width: 170px">
+                                            <h:outputText value="#{varFrequenciaDaAula.faltaJustificada ? 'Sim' : 'Não'}"  style="color:blue" rendered="#{varFrequenciaDaAula.faltaJustificada}"/>
+                                            <h:outputText value="#{varFrequenciaDaAula.faltaJustificada ? 'Sim' : 'Não'}"  rendered="#{!varFrequenciaDaAula.faltaJustificada}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                                
+                                <div class="ui-g-12 ui-md-6"/>
+                                <div class="ui-g-12 ui-md-3">
+                                    <p:commandButton value="Ir para justificar falta" icon="ui-icon-view-list" action="#{frequenciaMB.irParaJustificarFalta()}" ajax="false" style="width: 100%; margin-top: 5px;"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-3">
+                                    <p:commandButton value="Editar frequência" icon="ui-icon-view-list" action="#{frequenciaMB.editarFrequencia()}" styleClass="orange-btn" ajax="false" style="width: 100%;margin-top: 5px;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

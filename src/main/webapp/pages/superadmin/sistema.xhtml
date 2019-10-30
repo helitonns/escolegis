@@ -1,0 +1,135 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/listar-editar-aluno">Listar / Editar aluno</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Sistemas</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;">Gerenciar sistemas</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+                            
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idSistemaNome" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idSistemaChave" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-4"/>
+                            
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idSistemaNome" value="#{sistemaMB.sistema.nome}" required="true"  converter="upper"/>
+                                        <label>Nome do sistema</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+                            
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idSistemaChave" value="#{sistemaMB.sistema.chave}" required="true"/>
+                                        <label>Chave</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+                            
+                            <div class="ui-g-12 ui-md-4">
+                                <p:selectOneButton value="#{sistemaMB.sistema.status}">
+                                    <f:selectItem itemLabel="Ativo" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Inativo" itemValue="#{false}" />
+                                </p:selectOneButton>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4"/>
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Salvar" action="#{sistemaMB.salvarSistema()}" ajax="false" icon="ui-icon-save"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Cancelar" action="#{sistemaMB.cancelar()}" styleClass="blue-grey-btn" icon="ui-icon-cancel" immediate="true"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <h:form id="form2">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card card-w-title"> 
+                        <div style="margin-left: 20px;">Sistemas cadastrados</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable var="sistema_var" value="#{sistemaMB.sistemas}" reflow="true"  paginator="true" rows="10" emptyMessage=" ">
+                                    <p:column headerText="Id" style="width: 100px">
+                                        <h:outputText value="#{sistema_var.id}" />
+                                    </p:column>
+
+                                    <p:column headerText="Nome" sortBy="#{sistema_var.nome}" filterBy="#{sistema_var.nome}">
+                                        <h:outputText value="#{sistema_var.nome}" />
+                                    </p:column>
+                                    <p:column headerText="Chave">
+                                        <h:outputText value="#{sistema_var.chave}" />
+                                    </p:column>
+                                    <p:column headerText="Status">
+                                        <h:outputText value="#{sistema_var.status ? 'Ativo' : 'Inativo'}" />
+                                    </p:column>
+
+                                    <p:column headerText="Ação" style="width: 250px">
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton value="Editar"  icon="ui-icon-edit" ajax="true" update="form" style="width: 100%"  actionListener="#{sistemaMB.setSistema(sistema_var)}" />
+                                            <p:commandButton value="Excluir" icon="ui-icon-cancel"  style="width: 100%" styleClass="red-btn" actionListener="#{sistemaMB.setSistemaSelecionado(sistema_var)}" onclick="PF('modal_excluir').show();"/>
+                                        </h:panelGrid>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+
+                        <p:dialog header="Exclusão" widgetVar="modal_excluir" modal="true" height="100" width="550">
+                            <h:panelGrid columns="2" style="width: 100%">
+                                <h:outputText value="Tem certeza que deseja excluir o item selecionado?" style="width: 100%"/>
+                                <p:selectOneButton value="#{sistemaMB.removerSistema}">
+                                    <f:selectItem itemLabel="Sim" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Não" itemValue="#{false}" />
+                                </p:selectOneButton>
+                            </h:panelGrid>
+
+                            <f:facet name="footer">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <p:commandButton value="Excluir" icon="ui-icon-delete" ajax="false" action="#{sistemaMB.removerSistema()}" style="width: 100%"/>
+                                    <p:button value="Cancelar" styleClass="blue-grey-btn" icon="ui-icon-cancel"  style="width: 100%"/>
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

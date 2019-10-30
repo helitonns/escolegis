@@ -1,0 +1,88 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas/Verificar CPF</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-aprovacao.xhtml?faces-redirect=true">Verificar Aprovação</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Lista dos alunos do curso</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;">Verificar aprovados</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idPorcentagemPresenca" value="#{aprovacaoMB.porcentagemDePresenca}"  converter="upperClean">
+                                            <f:convertNumber/>
+                                        </p:inputText>
+                                        <label>Indique a porcentagem de presença necessária</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Listar aprovados" icon="ui-icon-view-list" action="#{aprovacaoMB.montarListaDeAlunos}" ajax="false" style="width: 100%;" update="form"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Cancelar" action="#{aprovacaoMB.cancelar()}" styleClass="blue-grey-btn" icon="ui-icon-cancel" style="width: 100%;" immediate="true"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-w-title">
+                        <div style="margin-left: 20px;">Resultado da pesquisa</div>
+                        <div class="ui-g ui-fluid form-group">
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable var="varAlunosAprovados" value="#{aprovacaoMB.alunos}" sortBy="#{varAlunosAprovados.turma.nome}" reflow="true" expandableRowGroups="true" emptyMessage=" ">
+                                    <p:headerRow>
+                                        <p:column colspan="4">
+                                            <h:outputText value="#{varAlunosAprovados.turma.nome}" />
+                                        </p:column>
+                                    </p:headerRow>
+                                    <p:column headerText="CPF">
+                                        <h:outputText value="#{varAlunosAprovados.cpf}" />
+                                    </p:column>
+                                    <p:column headerText="Nome">
+                                        <h:outputText value="#{varAlunosAprovados.nome}" />
+                                    </p:column>
+                                    <p:column headerText="Aulas / Presença">
+                                        <h:outputText value="#{varAlunosAprovados.quantidadeDeAulas} / #{varAlunosAprovados.quantidadeDePresencas}" />
+                                    </p:column>
+                                    <p:column headerText="Situação" style="width: 150px">
+                                        <p:commandButton id="btnAprovado" action="#{aprovacaoMB.imprimirCertificadoIndividual}"  value="APROVADO" ajax="false" styleClass="green-btn" icon="ui-icon-print" style="width: 100%" rendered="#{((varAlunosAprovados.quantidadeDePresencas*100)/varAlunosAprovados.quantidadeDeAulas) >= aprovacaoMB.porcentagemDePresenca}">
+                                            <f:setPropertyActionListener target="#{aprovacaoMB.aluno}" value="#{varAlunosAprovados}" />
+                                            <p:tooltip value="Imprimir certificado individualmente" for="btnAprovado"/>
+                                        </p:commandButton>
+                                        <p:button value="REPROVADO" styleClass="red-btn" style="width: 100%" rendered="#{!(((varAlunosAprovados.quantidadeDePresencas*100)/varAlunosAprovados.quantidadeDeAulas) >= aprovacaoMB.porcentagemDePresenca)}" disabled="true"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <div class="ui-g-12 ui-md-9"/>
+                            <div class="ui-g-12 ui-md-3">
+                                <p:commandButton value="Imprimir todos os certificados" action="#{aprovacaoMB.imprimirTodosOsCertificados}" ajax="false" icon="ui-icon-print" style="width: 250px; float: right; margin-right: 0px;"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

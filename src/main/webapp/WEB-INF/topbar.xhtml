@@ -1,0 +1,72 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pa="http://primefaces.org/sapphire">
+    <h:form>
+        <div class="layout-topbar">
+            <a id="layout-menubutton" href="#" class="layout-menubutton">
+                <div class="layout-menubutton-icon"></div>
+            </a>
+
+            <div class="layout-topbar-grid">
+<!--                <div class="layout-topbar-grid-column layout-topbar-grid-column-fixed">
+                    <a href="#" class="layout-logo">
+                        <p:graphicImage name="logo-white.png" library="imagens"/>
+                        <h3 style="color: white; ">Escolegis</h3>
+                    </a>
+                </div>-->
+                <div class="layout-topbar-grid-column">
+                    <ui:include src="./menu.xhtml" />
+                </div>
+
+                <div class="layout-topbar-grid-column layout-topbar-grid-column-fixed">
+                    <span class="layout-topbar-search">
+                        <h:outputText value="Usuário: #{startMB.usuario.login} | #{startMB.retornarUnidadeAtivaNomeCompleto()}" style="color: white"/>
+                    </span>
+                </div>
+
+                <div class="layout-topbar-grid-column layout-topbar-grid-column-fixed">
+                    <a id="profile-menu-button" href="#" class="profile-menu-button">
+                        <!--<p:graphicImage name="images/login/logo-sapphire-color.png" library="sapphire-layout" />-->
+                        <p:commandButton icon="ui-icon-person" styleClass="deep-orange-btn" style="width: 100%"/>
+                    </a>
+                    <ul id="layout-profile-menu" class="layout-profile-menu">
+                        <!--                        <li>
+                                                    <a href="#" class="ripplelink">
+                                                        <i class="material-icons">account_circle</i>
+                                                        <span>Foto</span>
+                                                    </a>
+                                                </li>-->
+                        <li>
+                            <h:panelGroup rendered="#{!startMB.usuarioRelatorio}">
+                                <a href="/escolegis-cursos/pages/user/redefinir.xhtml" class="ripplelink">
+                                    <i class="material-icons">lock</i>
+                                    <span>Redefinir senha</span>
+                                </a>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{startMB.usuarioRelatorio}">
+                                <a href="/escolegis-cursos/pages/relatorio/redefinir.xhtml" class="ripplelink">
+                                    <i class="material-icons">lock</i>
+                                    <span>Redefinir senha</span>
+                                </a>
+                            </h:panelGroup>
+                        </li>
+                        <li>
+                            <p:commandLink  action="#{startMB.sair()}" class="ripplelink">
+                                <i class="material-icons">cancel</i>
+                                <span>Sair</span>
+                            </p:commandLink>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </h:form>
+    <div class="layout-topbar-separator"></div>
+
+</ui:composition>

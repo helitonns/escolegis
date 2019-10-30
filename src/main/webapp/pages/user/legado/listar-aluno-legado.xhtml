@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:composition template="../../layout/layoutPrincipal.xhtml">
+        <ui:define name="nome-da-pagina">
+            Listar / Editar Aluno Legado
+        </ui:define>
+
+        <ui:define name="conteudo">
+
+            <b:form id="form">
+                <b:row>
+                    <b:column col-lg="12">
+                        <b:messages global-only="true"/>
+                    </b:column>
+                </b:row>
+
+                <b:panel title="Pesquisar Aluno por CPF ou Nome" look="info">
+                    <br/>
+                    <b:row>
+                        <b:column col-lg="4">
+                            <b:inputText id="idCPFPesquisa" label="CPF" value="#{alunoListagemLegadoMB.pessoa.cpf}" mask="999.999.999-99" />
+                        </b:column>
+                        <b:column col-lg="4">
+                            <b:inputText id="idNomePesquisa" label="Nome" value="#{alunoListagemLegadoMB.pessoa.nome}" converter="upperClean"/>
+                        </b:column>
+                        <b:column col-lg="4"> 
+                            <b:commandButton value="Pesquisar" icon-awesome="search"  action="#{alunoListagemLegadoMB.pesquisarAluno()}" ajax="false"  look="info" style="width: 100%; margin-top: 25px"/>
+                        </b:column>
+                    </b:row>
+                    <br/>
+                    <b:row>
+                        <b:column col-lg="12">
+                            <center>
+                                <b:dataTable value="#{alunoListagemLegadoMB.pessoas}" var="varAlunoListagem" fixedHeader="true" scroll-x="false" responsive="true" paginated="false" info="false" lang="it" searching="false" style="width: 98%"  customLangUrl="//cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json">
+                                    <b:dataTableColumn label="CPF" value="#{varAlunoListagem.cpf}" style="max-width: 80px;"/>
+                                    <b:dataTableColumn label="Nome" value="#{varAlunoListagem.nome}" searchable="true"/>
+                                    <b:dataTableColumn label="Celular" value="#{varAlunoListagem.celular}" style="max-width: 90px"/>
+                                    <b:dataTableColumn label="T. fixo" value="#{varAlunoListagem.telefone}" style="max-width: 80px"/>
+                                    <b:dataTableColumn label="Ação" style="max-width: 200px;">
+                                        <b:panelGrid columns="3" style="width: 90%">
+                                            <p:commandButton  icon="fa fa-trash-o" class="btn btn-warning" onclick="$('.modalPseudoClass2').modal()" title="Excluir" style="height: 40px; width: 40px">
+                                                <f:setPropertyActionListener target="#{alunoListagemLegadoMB.pessoa}" value="#{varAlunoListagem}" />
+                                                <p:tooltip value="Excluir item"/>
+                                            </p:commandButton>
+                                            <b:commandButton icon-awesome="edit" look="info" tooltip="Editar item" style="margin-right: 5px;" action="#{alunoListagemLegadoMB.editarAluno()}">
+                                                <f:setPropertyActionListener target="#{alunoListagemLegadoMB.pessoa}" value="#{varAlunoListagem}" /> 
+                                            </b:commandButton>
+                                            <b:commandButton icon-awesome="search" look="info" tooltip="Visualizar item" action="#{alunoListagemLegadoMB.exibirAluno()}">
+                                                <f:setPropertyActionListener target="#{alunoListagemLegadoMB.pessoa}" value="#{varAlunoListagem}" />
+                                            </b:commandButton>
+                                        </b:panelGrid>
+                                    </b:dataTableColumn>
+                                </b:dataTable>
+                            </center>
+                        </b:column>
+                    </b:row>
+                </b:panel>
+
+                <!-- MODAL DE REMOCAO-->
+                <b:modal id="modal" title="Exclusão" styleClass="modalPseudoClass2" closable="true"  close-on-escape="false" backdrop="false">
+                    <b:panelGrid columns="2">
+                        <p>Você realemente deseja excluir o dado?</p>
+                        <b:switch on-text="Sim" off-text="Não" value="#{alunoListagemLegadoMB.removerAluno}"/>
+                    </b:panelGrid>
+                    <f:facet name="footer">
+                        <b:commandButton value="Confirmar" look="info" actionListener="#{alunoListagemLegadoMB.removerAluno()}" ajax="false"/>
+                        <b:button value="Cancelar" look="warning" dismiss="modal" />
+                    </f:facet>
+                </b:modal>
+
+            </b:form>
+
+
+        </ui:define>
+    </ui:composition>
+</html>  

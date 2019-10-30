@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2019-06-06T09:09:46 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport2" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6420730a-5f98-468a-9615-c983853581ea">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<parameter name="cabecalho" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="turma.modulo.curso.nome" class="java.lang.String"/>
+	<field name="turma.modulo.curso.unidade.nome" class="java.lang.String"/>
+	<field name="turma.modulo.curso.unidade.endereco.enderecoCompleto" class="java.lang.String"/>
+	<field name="turma.horario.descricao" class="java.lang.String"/>
+	<field name="turma.professor" class="java.lang.String"/>
+	<field name="turma.nome" class="java.lang.String"/>
+	<title>
+		<band height="58" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="15" y="1" width="239" height="19" uuid="41695b43-46b4-447c-b3ed-23bb66021852"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{turma.modulo.curso.nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-20" y="24" width="170" height="20" uuid="974044cc-928c-441f-98b7-9aa623629a78"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Local: ESCOLA DO LEGISLATIVO  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-20" y="37" width="50" height="21" uuid="ddcdff73-e8d1-4a40-8094-d39edbe26b6d"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Unidade:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-20" y="1" width="135" height="19" uuid="bbf3f342-d32a-46da-8b2b-71fc08ca4413"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Curso:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="148" y="24" width="30" height="20" uuid="1b97d876-dd58-42bb-ad0f-affa26964bb6"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Hora:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="266" y="24" width="50" height="20" uuid="bcc80359-f8b0-4303-b7f2-e34060c4a755"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Instrutor:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-20" y="20" width="552" height="1" uuid="cc904602-64f2-45ad-9919-371ea3745f3d">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement x="22" y="38" width="168" height="20" uuid="9d64d9b2-f2e1-484b-928d-e5d06ee0324f"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{turma.modulo.curso.unidade.nome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="198" y="38" width="334" height="20" uuid="da0e4984-9c01-4b06-a00d-1d5f8f88de7f"/>
+				<textElement verticalAlignment="Middle">
+					<font isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{turma.modulo.curso.unidade.endereco.enderecoCompleto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="175" y="24" width="97" height="20" uuid="12662c3f-935f-474b-9a67-1818ab155a29"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{turma.horario.descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="308" y="24" width="224" height="20" uuid="0e4ed15a-1a25-497a-8787-a714bb5751b7"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{turma.professor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="257" y="0" width="40" height="20" uuid="dcc74617-ad05-4d87-b9ef-352e1c797062"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Turma:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="294" y="1" width="238" height="19" uuid="42be2d4b-46b0-4060-b8d5-840e00a249d4"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{turma.nome}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+</jasperReport>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>..:: Escolegis ::..</title>
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/imagens/favicon.ico" type="image/x-icon" />
+        <h:outputScript name="js/layout.js" library="sapphire-layout" />
+        <h:outputScript name="js/ripple.js" library="sapphire-layout" />
+    </h:head>
+
+    <h:body styleClass="login-body" style="background-color: #4680ca">
+        <h:form>
+            <div class="login-panel ui-fluid">
+                <div class="login-panel-header">
+                    <p:graphicImage name="images/login/logo-sapphire-color.png" library="sapphire-layout" />
+                </div>
+                <div class="login-panel-content">
+                    <div class="ui-g">
+                        <div class="ui-g-12">
+                            <h1>ESCOLA DO LEGISLATIVO</h1>
+                            <h2>Escolegis</h2>
+                        </div>
+                        <div class="ui-g-12">
+                            <h:panelGroup styleClass="md-inputfield">
+                                <p:inputText value="#{startMB.login}" autocomplete="off" />
+                                <label>Usuário:</label>
+                            </h:panelGroup>
+                        </div>
+                        <div class="ui-g-12">
+                            <h:panelGroup styleClass="md-inputfield">
+                                <p:password value="#{startMB.senha}" autocomplete="off" />
+                                <label>Senha:</label>
+                            </h:panelGroup>
+                        </div>
+                        <div class="ui-g-12">
+                            <h:panelGrid columns="2" style="width: 100%">
+                                <p:commandButton value="Entrar" action="#{startMB.logar2()}" />
+                                <p:commandButton value="Limpar" action="#{startMB.sair()}" styleClass="orange-btn" ajax="false"/>
+                            </h:panelGrid>
+                        </div>
+                        <div class="ui-g-12">
+                            <p:messages globalOnly="true" closable="true"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="sapphire-layout" />
+        </h:form>
+    </h:body>
+
+</html>

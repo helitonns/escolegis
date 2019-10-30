@@ -1,0 +1,282 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:stella="http://stella.caelum.com.br/faces2"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Aluno</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px">Dados do aluno</div>
+
+                        <div class="ui-g ui-fluid form-group">
+
+
+                            <div class="ui-g-12 ui-md-3">
+                                <p:message for="idCpfAluno" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-3">
+                                <p:message for="idNomeAluno" showSummary="true" showDetail="false"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-6"/>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputMask id="idCpfAluno" value="#{alunoMB.aluno.cpf}" mask="999.999.999-99" style="width: 100%;" required="true" requiredMessage="Campo obrigatório">
+                                            <stella:validateCPF/>
+                                        </p:inputMask>
+                                        <label>CPF: *</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idNomeAluno" value="#{alunoMB.aluno.nome}" style="width: 100%;" required="true" converter="upper" requiredMessage="Campo obrigatório"/>
+                                        <label>Nome: *</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idRgAluno" label="RG:" value="#{alunoMB.aluno.rg}" style="width: 100%;"/>
+                                        <label>RG:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <label>Sexo:</label>
+                                    <p:selectOneMenu id="slctSexo" value="#{alunoMB.aluno.sexo}">
+                                        <f:selectItems value="#{alunoMB.sexo.listaResumida}" var="s" itemLabel="#{s.value}" itemValue="#{s}" />
+                                    </p:selectOneMenu> 
+                                </h:panelGrid>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:calendar id="idDataNascimentoAluno" value="#{alunoMB.aluno.dataNascimento}"  pattern="dd/MM/yyyy" style="margin-top: 11px;" mask="99/99/9999" showOn="button"/> 
+                                        <label>Data de nascimento:</label>
+                                        <p:message for="idDataNascimentoAluno" showSummary="false" showDetail="false"/>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputMask id="idCelularAluno"  value="#{alunoMB.aluno.celular}" mask="(99) 99999-9999" style="width: 100%;"/>
+                                        <label>Celular:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputMask id="idFixoAluno"  value="#{alunoMB.aluno.fixo}" mask="(99) 99999-9999" style="width: 100%;"/>
+                                        <label>Fixo:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idEMailAluno" value="#{alunoMB.aluno.email}" style="width: 100%;"/>
+                                        <label>E-mail:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idNomeResponsavelAluno" value="#{alunoMB.aluno.nomeDoResponsavel}"  style="width: 100%;" converter="upper"/>
+                                        <label>Nome do responsável:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputMask id="idTelefoneResponsavel" label="Telefone:" value="#{alunoMB.aluno.telefoneDoResponsavel}" mask="(99) 99999-9999" style="width: 100%;"/>
+                                        <label>Telefone do reponsável:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3" style="margin-top: 20px;">
+                                <p:selectOneMenu value="#{alunoMB.pais}" style="width: 100%" required="true">
+                                    <f:selectItem itemLabel="Selecione o país" itemValue="0" noSelectionOption="true"/>
+                                    <f:selectItems value="#{alunoMB.paises}" var="varPais" itemLabel="#{varPais.nome}" itemValue="#{varPais.id}" />
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3" style="margin-top: 20px;">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <label>Possui filho?</label>
+                                    <p:selectOneRadio value="#{alunoMB.aluno.possuiFilho}">
+                                        <f:selectItem itemLabel="Sim" itemValue="#{true}" />
+                                        <f:selectItem itemLabel="Não" itemValue="#{false}" />
+                                    </p:selectOneRadio>
+                                </h:panelGrid>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputTextarea  value="#{alunoMB.aluno.informacoesComplementares}" rows="1"/>
+                                        <label>Informações complementares:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card card-w-title">
+                        <div style="margin-left: 20px">Dados do endereço</div>
+                        <div class="ui-g ui-fluid form-group">
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idRuaAluno" showSummary="true" showDetail="false"/>
+                            </div>
+                            
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idNumeroAluno" showSummary="true" showDetail="false"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4"/>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idRuaAluno" value="#{alunoMB.endereco.rua}" required="true"  converter="upperClean" requiredMessage="Campo obrigatório"/>
+                                        <label>Rua: *</label>
+                                    </h:panelGroup>
+
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idNumeroAluno" value="#{alunoMB.endereco.numero}" converter="upperClean" required="true" requiredMessage="Campo obrigatório"/>
+                                        <label>Número: *</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idComplementoAluno"  value="#{alunoMB.endereco.complemento}" converter="upperClean"/>
+                                        <label>Complemento:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4"/>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idEnderecoMunicipio" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-4" >
+                                <p:message for="idEnderecoBairro" showSummary="true" showDetail="false"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputMask id="idCepAluno" label="CEP:" value="#{alunoMB.endereco.cep}" mask="99.999-999"/>
+                                        <label>CEP:</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4" style="margin-top: 12px;">
+                                <p:selectOneMenu id="idEnderecoMunicipio" value="#{alunoMB.idMunicipio}" valueChangeListener="#{alunoMB.valueChanged}" required="true" requiredMessage="Campo obrigatório">
+                                    <p:ajax event="change" update="idEnderecoBairro" />
+                                    <f:selectItem itemLabel="Selecione o município *" />
+                                    <f:selectItems value="#{alunoMB.municipios}"	var="slc_municipio" itemValue="#{slc_municipio.id}" itemLabel="#{slc_municipio.nome}"/>
+                                </p:selectOneMenu> 
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3" style="margin-top: 12px;">
+                                <p:selectOneMenu id="idEnderecoBairro" value="#{alunoMB.bairro}" required="true" style="width: 100%" requiredMessage="Campo obrigatório" converter="entityConverter">
+                                    <f:selectItem itemLabel="Selecione o bairro *" itemValue="0" noSelectionOption="true"/>
+                                    <f:selectItems value="#{alunoMB.bairros}" var="slc_bairro" itemValue="#{slc_bairro}" itemLabel="#{slc_bairro.nome}"  />
+                                </p:selectOneMenu>
+                            </div>
+                            
+                            <div class="ui-g-12 ui-md-1" style="margin-top: 12px;">
+                                <p:commandButton id="idAdicionarBairro" icon="ui-icon-plus" ajax="false" action="bairro" onclick="this.form.target = '_blank'" immediate="true">
+                                    <p:tooltip for="idAdicionarBairro" value="Adicionar bairro"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card card-w-title">
+                        <div style="margin-left: 20px">Deseja matricular o aluno nesta turma?</div>
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+                            <div class="ui-g-12 ui-md-4">
+                                <p:selectOneRadio value="#{alunoMB.matricularNaTurma}" style="width: 100%">
+                                    <f:selectItem itemLabel="Matricular" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Não matricular" itemValue="#{false}" />
+                                </p:selectOneRadio>
+                            </div>
+                            <div class="ui-g-12 ui-md-8">
+                                <p:selectOneMenu id="idMatricularTurmaALuno" value="#{alunoMB.turma}" converter="entityConverter" class="form-control">
+                                    <f:selectItem itemLabel=" - Turmas ativas -"/>
+                                    <f:selectItems value="#{alunoMB.turmas}" var="varTurmaAluno" itemValue="#{varTurmaAluno}" itemLabel="#{varTurmaAluno.nomeExibicao}"  />
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-w-title">
+                        <div class="ui-g ui-fluid form-group">
+                            <div class="ui-g-12 ui-md-2"/>
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Salvar" action="#{alunoMB.salvarAluno()}" ajax="false" icon="ui-icon-save" style="width: 100%"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Cancelar" action="#{alunoMB.cancelar()}" immediate="true" styleClass="blue-grey-btn" icon="ui-icon-cancel" style="width: 100%" />
+                            </div>
+                            <div class="ui-g-12 ui-md-2"/>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

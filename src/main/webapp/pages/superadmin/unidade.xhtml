@@ -1,0 +1,158 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Unidade</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;">Gerenciar unidades</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+
+                            <!-- ############ PRIMEIRA LINHA #############-->
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idUnidade"  value="#{unidadeMB.unidade.nome}" required="true"  converter="upperClean"/>
+                                        <label>Nome da unidade</label>
+                                        <p:message for="idUnidade" showSummary="false" showDetail="false"/>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idRua" value="#{unidadeMB.endereco.rua}" required="true"  converter="upperClean"/>
+                                        <label>Rua</label>
+                                        <p:message for="idRua" showSummary="false" showDetail="false"/>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idNumero" label=""  value="#{unidadeMB.endereco.numero}"  converter="upperClean"/>
+                                        <label>Número</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <!-- ############ SEGUNDA LINHA #############-->
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputMask id="idCEP" value="#{unidadeMB.endereco.cep}" mask="99.999-999"  converter="upperClean"/>
+                                        <label>CEP</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:selectOneMenu id="idMunicipio" value="#{unidadeMB.idMunicipio}" valueChangeListener="#{unidadeMB.valueChanged}" required="true">
+                                    <p:ajax event="change" update="idBairro" />
+                                    <f:selectItem itemLabel="Selecione o município" />
+                                    <f:selectItems value="#{unidadeMB.municipios}" var="var_municipio" itemValue="#{var_municipio.id}" itemLabel="#{var_municipio.nome}"/>
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:selectOneMenu id="idBairro" value="#{unidadeMB.bairro}" style="width: 100%">
+                                    <f:selectItem itemLabel="Selecione o bairro" itemValue="0"/>
+                                    <f:selectItems value="#{unidadeMB.bairros}" var="var_bairro" itemValue="#{var_bairro}" itemLabel="#{var_bairro.nome}"  />
+                                    <f:converter converterId="entityConverter"/>
+                                </p:selectOneMenu>
+                            </div>
+
+                            <!-- ############ TERCEIRA LINHA #############-->
+                            <div class="ui-g-12 ui-md-4"/>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Salvar" action="#{unidadeMB.salvarUnidade}" ajax="false" icon="ui-icon-save"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Cancelar" action="#{unidadeMB.cancelar()}" styleClass="blue-grey-btn" icon="ui-icon-cancel" immediate="true"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <h:form id="form2">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card card-w-title"> 
+                        <div style="margin-left: 20px;">Unidades cadastradas</div>
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable var="unidade_var" value="#{unidadeMB.unidades}" reflow="true" rowKey="#{unidade_var.id}" paginator="true" rows="10" emptyMessage=" ">
+                                    <p:column headerText="Id" style="width: 70px;">
+                                        <h:outputText value="#{unidade_var.id}" />
+                                    </p:column>
+
+                                    <p:column headerText="Nome" sortBy="#{unidade_var.nome}" filterBy="#{unidade_var.nome}" style="width: 170px;">
+                                        <h:outputText value="#{unidade_var.nome}" />
+                                    </p:column>
+
+                                    <p:column headerText="Endereço">
+                                        <h:outputText value="#{unidade_var.endereco.enderecoCompleto}" />
+                                    </p:column>
+
+                                    <p:column headerText="Ação" style="width: 450px;">
+                                        <h:panelGrid columns="3">
+                                            <p:commandButton value="Editar"  icon="ui-icon-edit" ajax="true" update="form" style="width: 100%;"  actionListener="#{unidadeMB.setUnidade(unidade_var)}" action="#{unidadeMB.prepararEdicao()}"/>
+                                            <p:commandButton value="Set. Unid."  icon="ui-icon-navigate-next" ajax="true" update="form" style="width: 100%" styleClass="green-btn"  actionListener="#{unidadeMB.setUnidade(unidade_var)}" action="#{unidadeMB.setarUnidade()}"/>
+                                            <p:commandButton value="Excluir" icon="ui-icon-cancel"  style="width: 100%;" styleClass="red-btn" actionListener="#{unidadeMB.setUnidade(unidade_var)}" onclick="PF('modal_excluir_pais').show();"/>
+                                        </h:panelGrid>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+
+                        <p:dialog header="Exclusão" widgetVar="modal_excluir_pais" modal="true" height="100" width="550">
+                            <h:panelGrid columns="2" style="width: 100%">
+                                <h:outputText value="Tem certeza que deseja excluir o item selecionado?" style="width: 100%"/>
+                                <p:selectOneButton value="#{unidadeMB.removerUnidade}">
+                                    <f:selectItem itemLabel="Sim" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Não" itemValue="#{false}" />
+                                </p:selectOneButton>
+                            </h:panelGrid>
+
+                            <f:facet name="footer">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <p:commandButton value="Excluir" icon="ui-icon-delete" ajax="false" action="#{unidadeMB.removerUnidade()}" style="width: 100%"/>
+                                    <p:button value="Cancelar" styleClass="blue-grey-btn" icon="ui-icon-cancel"  style="width: 100%"/>
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+    
+    <name>primefaces_sapphire</name>
+    
+    <component>
+        <component-type>org.primefaces.component.SapphireMenu</component-type>
+        <component-class>org.primefaces.sapphire.component.SapphireMenu</component-class>
+    </component>
+    
+    <render-kit>
+        <renderer>
+            <component-family>org.primefaces.component</component-family>
+            <renderer-type>org.primefaces.component.SapphireMenuRenderer</renderer-type>
+            <renderer-class>org.primefaces.sapphire.component.SapphireMenuRenderer</renderer-class>
+        </renderer>
+    </render-kit>
+    
+    <application>
+        <locale-config>
+            <default-locale>pt_BR</default-locale>
+        </locale-config>
+        
+        <resource-bundle>
+            <base-name>i18n</base-name>
+            <var>i18n</var>
+        </resource-bundle>
+        
+        <resource-bundle>
+            <base-name>ValidationMessages</base-name>
+            <var>ValidationMessages</var>
+        </resource-bundle>
+        
+        <message-bundle>messages_pt_BR</message-bundle>
+        <message-bundle>ValidationMessages</message-bundle>
+
+            
+    </application>
+    
+</faces-config>

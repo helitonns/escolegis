@@ -1,0 +1,63 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:stella="http://stella.caelum.com.br/faces2"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-button {
+                margin-right: .5em;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="breadcrumb">
+        <li><p:link outcome="/pages/user/verificar-cpf"></p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px;">Verificar CPF</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px">Informe o CPF</div>
+
+                        <div class="ui-g ui-fluid form-group">
+                            
+                            <div class="ui-g-12 ui-md-6">
+                                <p:message for="idCPFPesquisa" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6"/>
+                            
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputMask id="idCPFPesquisa" label="CPF" value="#{alunoMB.aluno.cpf}" mask="999.999.999-99">
+                                            <stella:validateCPF/>
+                                        </p:inputMask>
+                                        <label>CPF</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-6">
+                                <p:commandButton value="Pesquisar"  action="#{alunoMB.verificarSeCpfCadastrado()}" ajax="false" icon="ui-icon-search" style="width: 100%;"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-12" style="min-height: 200px;"/>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

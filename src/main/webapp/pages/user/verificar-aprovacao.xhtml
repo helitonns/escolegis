@@ -1,0 +1,149 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Verificar aprovação</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;">A pesquisa apenas analizará os cursos concluídos</div>
+
+                        <!--################# PRIMEIRA LINHA ################-->
+                        <div class="ui-g ui-fluid form-group">
+                            <p:panel style="width: 100%; margin-top: 10px; margin-left: 20px; margin-right: 20px">
+
+                                <div class="ui-g-12 ui-md-12">
+                                    <h:outputText value="Selecione os campos que farão parte da pesquisa"/>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-3" style="margin-top: 20px;">
+                                    <div class="ui-inputgroup">
+                                        <h:panelGroup styleClass="md-inputfield">
+                                            <p:inputText id="idNomeCursoAprovacao" value="#{aprovacaoMB.curso.nome}"   converter="upperClean" style="margin-top: 5px;">
+                                                <p:tooltip value="Digite parte do nome do curso" for="idNomeCursoAprovacao" />
+                                            </p:inputText>
+                                            <label>Curso</label>
+                                            <p:message for="idNomeCursoAprovacao" showSummary="false" showDetail="false"/>
+                                        </h:panelGroup>     
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-1" style="margin-top: 20px;">
+                                    <p:selectBooleanCheckbox id="idSelectNomeCursoAprovacao" value="#{aprovacaoMB.incluirNomeNapesquisa}" style="margin-top: 10px; float: right">
+                                        <p:tooltip for="idSelectNomeCursoAprovacao" value="Marque este campo para incluir na pesquisa o nome do curso" />
+                                    </p:selectBooleanCheckbox>
+                                </div>
+
+
+                                <div class="ui-g-12 ui-md-3" style=" margin-top: 20px;">
+                                    <div class="ui-inputgroup">
+                                        <h:panelGrid columns="2" style="width: 100%">
+                                            <p:outputLabel value="Data de inicio: " style="width: 100%"/>
+                                            <h:panelGroup styleClass="md-inputfield" style="width: 100px">
+                                                <p:calendar id="idDataInicioCursoAprovacao" value="#{aprovacaoMB.curso.dataDeInicio}"  pattern="dd/MM/yyyy" mask="99/99/9999" style="width: 100%">
+                                                    <p:tooltip value="A pesquisa buscará cursos que tenha começado na data especificada ou em data posterior" for="idDataInicioCursoAprovacao"/>
+                                                </p:calendar>
+                                                <!--<p:message for="idDataInicioCursoAprovacao" showSummary="false" showDetail="false"/>-->
+                                            </h:panelGroup> 
+                                        </h:panelGrid>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-1" style=" margin-top: 20px;">
+                                    <p:selectBooleanCheckbox id="idSelectDataInicioCursoAprovacao" value="#{aprovacaoMB.incluirDataInicioNaPesquisa}" style="margin-top: 10px; float: right">
+                                        <p:tooltip for="idSelectDataInicioCursoAprovacao" value="Marque este campo para incluir na pesquisa a data de início do curso"/>
+                                    </p:selectBooleanCheckbox>
+                                </div>
+
+
+                                <div class="ui-g-12 ui-md-3" style=" margin-top: 20px;">
+                                    <div class="ui-inputgroup">
+                                        <h:panelGrid columns="2" style="width: 100%">
+                                            <p:outputLabel value="Data de término:" style="width: 100%"/>
+                                            <h:panelGroup styleClass="md-inputfield" style="width: 100px">
+                                                <p:calendar id="idDataTerminoCursoAprovacao"  value="#{aprovacaoMB.curso.dataDeTermino}"   pattern="dd/MM/yyyy" mask="99/99/9999">
+                                                    <p:tooltip for="idDataTerminoCursoAprovacao" value="A pesquisa buscará cursos que tenham terminado na data especificada ou em data anterior"/>
+                                                </p:calendar>
+                                                <p:message for="idDataTerminoCursoAprovacao" showSummary="false" showDetail="false"/>
+                                            </h:panelGroup> 
+                                        </h:panelGrid>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-1" style=" margin-top: 20px;">
+                                    <p:selectBooleanCheckbox id="idSelectDataTerminoCursoAprovacao" value="#{aprovacaoMB.incluirDataTerminoNaPesquisa}" style="margin-top: 10px; float: right">
+                                        <p:tooltip for="idSelectDataTerminoCursoAprovacao" value="Marque este campo para incluir na pesquisa a data de início do curso"/>
+                                    </p:selectBooleanCheckbox>
+                                </div>
+                                
+                                
+                                <!--################# TERCEIRA LINHA ################-->
+                                <div class="ui-g-12 ui-md-4"/>
+
+                                <div class="ui-g-12 ui-md-4">
+                                    <p:commandButton value="Pesquisar" action="#{aprovacaoMB.pesquisarCurso}" ajax="false" icon="ui-icon-search" style="width: 100%" update="form"/>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-4" style="margin-right: 0px;">
+                                    <p:commandButton value="Cancelar" action="#{aprovacaoMB.cancelar()}" styleClass="blue-grey-btn" ajax="false" icon="ui-icon-cancel" style="width: 100%;" immediate="true"/>
+                                </div>
+                            </p:panel> 
+
+                        </div>
+                    </div>
+
+                    <div class="card card-w-title">
+                        <div style="margin-left: 20px;">Resultado da pesquisa</div>
+                        <div class="ui-g ui-fluid form-group"> 
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable value="#{aprovacaoMB.cursos}" var="varCursoAprovacao" reflow="true" style="width: 100%;" emptyMessage=" ">
+                                    <p:column headerText="ID" style="width: 80px;" rendered="#{startMB.superAdmin}">
+                                        <h:outputText value="#{varCursoAprovacao.id}"/>
+                                    </p:column>
+                                    <p:column headerText="Curso">
+                                        <h:outputText value="#{varCursoAprovacao.nome}"/>
+                                    </p:column>
+                                    <p:column headerText="Período" style="width: 200px;">
+                                        <h:outputText value="#{varCursoAprovacao.dataDeInicio}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                        <h:outputText value=" - "/>
+                                        <h:outputText value="#{varCursoAprovacao.dataDeTermino}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Andamento" style="width: 120px;">
+                                        <h:outputText value="#{varCursoAprovacao.iniciado ? 'Iniciado' : 'Concluído'}"/>
+                                    </p:column>
+                                    <p:column headerText="Status" style="width: 120px;">
+                                        <h:outputText value="#{varCursoAprovacao.status ? 'Ativo' : 'Inativo'}"/>
+                                    </p:column>
+                                    <p:column headerText="Ação" style="width: 200px">
+                                        <p:commandButton value="Verificar aprovados" icon="ui-icon-check" ajax="false" style="width: 100%" actionListener="#{aprovacaoMB.setCurso(varCursoAprovacao)}"  action="#{aprovacaoMB.verificarAprovados}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

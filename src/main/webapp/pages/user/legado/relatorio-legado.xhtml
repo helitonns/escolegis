@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:composition template="../../layout/layoutPrincipal.xhtml">
+        <ui:define name="nome-da-pagina">
+            Relatório Legado
+        </ui:define>
+
+        <ui:define name="conteudo">
+            <b:form id="form">
+
+                <b:row>
+                    <b:column col-lg="12">
+                        <b:messages id="idMensagemGlobal" global-only="true"/>
+                    </b:column>
+                </b:row>
+
+                <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
+                <b:panel title="Selecione os parâmetros da pesquisa" look="info">
+                    <b:row>
+                        <b:column col-lg="3">
+                            <b:message for="idCursoLegado"/>
+                        </b:column>
+                        <b:column col-lg="3">
+                            <b:message for="idDiasLegado"/>
+                        </b:column>
+                        <b:column col-lg="3">
+                            <b:message for="idHorarioLegado"/>
+                        </b:column>
+                        <b:column col-lg="3">
+                            <b:message for="idPeriodoLegado"/>
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column col-lg="3">
+                            <b:selectOneMenu id="idCursoLegado" label="Curso:"  value="#{relatorioLegadoMB.idAtividade}" style="width: 100%">
+                                <f:selectItem itemLabel=" - Selecione o curso -" itemValue="#{0}"/>
+                                <f:selectItems value="#{relatorioLegadoMB.atividades}" var="varAtividade" itemValue="#{varAtividade.id}" itemLabel="#{varAtividade.descricao}"/>
+                            </b:selectOneMenu>
+                        </b:column>
+                        <b:column col-lg="3">
+                            <b:selectOneMenu id="idDiasLegado" label="Dias da semana:"  value="#{relatorioLegadoMB.idDiasDaSemana}" style="width: 100%">
+                                <f:selectItem itemLabel=" - Selecione o dia da semana -" itemValue="#{0}"/>
+                                <f:selectItems value="#{relatorioLegadoMB.dias}" var="varDias" itemValue="#{varDias.id}" itemLabel="#{varDias.descricao}"/>
+                            </b:selectOneMenu>
+                        </b:column>
+                        <b:column col-lg="3">
+                            <b:selectOneMenu id="idHorarioLegado" label="Horário:"  value="#{relatorioLegadoMB.idHorario}" style="width: 100%">
+                                <f:selectItem itemLabel=" - Selecione o horário -" itemValue="#{0}"/>
+                                <f:selectItems value="#{relatorioLegadoMB.horarios}" var="varHorario" itemValue="#{varHorario.id}" itemLabel="#{varHorario.descricao}"/>
+                            </b:selectOneMenu>
+                        </b:column>
+                        <b:column col-lg="3">
+                            <b:selectOneMenu id="idPeriodoLegado" label="Período:"  value="#{relatorioLegadoMB.idPeriodo}" style="width: 100%">
+                                <f:selectItem itemLabel=" - Selecione o período -" itemValue="#{0}"/>
+                                <f:selectItems value="#{relatorioLegadoMB.periodos}" var="varPeriodo" itemValue="#{varPeriodo.id}" itemLabel="#{varPeriodo.dataConcatenada}"/>
+                            </b:selectOneMenu>
+                        </b:column>
+                    </b:row>
+
+                    <b:row>
+                        <b:column col-lg="3" offset-lg="6"> 
+                            <p:commandButton value="Pesquisar" action="#{relatorioLegadoMB.pesquisarALunosMatriculados}" class="btn btn-info" icon="fa fa-search" style="width: 100%;margin-top: 25px" update="form"/>
+                        </b:column>
+                        <b:column col-lg="3"> 
+                            <p:commandButton value="Cancelar" action="#{relatorioLegadoMB.cancelar()}" immediate="true" ajax="false" class="btn btn-warning" icon="fa fa-search" style="width: 100%;margin-top: 25px"/>
+                        </b:column>
+                    </b:row>
+                    
+                    <br/>
+                    <b:panel>
+                        <b:row>
+                            <b:column col-lg="12">
+                                <b:dataTable id="idTabelaAlunos" value="#{relatorioLegadoMB.pessoas}" var="varAluno" fixedHeader="true" info="false" scroll-x="false" responsive="true" lang="it" searching="true" paginated="true" style="width: 100%" customLangUrl="//cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json">
+                                    <b:dataTableColumn label="CPF" value="#{varAluno.cpf}" style="max-width: 80px;"/>
+                                    <b:dataTableColumn label="Nome" value="#{varAluno.nome}" searchable="true"/>
+                                    <b:dataTableColumn label="Celular" value="#{varAluno.celular}" style="max-width: 90px"/>
+                                    <b:dataTableColumn label="T. fixo" value="#{varAluno.telefone}" style="max-width: 80px"/>
+                                </b:dataTable>
+                            </b:column>
+                        </b:row>
+                        <b:row>
+                            <b:column col-lg="3" offset-lg="9">
+                                <b:commandButton value="Imprimir relatório" action="#{relatorioLegadoMB.exportarPDFPessoas}" look="info" icon="print" style="width: 100%;"/>
+                            </b:column>
+                        </b:row>
+                    </b:panel>
+                </b:panel>
+            </b:form>
+        </ui:define>
+    </ui:composition>
+</html>  

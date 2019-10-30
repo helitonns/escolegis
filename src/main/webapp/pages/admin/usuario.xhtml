@@ -1,0 +1,159 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Usuário</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;">Gerenciar usuários</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 10px">
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idLoginUsuario" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idSenhaUsuario" showSummary="true" showDetail="false"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <!--<p:message for="idUnidadeUsuario" showSummary="true" showDetail="false"/>-->
+                            </div>
+
+                            <!-- ############ PRIMEIRA LINHA #############-->
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idLoginUsuario" value="#{usuarioMB.usuario.login}" required="true"/>
+                                        <label>Digite o login do usuário</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:password id="idSenhaUsuario" value="#{usuarioMB.senha}" required="true">
+                                            <f:validateLength minimum="8"/>
+                                            <p:tooltip for="idSenhaUsuario" value="A senha deve ter no mínimo 8 dígitos, 1 letra maiúscula, 1 letra minúscula e 1 número"/>
+                                        </p:password>
+                                        <label>Senha</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <!-- ############ SEGUNDA LINHA #############-->
+                            <div class="ui-g-12 ui-md-4">
+                                <p:selectOneMenu id="idTipoUsuario" label="Tipo Usuário" value="#{usuarioMB.idPermissao}" required="true" >
+                                    <f:selectItem itemLabel="Selecione o tipo de usuário" noSelectionOption="true"/>
+                                    <f:selectItems value="#{usuarioMB.permissoes}" var="tu" itemLabel="#{tu.descricao}" itemValue="#{tu.id}" />                            
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:selectOneButton value="#{usuarioMB.usuario.status}">
+                                    <f:selectItem itemLabel="Ativo" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Inativo" itemValue="#{false}" />
+                                </p:selectOneButton>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Salvar" action="#{usuarioMB.salvarUsuario}" ajax="false" icon="ui-icon-save"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Cancelar" action="#{usuarioMB.cancelar()}" styleClass="blue-grey-btn" icon="ui-icon-cancel" immediate="true"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <h:form id="form2">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card card-w-title"> 
+                        <div style="margin-left: 20px">Usuários cadastradas</div>
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable var="autorizacao_var" value="#{usuarioMB.autorizacoes}" reflow="true" rowKey="#{autorizacao_var.id}" paginator="true" rows="10" emptyMessage=" ">
+                                    <p:column headerText="Id" style="width: 70px;">
+                                        <h:outputText value="#{autorizacao_var.id}" />
+                                    </p:column>
+
+                                    <p:column headerText="Usuário" sortBy="#{autorizacao_var.usuario.login}" filterBy="#{autorizacao_var.usuario.login}" >
+                                        <h:outputText value="#{autorizacao_var.usuario.login}" />
+                                    </p:column>
+                                    <p:column headerText="Sistema" sortBy="#{autorizacao_var.privilegio.sistema.nome}" filterBy="#{autorizacao_var.privilegio.sistema.nome}" >
+                                        <h:outputText value="#{autorizacao_var.privilegio.sistema.nome}" />
+                                    </p:column>
+                                    <p:column headerText="Permissão" sortBy="#{autorizacao_var.privilegio.descricao}" filterBy="#{autorizacao_var.privilegio.descricao}" >
+                                        <h:outputText value="#{autorizacao_var.privilegio.descricao}" />
+                                    </p:column>
+
+                                    <p:column headerText="Status">
+                                        <h:outputText value="#{autorizacao_var.status ? 'ATIVO' : 'INATIVO'}" />
+                                    </p:column>
+
+                                    <p:column headerText="Ação" style="width: 250px;">
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton value="Editar"  icon="ui-icon-edit" ajax="true" update="form" style="width: 100%;"  action="#{usuarioMB.prepararEdicao()}">
+                                                <f:setPropertyActionListener value="#{autorizacao_var}" target="#{usuarioMB.autorizacao}"/>
+                                                <f:setPropertyActionListener value="#{autorizacao_var.usuario}" target="#{usuarioMB.usuario}"/>
+                                                <f:setPropertyActionListener value="#{autorizacao_var.privilegio.id}" target="#{usuarioMB.idPermissao}"/>
+                                            </p:commandButton>
+                                            <p:commandButton value="Excluir" icon="ui-icon-cancel"  style="width: 100%;" styleClass="red-btn" actionListener="#{usuarioMB.setUsuario(usuario_var)}" onclick="PF('modal_excluir_pais').show();">
+                                                <f:setPropertyActionListener value="#{autorizacao_var}" target="#{usuarioMB.autorizacao}"/>
+                                                <f:setPropertyActionListener value="#{autorizacao_var.usuario}" target="#{usuarioMB.usuario}"/>
+                                            </p:commandButton>
+                                        </h:panelGrid>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+
+                        <p:dialog header="Exclusão" widgetVar="modal_excluir_pais" modal="true" height="100" width="550">
+                            <h:panelGrid columns="2" style="width: 100%">
+                                <h:outputText value="Tem certeza que deseja excluir o item selecionado?" style="width: 100%"/>
+                                <p:selectOneButton value="#{usuarioMB.removerUsuario}">
+                                    <f:selectItem itemLabel="Sim" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Não" itemValue="#{false}" />
+                                </p:selectOneButton>
+                            </h:panelGrid>
+
+                            <f:facet name="footer">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <p:commandButton value="Excluir" icon="ui-icon-delete" ajax="false" action="#{usuarioMB.removerUsuario()}" style="width: 100%"/>
+                                    <p:button value="Cancelar" icon="ui-icon-cancel" styleClass="blue-grey-btn"  style="width: 100%"/>
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+
+                    </div>
+                </div>
+            </div>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

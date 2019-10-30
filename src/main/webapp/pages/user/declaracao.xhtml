@@ -1,0 +1,182 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:stella="http://stella.caelum.com.br/faces2"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-button {
+                margin-right: .5em;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Declarações</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px">Pesquisar Aluno por CPF ou Nome</div>
+
+                        <div class="ui-g ui-fluid form-group">
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idCPFPesquisa" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-8"/>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputMask id="idCPFPesquisa" value="#{declaracaoMB.aluno.cpf}" mask="999.999.999-99">
+                                            <stella:validateCPF/>
+                                        </p:inputMask>
+                                        <label>CPF</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idNomePesquisa"  value="#{declaracaoMB.aluno.nome}" converter="upperClean"/>
+                                        <label>Nome</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <p:commandButton value="Pesquisar"  action="#{declaracaoMB.pesquisarAluno()}" ajax="false" icon="ui-icon-search" style="width: 100%;"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <p:commandButton value="Cancelar"  action="#{declaracaoMB.cancelar()}" styleClass="blue-grey-btn" ajax="false" icon="ui-icon-close" style="width: 100%;"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12" style="margin-top: 20px;">
+                                <p:dataTable value="#{declaracaoMB.alunos}" var="varAlunoListagem" emptyMessage=" " style="width: 100%">
+                                    <p:column headerText="CPF"  style="width: 130px;">
+                                        <h:outputText value="#{varAlunoListagem.cpf}" />
+                                    </p:column>
+                                    <p:column headerText="Nome" sortBy="#{varAlunoListagem.nome}" filterBy="#{varAlunoListagem.nome}">
+                                        <h:outputText value="#{varAlunoListagem.nome}" />
+                                    </p:column>
+                                    <p:column headerText="Ação" style="width: 500px;">
+                                        <h:panelGrid columns="2" style="width: 100%">
+                                            <p:commandButton value="Declaração de matrícula" actionListener="#{declaracaoMB.setAluno(varAlunoListagem)}" action="#{declaracaoMB.prepararDeclaracaoDeMatricula()}" ajax="false" icon="ui-icon-view-list" style="float: left" />
+                                            <p:commandButton value="Declaração de conclusão" actionListener="#{declaracaoMB.setAluno(varAlunoListagem)}" action="#{declaracaoMB.prepararDeclaracaoDeConclusao()}" ajax="false" icon="ui-icon-view-list" style="float: right" />
+                                        </h:panelGrid>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <div class="ui-g-12 ui-md-9"/>
+                            <div class="ui-g-12 ui-md-3" style="margin-top: 20px;">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText value="#{declaracaoMB.porcentagemDePresenca}"/>
+                                        <label>Porcentagem para aprovação</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h:panelGroup rendered="#{declaracaoMB.exibirTabelaDeTurmas}">
+                        <div class="card card-w-title">
+                            <div style="margin-left: 20px">Turmas, não conluídas, nas quais o aluno está matriculado</div>
+                            <div class="ui-g ui-fluid form-group">
+                                <div class="ui-g-12 ui-md-12" style="margin-top: 20px;">
+                                    <p:dataTable id="idTabelaCursoDoAlunos" value="#{declaracaoMB.turmas}" var="varTurma" emptyMessage=" " style="width: 100%">
+                                        <p:column headerText="Curso">
+                                            <h:outputText value="#{varTurma.modulo.curso.nome}" />
+                                        </p:column>
+                                        <p:column headerText="Módulo">
+                                            <h:outputText value="#{varTurma.modulo.nome}" />
+                                        </p:column>
+                                        <p:column headerText="Turma">
+                                            <h:outputText value="#{varTurma.nome}" />
+                                        </p:column>
+
+                                        <p:column headerText="Período" style="width: 150px" >
+                                            <h:outputText value="#{varTurma.dataInicio}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                            <h:outputText value=" - "/>
+                                            <h:outputText value="#{varTurma.dataTermino}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Ação" style="width: 220px;">
+                                            <p:commandButton value="Imprimir declaração" icon="ui-icon-print" ajax="false" update="form" action="#{declaracaoMB.imprimirDeclaracaoDeMatricula}">
+                                                <f:setPropertyActionListener target="#{declaracaoMB.turma}" value="#{varTurma}" />
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{declaracaoMB.exibirTabelaDeCurso}">
+                        <div class="card card-w-title">
+                            <div style="margin-left: 20px">Cursos conclídos nos quais o aluno passou</div>
+                            <div class="ui-g ui-fluid form-group">
+                                <div class="ui-g-12 ui-md-12" style="margin-top: 20px;">
+                                    <p:dataTable value="#{declaracaoMB.matriculas}" var="varMatricula" emptyMessage=" " style="width: 100%">
+                                        <p:column headerText="ID" style="width: 100px;" rendered="#{startMB.superAdmin}">
+                                            <h:outputText value="#{varMatricula.id}" />
+                                        </p:column>
+                                        <p:column headerText="Curso">
+                                            <h:outputText value="#{varMatricula.curso.nome}" />
+                                        </p:column>
+
+                                        <p:column headerText="Período" style="width: 170px" >
+                                            <h:outputText value="#{varMatricula.curso.dataDeInicio}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                            <h:outputText value=" - "/>
+                                            <h:outputText value="#{varMatricula.curso.dataDeTermino}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Andamento" style="width: 140px;">
+                                            <h:outputText value="#{varMatricula.curso.iniciado ? 'Iniciado' : 'Concluído'}" />
+                                        </p:column>
+                                        <p:column headerText="Ação" style="width: 322px;">
+                                            <p:commandButton value="Imprimir declaração" icon="fa fa-print" ajax="false" update="form" action="#{declaracaoMB.imprimirDeclaracaoDeConclusao}"  class="btn btn-info" style="width: 100%; float: right">
+                                                <f:setPropertyActionListener target="#{declaracaoMB.curso}" value="#{varMatricula.curso}" />
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-9" />
+                                <div class="ui-g-12 ui-md-3">
+                                    <p:commandButton value="Imprimir declaração de todos os curso" icon="fa fa-print" ajax="false" update="form" action="#{declaracaoMB.imprimirDeclaracaoDeConclusaoDeTodosOsCursos}"  class="btn btn-info" style="width: 320px;float: right; margin-right: 0px;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

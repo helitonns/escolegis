@@ -1,0 +1,139 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/listar-editar-aluno">Listar / Editar aluno</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Privilégio</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;">Gerenciar permissões</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+                            
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idDescricaoPermissao" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idSelectSistema" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-4"/>
+                            
+                            
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idDescricaoPermissao" value="#{privilegioMB.privilegio.descricao}" required="true"  converter="upper"/>
+                                        <label>Descrição</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:selectOneMenu id="idSelectSistema" value="#{privilegioMB.idSistema}" required="true" requiredMessage="Campo obrigatório" style="margin-top: 10px;">
+                                    <f:selectItem itemLabel="Selecione o sistema" noSelectionOption="true"/>
+                                    <f:selectItems value="#{privilegioMB.sistemas}" var="varSistema" itemValue="#{varSistema.id}" itemLabel="#{varSistema.nome}" />
+                                </p:selectOneMenu>
+                            </div>
+                            
+                            <div class="ui-g-12 ui-md-4">
+                                <p:selectOneButton value="#{privilegioMB.privilegio.status}">
+                                    <f:selectItem itemLabel="Ativo" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Inativo" itemValue="#{false}" />
+                                </p:selectOneButton>
+                            </div>
+                            
+                            <div class="ui-g-12 ui-md-4"/>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Salvar" action="#{privilegioMB.salvarPrivilegio()}" ajax="false" icon="ui-icon-save"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Cancelar" action="#{privilegioMB.cancelar()}" styleClass="blue-grey-btn" icon="ui-icon-cancel" immediate="true"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <h:form id="form2">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card card-w-title"> 
+                        <div style="margin-left: 20px;">Permissões cadastradas</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable var="permissao_var" value="#{privilegioMB.privilegios}" reflow="true" rowKey="#{permissao_var.id}" paginator="true" rows="10" emptyMessage=" ">
+                                    <p:column headerText="Id" style="width: 100px">
+                                        <h:outputText value="#{permissao_var.id}" />
+                                    </p:column>
+
+                                    <p:column headerText="Nome" sortBy="#{permissao_var.descricao}" filterBy="#{permissao_var.descricao}">
+                                        <h:outputText value="#{permissao_var.descricao}" />
+                                    </p:column>
+
+                                    <p:column headerText="Sistema" sortBy="#{permissao_var.sistema.nome}" filterBy="#{permissao_var.sistema.nome}">
+                                        <h:outputText value="#{permissao_var.sistema.nome}" />
+                                    </p:column>
+                                    
+                                     <p:column headerText="Status">
+                                        <h:outputText value="#{permissao_var.status ? 'Ativa' : 'Inativa'}" />
+                                    </p:column>
+
+                                    <p:column headerText="Ação" style="width: 250px">
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton value="Editar"  icon="ui-icon-edit" ajax="true" update="form" style="width: 100%"  actionListener="#{privilegioMB.setPrivilegio(permissao_var)}">
+                                                <f:setPropertyActionListener value="#{permissao_var.sistema.id}" target="#{privilegioMB.idSistema}"/>
+                                            </p:commandButton>
+                                            <p:commandButton value="Excluir" icon="ui-icon-cancel"  style="width: 100%" styleClass="red-btn" actionListener="#{privilegioMB.setPrivilegio(permissao_var)}" onclick="PF('modal_excluir').show();"/>
+                                        </h:panelGrid>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+
+                        <p:dialog header="Exclusão" widgetVar="modal_excluir" modal="true" height="100" width="550">
+                            <h:panelGrid columns="2" style="width: 100%">
+                                <h:outputText value="Tem certeza que deseja excluir o item selecionado?" style="width: 100%"/>
+                                <p:selectOneButton value="#{privilegioMB.removerPrivilegio}">
+                                    <f:selectItem itemLabel="Sim" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Não" itemValue="#{false}" />
+                                </p:selectOneButton>
+                            </h:panelGrid>
+
+                            <f:facet name="footer">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <p:commandButton value="Excluir" icon="ui-icon-delete" ajax="false" action="#{privilegioMB.removerPrivilegio()}" style="width: 100%"/>
+                                    <p:button value="Cancelar" styleClass="blue-grey-btn" icon="ui-icon-cancel"  style="width: 100%"/>
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

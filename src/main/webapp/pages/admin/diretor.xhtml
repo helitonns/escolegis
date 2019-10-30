@@ -1,0 +1,116 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Diretor</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;">Gerenciar diretores</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 10px">
+                            <div class="ui-g-12 ui-md-3">
+                                <p:message for="idDiretorNome" showSummary="false" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-9"/>
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idDiretorNome" value="#{diretorMB.diretor.nome}" required="true"  converter="upper"/>
+                                        <label>Nome do diretor(a)</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <p:selectBooleanButton id="idDiretorStatus" value="#{diretorMB.diretor.status}"  onLabel="Ativo" offLabel="Inativo" label="Status" onIcon="ui-icon-check" offIcon="ui-icon-close">
+                                    <p:tooltip value="Clique para selecoinar o Status" for="idDiretorStatus"/>
+                                </p:selectBooleanButton>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <p:commandButton value="Salvar" action="#{diretorMB.salvarDiretor}" ajax="false" icon="ui-icon-save"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <p:commandButton value="Cancelar" action="#{diretorMB.cancelar()}" styleClass="blue-grey-btn" icon="ui-icon-cancel" immediate="true"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <h:form id="form2">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card card-w-title"> 
+                        <div style="margin-left: 20px">Diretores cadastrados</div>
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 10px">
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable var="diretor_var" value="#{diretorMB.diretores}" reflow="true" rowKey="#{diretor_var.id}" paginator="true" rows="10" emptyMessage=" ">
+                                    <p:column headerText="Id">
+                                        <h:outputText value="#{diretor_var.id}" />
+                                    </p:column>
+
+                                    <p:column headerText="Nome" sortBy="#{diretor_var.nome}" filterBy="#{diretor_var.nome}">
+                                        <h:outputText value="#{diretor_var.nome}" />
+                                    </p:column>
+
+                                    <p:column headerText="Status">
+                                        <h:outputText value="#{diretor_var.status ? 'Ativo' : 'Inativo'}" />
+                                    </p:column>
+
+                                    <p:column headerText="Ação">
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton value="Editar"  icon="ui-icon-edit" ajax="true" update="form" style="width: 100%"  actionListener="#{diretorMB.setDiretor(diretor_var)}" />
+                                            <p:commandButton value="Excluir" icon="ui-icon-cancel"  style="width: 100%" styleClass="red-btn" actionListener="#{diretorMB.setDiretorSelecionado(diretor_var)}" onclick="PF('modal_excluir_pais').show();"/>
+                                        </h:panelGrid>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+
+                        <p:dialog header="Exclusão" widgetVar="modal_excluir_pais" modal="true" height="100" width="550">
+                            <h:panelGrid columns="2" style="width: 100%">
+                                <h:outputText value="Tem certeza que deseja excluir o item selecionado?" style="width: 100%"/>
+                                <p:selectOneButton value="#{diretorMB.removerDiretor}">
+                                    <f:selectItem itemLabel="Sim" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Não" itemValue="#{false}" />
+                                </p:selectOneButton>
+                            </h:panelGrid>
+
+                            <f:facet name="footer">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <p:commandButton value="Excluir" icon="ui-icon-delete" ajax="false" action="#{diretorMB.removerDiretor()}" style="width: 100%"/>
+                                    <p:button value="Cancelar" styleClass="blue-grey-btn" icon="ui-icon-cancel"  style="width: 100%"/>
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

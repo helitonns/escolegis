@@ -1,0 +1,312 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+
+
+        <div class="ui-g">
+            <h:form id="form">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Turma</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;">Gerenciar turmas</div>
+
+
+                        <div class="ui-g ui-fluid form-group">
+
+                            <!--OOOOOOOOOOOOOOOOOOOOO PAINEL DE EXIBIÇÃO DO CURSO, MÓDULO E DISCIPLINAS OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-->
+                            <div class="ui-g-12 ui-md-12">
+                                <p:selectOneMenu id="idCurso" value="#{turmaMB.idCurso}" required="true" valueChangeListener="#{turmaMB.selecionarCurso}" style="width: 100%">
+                                    <f:selectItem itemLabel="- Selecione o Curso - " />
+                                    <f:selectItems value="#{turmaMB.cursos}" var="var_curso" itemLabel="#{var_curso.nome}" itemValue="#{var_curso.id}" />
+                                    <p:ajax event="change" update="idModulosDoCurso idTabelaCursoDoAlunos"/>
+                                </p:selectOneMenu>
+                            </div>
+
+                            <!--TABELA DE MÓDULOS DO CURSO SELECIONADO-->
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable id="idModulosDoCurso" var="var_bmd" value="#{turmaMB.blocoModuloDisciplinas}" reflow="true" sortBy="#{var_bmd.nomeModulo}" style="width: 100%;" emptyMessage=" ">
+                                    <p:column headerText="Módulo" groupRow="true">
+                                        <h:outputText value="#{var_bmd.nomeModulo}" />
+                                    </p:column>
+                                    <p:column headerText="Disciplina">
+                                        <h:outputText value="#{var_bmd.nomeDiscipina}" />
+                                    </p:column>
+                                    <p:column style="width: 200px">
+                                        <p:commandButton value="Montar turma" title="Editar Módulo" icon="ui-icon-developer-board" ajax="false" update="form" actionListener="#{turmaMB.setBlocoModuloDisciplina(var_bmd)}" action="#{turmaMB.montarTurma()}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--TURMAS JÁ CADASTRADAS PARA AQUELE MÓDULO-->
+                    <div class="card card-w-title">
+                        <div style="margin-left: 20px;">Turmas já cadastradas para o curso selecionado</div>
+                        <div class="ui-g ui-fluid form-group">
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable id="idTabelaCursoDoAlunos" value="#{turmaMB.turmas}" var="varTurma" reflow="true"  style="width: 100%;" emptyMessage=" ">
+                                    <p:column headerText="Curso">
+                                        <h:outputText value="#{varTurma.modulo.curso.nome}" style=" #{varTurma.alcancouTermoFinal?'color: red':''}" />
+                                    </p:column>
+                                    <p:column headerText="Módulo" style="width: 150px">
+                                        <h:outputText value="#{varTurma.modulo.nome}" style=" #{varTurma.alcancouTermoFinal?'color: red':''}" />
+                                    </p:column>
+                                    <p:column headerText="Turma">
+                                        <h:outputText value="#{varTurma.nome}" style=" #{varTurma.alcancouTermoFinal?'color: red':''}" />
+                                    </p:column>
+                                    <p:column headerText="Período" style="width: 150px">
+                                        <h:outputText value="#{varTurma.dataInicio}" style=" #{varTurma.alcancouTermoFinal?'color: red':''}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                        <h:outputText value=" - " style=" #{varTurma.alcancouTermoFinal?'color: red':''}"/>
+                                        <h:outputText value="#{varTurma.dataTermino}" style="#{varTurma.alcancouTermoFinal?'color: red':''}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="Ação" style="width: 160px">
+                                        <h:panelGrid columns="3" style="width: 100%">
+                                            <p:commandButton id="btnEcluirTurma" icon="ui-icon-delete" actionListener="#{turmaMB.setTurma(varTurma)}" onclick="PF('modal_excluir1').show();" styleClass="red-btn">
+                                                <p:tooltip value="Excluir turma" for="btnEcluirTurma"/>
+                                            </p:commandButton>
+                                            <p:commandButton id="btnConcluirTurma" icon="ui-icon-done-all"  actionListener="#{turmaMB.setTurma(varTurma)}" onclick="PF('modal_finalizar').show();" styleClass="orange-btn">
+                                                <p:tooltip value="Finalizar turma" for="btnConcluirTurma"/>
+                                            </p:commandButton>
+                                            <p:commandButton id="btnGerenciarTurma" icon="ui-icon-settings" ajax="false" update="form" actionListener="#{turmaMB.setTurma(varTurma)}" action="#{turmaMB.prepararEdicaoDeTurma}"  styleClass="green-btn">
+                                                <p:tooltip value="Gerenciar turma: inscrever novos alunos bem como editá-la" for="btnGerenciarTurma"/>
+                                            </p:commandButton>
+                                        </h:panelGrid>
+                                    </p:column>
+                                </p:dataTable>
+
+
+                                <p:dialog header="Exclusão" widgetVar="modal_excluir1" modal="true" height="100" width="550">
+                                    <h:panelGrid columns="2" style="width: 100%">
+                                        <h:outputText value="Deseja excluir a turma ?" style="width: 100%"/>
+                                        <p:selectOneButton value="#{turmaMB.removerTurma}">
+                                            <f:selectItem itemLabel="Sim" itemValue="#{true}" />
+                                            <f:selectItem itemLabel="Não" itemValue="#{false}" />
+                                        </p:selectOneButton>
+                                    </h:panelGrid>
+
+                                    <f:facet name="footer">
+                                        <h:panelGrid columns="2" style="width: 100%">
+                                            <p:commandButton value="Excluir" icon="ui-icon-delete" ajax="false" action="#{turmaMB.removerTurma()}" style="width: 100%"/>
+                                            <p:button value="Cancelar" styleClass="blue-grey-btn" icon="ui-icon-cancel"  style="width: 100%"/>
+                                        </h:panelGrid>
+                                    </f:facet>
+                                </p:dialog>
+
+                                <p:dialog header="Finalizar turma" widgetVar="modal_finalizar" modal="true" height="100" width="550">
+                                    <h:outputText value="Tem certeza que deseja finalizar a turma?" style="width: 100%"/>
+
+                                    <f:facet name="footer">
+                                        <h:panelGrid columns="2" style="width: 100%">
+                                            <p:commandButton value="Finalizar" icon="ui-icon-done-all" ajax="false" action="#{turmaMB.concluirTurma}" style="width: 100%"/>
+                                            <p:button value="Cancelar" icon="ui-icon-cancel" styleClass="blue-grey-btn"  style="width: 100%"/>
+                                        </h:panelGrid>
+                                    </f:facet>
+                                </p:dialog>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO PAINEL DE INCLUSÃO DA TURMA OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-->
+                    <h:panelGroup rendered="#{turmaMB.montarTurma}">
+                        <div class="card card-w-title">
+                            <div style="margin-left: 20px;">Montar turma</div>
+                            <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+                                <div class="ui-g-12 ui-md-12">
+
+                                    <!--################ PRIMEIRA LINHA ###############-->
+                                    <div class="ui-g-12 ui-md-4">
+                                        <div class="ui-inputgroup">
+                                            <h:panelGroup styleClass="md-inputfield">
+                                                <p:inputText id="idTurmaNome"  value="#{turmaMB.turma.nome}" required="true"  converter="upper" style="margin-top: 11px;"/>
+                                                <label>Nome</label>
+                                                <p:message for="idTurmaNome" showSummary="false" showDetail="false"/>
+                                            </h:panelGroup>     
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-4">
+                                        <div class="ui-inputgroup">
+                                            <h:panelGroup styleClass="md-inputfield">
+                                                <p:calendar id="idDataInicioCurso" value="#{turmaMB.turma.dataInicio}" required="true" pattern="dd/MM/yyyy" style="margin-top: 11px;"/>
+                                                <label>Data de início</label>
+                                                <p:message for="idDataInicioCurso" showSummary="false" showDetail="false"/>
+                                            </h:panelGroup>     
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-4">
+                                        <div class="ui-inputgroup">
+                                            <h:panelGroup styleClass="md-inputfield">
+                                                <p:calendar id="idDataTerminiCurso" value="#{turmaMB.turma.dataTermino}" required="true" pattern="dd/MM/yyyy" style="margin-top: 11px;"/>
+                                                <label>Data de término</label>
+                                                <p:message for="idDataTerminiCurso" showSummary="false" showDetail="false"/>
+                                            </h:panelGroup>     
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12" style="margin-top: 10px;"/>
+
+                                    <!--################ SEGUNDA LINHA ###############-->
+                                    <div class="ui-g-12 ui-md-3">
+                                        <p:selectOneMenu id="idSelectMunicipio" value="#{turmaMB.idHorario}" >
+                                            <f:selectItem itemLabel="Selecione o horário" noSelectionOption="true"/>
+                                            <f:selectItems value="#{turmaMB.horarios}" var="var_horario" itemValue="#{var_horario.id}" itemLabel="#{var_horario.descricao}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-3">
+                                        <div class="ui-inputgroup">
+                                            <h:panelGroup styleClass="md-inputfield">
+                                                <p:inputText id="idCargaHorariaTurma"  value="#{turmaMB.turma.cargaHoraria}" >
+                                                    <f:convertNumber/>
+                                                </p:inputText>
+                                                <label>Carga horária em horas</label>
+                                                <p:message for="idCargaHorariaTurma" showSummary="false" showDetail="false"/>
+                                            </h:panelGroup>     
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-3">
+                                        <div class="ui-inputgroup">
+                                            <h:panelGroup styleClass="md-inputfield">
+                                                <p:inputText id="idNumeroMaximoDeFaltasJustificadas"  value="#{turmaMB.turma.quantidadeMaximaDeFaltasJustificadas}" >
+                                                    <f:convertNumber/>
+                                                </p:inputText>
+                                                <label>Número máximo de faltas justificadas</label>
+                                                <p:message for="idNumeroMaximoDeFaltasJustificadas" showSummary="false" showDetail="false"/>
+                                            </h:panelGroup>     
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-3">
+                                        <p:selectBooleanButton value="#{turmaMB.turma.iniciada}"  onLabel="Iniciada" offLabel="Em espera" onIcon="ui-icon-check" offIcon="ui-icon-close"/>
+                                    </div>
+
+                                    <!--################ TERCEIRA LINHA ###############-->
+                                    <div class="ui-g-12 ui-md-6">
+                                        <div class="ui-inputgroup">
+                                            <h:panelGroup styleClass="md-inputfield">
+                                                <p:inputText id="idTurmaProfessor" value="#{turmaMB.turma.professor}"  converter="upperClean"/>
+                                                <label>Professoar</label>
+                                            </h:panelGroup>     
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-6">
+                                        <p:selectManyCheckbox id="cds"  value="#{turmaMB.diasDaSemanaSelecionados}" required="true" style="width: 100%; float: right">
+                                            <f:selectItems value="#{turmaMB.diasDaSemana}" var="ds" itemValue="#{ds}" itemLabel="#{ds}"  />
+                                        </p:selectManyCheckbox>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <!--OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO PAINEL TABELA DE ALUNOS DA TURMA OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-->
+                    <h:panelGroup rendered="#{turmaMB.montarTurma}">
+                        <div class="card card-w-title">
+                            <div style="margin-left: 20px;">Alunos já inscritos na turma</div>
+                            <div class="ui-g ui-fluid form-group">
+                                <div class="ui-g-12 ui-md-12">
+                                    <p:dataTable id="idTabelaAlunosDaTurma" value="#{turmaMB.alunosDaTurma}" var="varAlunoListagem" emptyMessage=" ">
+                                        <p:column headerText="CPF" filterBy="#{varAlunoListagem.cpf}" style="width: 150px">
+                                            <h:outputText value="#{varAlunoListagem.cpf}" />
+                                        </p:column>
+                                        <p:column headerText="Nome" sortBy="#{varAlunoListagem.nome}" filterBy="#{varAlunoListagem.nome}">
+                                            <h:outputText value="#{varAlunoListagem.nome}" />
+                                        </p:column>
+                                        <p:column headerText="Ação" style="width: 200px">
+                                            <p:commandButton id="btnCancelarMatricula" value="Cancelar Matrícula" icon="ui-icon-delete" styleClass="red-btn" actionListener="#{turmaMB.setAlunoExcluidoDaTurma(varAlunoListagem)}" onclick="PF('modal_excluir').show();" style="width: 100%">
+                                                <p:tooltip value="Cancela a matrícula apenas nesta turma!" for="btnCancelarMatricula"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                                <p:dialog header="Exclusão" widgetVar="modal_excluir" modal="true" height="100" width="550">
+                                    <h:panelGrid columns="2" style="width: 100%">
+                                        <h:outputText value="Deseja cancelar a matrícula do aluno(a) ?" style="width: 100%"/>
+                                        <p:selectOneButton value="#{turmaMB.cancelaMatricula}">
+                                            <f:selectItem itemLabel="Sim" itemValue="#{true}" />
+                                            <f:selectItem itemLabel="Não" itemValue="#{false}" />
+                                        </p:selectOneButton>
+                                    </h:panelGrid>
+
+                                    <f:facet name="footer">
+                                        <h:panelGrid columns="2" style="width: 100%">
+                                            <p:commandButton value="Excluir" icon="ui-icon-delete" ajax="false" action="#{turmaMB.removerAlunoDaTurma()}" style="width: 100%"/>
+                                            <p:button value="Cancelar" icon="ui-icon-cancel"  style="width: 100%"/>
+                                        </h:panelGrid>
+                                    </f:facet>
+                                </p:dialog>
+                            </div>
+                            
+                            <div class="ui-g-12 ui-md-9"/>
+                            <div class="ui-g-12 ui-md-3">
+                                <p:commandButton value="EXCEL" ajax="false" styleClass="green-btn">
+                                    <p:dataExporter type="xls" target="idTabelaAlunosDaTurma" fileName="alunos_inscritos_na_turma"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <!--OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO PAINEL TABELA DE ALUNOS DO CURSO OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-->
+                    <h:panelGroup rendered="#{turmaMB.montarTurma}">
+                        <div class="card card-w-title">
+                            <div style="margin-left: 20px;">Inscrever alunos na turma</div>
+                            <div class="ui-g ui-fluid form-group">
+                                <div class="ui-g-12 ui-md-12">
+                                    <p:dataTable id="idTabelaAlunos" var="varAluno"  value="#{turmaMB.alunos}" selection="#{turmaMB.alunosSelecionados}" rowKey="#{varAluno.id}" style="margin-bottom:0" emptyMessage=" ">
+                                        <f:facet name="header">
+                                            Selecione os alunos que serão inscritos na turma
+                                        </f:facet>
+                                        <p:column selectionMode="multiple" style="width:35px;text-align:center"/>
+                                        <p:column headerText="CPF">
+                                            <h:outputText value="#{varAluno.cpf}" />
+                                        </p:column>
+                                        <p:column headerText="Nome">
+                                            <h:outputText value="#{varAluno.nome}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-3"/>
+                                <div class="ui-g-12 ui-md-3">
+                                    <p:commandButton value="Salvar" action="#{turmaMB.salvarTurma}" ajax="false" icon="ui-icon-save" style="width: 100%"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-3">
+                                    <p:commandButton value="Cancelar" action="#{turmaMB.cancelar}" ajax="false" icon="ui-icon-cancel" styleClass="blue-grey-btn" immediate="true" style="width: 100%"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-3"/>
+
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

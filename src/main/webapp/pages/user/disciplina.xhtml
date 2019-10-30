@@ -1,0 +1,130 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Disciplina</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;">Gerenciar disciplinas</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 10px">
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idDisciplina"  value="#{disciplinaMB.disciplina.nome}" required="true"  converter="upper"/>
+                                        <label>Disciplina...</label>
+                                        <p:message for="idDisciplina" showSummary="false" showDetail="false"/>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:selectOneMenu id="idSelectDisciplina" value="#{disciplinaMB.idGrupoDisciplina}" required="true" style="margin-top: 10px;">
+                                    <f:selectItem itemLabel="Selecione a disciplina" noSelectionOption="true"/>
+                                    <f:selectItems value="#{disciplinaMB.grupoDisciplinas}" var="slc_grupoDisciplina" itemLabel="#{slc_grupoDisciplina.nome}" itemValue="#{slc_grupoDisciplina.id}"/>
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:selectBooleanButton id="idDisiciplinaStatus" value="#{disciplinaMB.disciplina.status}"  onLabel="Ativo" offLabel="Inativo" label="Status" onIcon="ui-icon-check" offIcon="ui-icon-close">
+                                    <p:tooltip value="Clique para selecoinar o Status" for="idDisiciplinaStatus"/>
+                                </p:selectBooleanButton>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4"/>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Salvar" action="#{disciplinaMB.salvarDisciplina}" ajax="false" icon="ui-icon-save"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Cancelar" action="#{disciplinaMB.cancelar()}" styleClass="blue-grey-btn" icon="ui-icon-cancel" immediate="true"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <h:form id="form2">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card card-w-title"> 
+                        <div style="margin-left: 20px;">Disciplinas cadastradas</div>
+
+                        <div class="ui-g ui-fluid form-group">
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable var="disciplina_var" value="#{disciplinaMB.disciplinas}" reflow="true"  paginator="true" rows="10" emptyMessage=" ">
+                                    <p:column headerText="Id" style="width: 100px">
+                                        <h:outputText value="#{disciplina_var.id}" rendered="#{startMB.superAdmin}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Disciplina" sortBy="#{disciplina_var.nome}" filterBy="#{disciplina_var.nome}">
+                                        <h:outputText value="#{disciplina_var.nome}" />
+                                    </p:column>
+
+                                    <p:column headerText="Grupo" sortBy="#{disciplina_var.grupoDisciplina.nome}" filterBy="#{disciplina_var.grupoDisciplina.nome}">
+                                        <h:outputText value="#{disciplina_var.grupoDisciplina.nome}" />
+                                    </p:column>
+
+                                    <p:column headerText="Status" sortBy="#{disciplina_var.status}" style="width: 100px;">
+                                        <h:outputText value="#{disciplina_var.status ? 'Ativo' : 'Inativo'}" />
+                                    </p:column>
+
+                                    <p:column headerText="Ação" style="width: 250px;">
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton value="Editar"  icon="ui-icon-edit" ajax="true" update="form" style="width: 100%">
+                                                <f:setPropertyActionListener target="#{disciplinaMB.idGrupoDisciplina}" value="#{disciplina_var.grupoDisciplina.id}" />
+                                                <f:setPropertyActionListener target="#{disciplinaMB.disciplina}" value="#{disciplina_var}" />
+                                            </p:commandButton>
+                                            <p:commandButton value="Excluir" icon="ui-icon-cancel"  style="width: 100%" styleClass="red-btn" actionListener="#{disciplinaMB.setDisciplina(disciplina_var)}" onclick="PF('modal_excluir').show();"/>
+                                        </h:panelGrid>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+
+
+
+                        <p:dialog header="Exclusão" widgetVar="modal_excluir" modal="true" height="100" width="550">
+                            <h:panelGrid columns="2" style="width: 100%">
+                                <h:outputText value="Tem certeza que deseja excluir o item selecionado?" style="width: 100%"/>
+                                <p:selectOneButton value="#{disciplinaMB.removerDisciplina}">
+                                    <f:selectItem itemLabel="Sim" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Não" itemValue="#{false}" />
+                                </p:selectOneButton>
+                            </h:panelGrid>
+
+                            <f:facet name="footer">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <p:commandButton value="Excluir" icon="ui-icon-delete" ajax="false" action="#{disciplinaMB.removerDisciplina()}" style="width: 100%"/>
+                                    <p:button value="Cancelar" icon="ui-icon-cancel" styleClass="blue-grey-btn" style="width: 100%"/>
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

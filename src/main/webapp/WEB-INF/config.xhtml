@@ -1,0 +1,136 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    
+    <a href="#" id="layout-config-button" class="layout-config-button">
+        <i class="material-icons">settings</i>
+    </a>
+
+    <div id="layout-config" class="layout-config">
+        <div class="layout-config-content">
+            <a href="#" class="layout-config-close">
+                <i class="material-icons">close</i>
+            </a>
+            <h:form id="config-form">
+                <p:tabView id="config-form-tabs">
+                    <p:tab title="TopBar">
+                        <div class="layout-config-subtitle">Size</div>
+                        <p:outputPanel id="topbarsize-panel">
+                            <div class="p-grid">
+                                <ui:repeat value="#{guestPreferences.topbarSizes}" var="size">
+                                    <div class="p-col p-col-fixed">
+                                        <p:commandLink class="layout-config-option layout-config-option-image layout-config-option-light ui-shadow-1" actionListener="#{guestPreferences.setTopBarSize(size)}" update=":config-form:config-form-tabs:topbarsize-panel"
+                                            oncomplete="PrimeFaces.SapphireConfigurator.changeSectionTheme('#{size}', 'layout-top')">
+                                            <p:graphicImage name="images/configurator/topbar-#{size}.png" library="sapphire-layout" title="#{size}" style="width:100%"/>
+                                            <ui:fragment rendered="#{size eq guestPreferences.topBarSize}">
+                                                <i class="material-icons">check</i>
+                                            </ui:fragment>
+                                        </p:commandLink>
+                                    </div>
+                                </ui:repeat>
+                            </div>
+                        </p:outputPanel>
+                        
+                        <div class="layout-config-subtitle">Themes</div>
+                        <p:outputPanel id="topbarthemes-panel">
+                            <div class="p-grid">
+                                <ui:repeat value="#{guestPreferences.topbarThemes}" var="topbarTheme">
+                                    <div class="p-col">
+                                        <p:commandLink class="layout-config-option layout-config-option-image ui-shadow-1" actionListener="#{guestPreferences.setTopBar(topbarTheme.file)}" update=":config-form:config-form-tabs:topbarthemes-panel"
+                                            oncomplete="PrimeFaces.SapphireConfigurator.changeSectionTheme('#{topbarTheme.file}', 'layout-topbar')">
+                                            <p:graphicImage name="images/configurator/#{topbarTheme.image}" library="sapphire-layout" title="#{topbarTheme.name}" />
+                                            <ui:fragment rendered="#{topbarTheme.file eq guestPreferences.topBar}">
+                                                <i class="material-icons">check</i>
+                                            </ui:fragment>
+                                        </p:commandLink>
+                                    </div>
+                                </ui:repeat>
+                            </div>
+                        </p:outputPanel>
+                    </p:tab>
+
+                    <p:tab title="Menu">
+                        <p:outputPanel id="menuthemes-panel">
+                            <div class="layout-config-subtitle">Orientation</div>
+                                <div class="p-grid">
+                                <div class="p-col p-col-fixed">
+                                    <p:commandLink class="layout-config-option layout-config-option-image layout-config-option-light ui-shadow-1" actionListener="#{guestPreferences.setHorizontal(true)}" update=":config-form:config-form-tabs:menuthemes-panel"
+                                            oncomplete="PrimeFaces.SapphireConfigurator.changeMenuToHorizontal(true)">
+                                        <p:graphicImage name="images/configurator/horizontal.png" library="sapphire-layout" title="Horizontal" style="width:100%"/>
+                                        <ui:fragment rendered="#{guestPreferences.horizontal}">
+                                            <i class="material-icons">check</i>
+                                        </ui:fragment>
+                                    </p:commandLink>
+                                </div>
+                                <div class="p-col p-col-fixed">
+                                    <p:commandLink class="layout-config-option layout-config-option-image layout-config-option-light ui-shadow-1" actionListener="#{guestPreferences.setHorizontal(false)}" update=":config-form:config-form-tabs:menuthemes-panel"
+                                            oncomplete="PrimeFaces.SapphireConfigurator.changeMenuToHorizontal(true)"> 
+                                    <p:graphicImage name="images/configurator/vertical.png" library="sapphire-layout" title="Vertical"  style="width:100%"/>
+                                        <ui:fragment rendered="#{!guestPreferences.horizontal}">
+                                            <i class="material-icons">check</i>
+                                        </ui:fragment>
+                                    </p:commandLink>
+                                </div>
+                            </div>
+                                <div class="layout-config-subtitle">Theme</div>
+                                <div class="p-grid">
+                                    <ui:repeat value="#{guestPreferences.menuThemes}" var="menuTheme">
+                                        <div class="p-col">
+                                            <p:commandLink class="layout-config-option layout-config-option-image ui-shadow-1 #{menuTheme.file == 'light'? 'layout-config-option-light': null}" actionListener="#{guestPreferences.setMenuTheme(menuTheme.file)}" update=":config-form:config-form-tabs:menuthemes-panel"
+                                                        oncomplete="PrimeFaces.SapphireConfigurator.changeSectionTheme('#{menuTheme.file}', 'layout-menu')">
+                                                <p:graphicImage name="images/configurator/#{menuTheme.image}" library="sapphire-layout" title="#{menuTheme.name}" />
+                                                <ui:fragment rendered="#{menuTheme.file eq guestPreferences.menuTheme}">
+                                                    <i class="material-icons">check</i>
+                                                </ui:fragment>
+                                            </p:commandLink>
+                                        </div>
+                                    </ui:repeat>
+                                </div>
+                            </p:outputPanel>
+                    </p:tab>
+
+                    <p:tab title="Components">
+                        <p:outputPanel id="componentthemes-panel">
+                            <div class="p-grid">
+                                <ui:repeat value="#{guestPreferences.componentThemes}" var="componentTheme">
+                                    <div class="p-col">
+                                        <p:commandLink class="layout-config-option layout-config-option-image ui-shadow-1" actionListener="#{guestPreferences.setTheme(componentTheme.file)}" update=":config-form:config-form-tabs:componentthemes-panel"
+                                            oncomplete="PrimeFaces.SapphireConfigurator.changeComponentsTheme('#{componentTheme.file}')">
+                                            <p:graphicImage name="images/configurator/theme/#{componentTheme.image}" library="sapphire-layout" title="#{componentTheme.name}" />
+                                            <ui:fragment rendered="#{componentTheme.file eq guestPreferences.theme}">
+                                                <i class="material-icons">check</i>
+                                            </ui:fragment>
+                                        </p:commandLink>
+                                    </div>
+                                </ui:repeat>
+                            </div>
+                        </p:outputPanel>
+                    </p:tab>
+
+                    <p:tab title="Primary Color">
+                        <p:outputPanel id="primarycolors-panel">
+                            <p>Primary Color defines the highlight color of active menus. Note that this setting is only utilized in <b>light</b> and <b>light</b> menu modes as other menu themes have their own color to highlight the active
+                                menus.</p>
+                            <div class="p-grid p-primary-colors-grid">
+                                <ui:repeat value="#{guestPreferences.primaryColors}" var="primaryColor">
+                                    <div class="p-col">
+                                        <p:commandLink actionListener="#{guestPreferences.setLayout(primaryColor.file)}" update=":config-form:config-form-tabs:primarycolors-panel"
+                                            class="layout-config-option ui-shadow-1" style="background-color: #{primaryColor.color}" title="#{primaryColor.name}" oncomplete="PrimeFaces.SapphireConfigurator.changePrimaryColor('#{primaryColor.file}')">
+                                            <ui:fragment rendered="#{primaryColor.file eq guestPreferences.layout}">
+                                                <i class="material-icons">check</i>
+                                            </ui:fragment>
+                                        </p:commandLink>
+                                    </div>
+                                </ui:repeat>
+                            </div>
+                        </p:outputPanel>
+                    </p:tab>
+                </p:tabView>
+            </h:form>
+        </div>
+        
+    </div>
+</ui:composition>

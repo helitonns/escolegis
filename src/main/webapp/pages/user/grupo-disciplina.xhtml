@@ -1,0 +1,114 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Grupo disciplina</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px;">Gerenciar grupos de disciplinas</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 10px;">
+                            <div class="ui-g-12 ui-md-3">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idGrupoDisciplina"  value="#{grupoDisciplinaMB.grupoDisciplina.nome}" required="true"  converter="upper"/>
+                                        <label>Grupo Disciplina</label>
+                                        <p:message for="idGrupoDisciplina" showSummary="false" showDetail="false"/>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <p:selectBooleanButton id="idGDStatus" value="#{grupoDisciplinaMB.grupoDisciplina.status}"  onLabel="Ativo" offLabel="Inativo" label="Status" onIcon="ui-icon-check" offIcon="ui-icon-close">
+                                    <p:tooltip value="Clique para selecoinar o Status" for="idGDStatus"/>
+                                </p:selectBooleanButton>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <p:commandButton value="Salvar" action="#{grupoDisciplinaMB.salvarGrupoDisciplina}" ajax="false" icon="ui-icon-save"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-3">
+                                <p:commandButton value="Cancelar" action="#{grupoDisciplinaMB.cancelar()}" styleClass="blue-grey-btn" icon="ui-icon-cancel" immediate="true"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <h:form id="form2">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card card-w-title"> 
+                        <div style="margin-left: 20px;">Grupo de disciplinas cadastrados</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 10px">
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable var="gd_var" value="#{grupoDisciplinaMB.grupoDisciplinas}" reflow="true" rowKey="#{pais_var.id}" paginator="true" rows="10" emptyMessage=" ">
+                                    <p:column headerText="Id" rendered="#{startMB.superAdmin}" style="width: 100px">
+                                        <h:outputText value="#{gd_var.id}" />
+                                    </p:column>
+
+                                    <p:column headerText="Descrição" sortBy="#{gd_var.nome}" filterBy="#{gd_var.nome}">
+                                        <h:outputText value="#{gd_var.nome}" />
+                                    </p:column>
+
+                                    <p:column headerText="Status" sortBy="#{gd_var.status}">
+                                        <h:outputText value="#{gd_var.status ? 'Ativo' : 'Inativo'}" />
+                                    </p:column>
+
+                                    <p:column headerText="Ação">
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton value="Editar"  icon="ui-icon-edit" ajax="true" update="form" style="width: 100%"  actionListener="#{grupoDisciplinaMB.setGrupoDisciplina(gd_var)}" />
+                                            <p:commandButton value="Excluir" icon="ui-icon-cancel"  style="width: 100%" styleClass="red-btn" actionListener="#{grupoDisciplinaMB.setGrupoDisciplina(gd_var)}" onclick="PF('modal_excluir_pais').show();"/>
+                                        </h:panelGrid>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+
+                        <p:dialog header="Exclusão" widgetVar="modal_excluir_pais" modal="true" height="100" width="550">
+                            <h:panelGrid columns="2" style="width: 100%">
+                                <h:outputText value="Tem certeza que deseja excluir o item selecionado?" style="width: 100%"/>
+                                <p:selectOneButton value="#{grupoDisciplinaMB.removerGrupoDisciplina}">
+                                    <f:selectItem itemLabel="Sim" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Não" itemValue="#{false}" />
+                                </p:selectOneButton>
+                            </h:panelGrid>
+
+                            <f:facet name="footer">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <p:commandButton value="Excluir" icon="ui-icon-delete" ajax="false" action="#{grupoDisciplinaMB.removerGrupoDisciplina()}" style="width: 100%"/>
+                                    <p:button value="Cancelar" icon="ui-icon-cancel" styleClass="blue-grey-btn"  style="width: 100%"/>
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>
