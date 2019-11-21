@@ -163,7 +163,7 @@ public class AlunoMB implements Serializable {
         } else {
             FacesUtils.addWarnMessage("Informe o CPF!!!");
         }
-
+        limparMemoria();
         return null;
     }
 

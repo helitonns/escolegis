@@ -10,6 +10,7 @@ import br.leg.alrr.cursos.util.FacesUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
@@ -73,6 +74,8 @@ public class AlunoListagemMB implements Serializable {
         } catch (Exception e) {
             FacesUtils.addErrorMessageFlashScoped(e.getCause().toString());
         }
+        
+        limparMemoria();
         return "listar-editar-aluno.xhtml" + "?faces-redirect=true";
     }
 
@@ -104,7 +107,7 @@ public class AlunoListagemMB implements Serializable {
         FacesUtils.setBean("curso", curso);
         return "aprovados.xhtml" + "?faces-redirect=true";
     }
-    
+
     public String cancelar() {
         return "listar-editar-aluno.xhtml" + "?faces-redirect=true";
     }
@@ -118,7 +121,31 @@ public class AlunoListagemMB implements Serializable {
         removerAluno = false;
     }
 
+    /**
+     * Método usado para liberar memória. Foi necessário adicionar este método
+     * porque, possivelmente, está havendo vazamento de memória, fazendo com que
+     * a aplicação pare de funcionar. Basicamente o método irá anular as
+     * referências das variáveis, sinalizando para o Garbage Collector realizar
+     * a coleta.
+     */
+    private void limparMemoria() {
+        alunoDAO = null;
+        turmaDAO = null;
+        alunos = null;
+        turmas = null;
+        aluno = null;
+        curso = null;
+    }
+    
+    /**
+     * Ao sair da página executa o método @limparMemoria.
+     */
+    @PreDestroy
+    public void saindoDaPagina(){
+        limparMemoria();
+    }
 //==============================================================================
+
     public ArrayList<Aluno> getAlunos() {
         return alunos;
     }
