@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -50,12 +51,12 @@ public class RelatorioGeralMB implements Serializable {
 
     @EJB
     private MunicipioDAO municipioDAO;
-    
+
     @EJB
     private PaisDAO paisDAO;
 
     private InputStream logo;
-    
+
     private InputStream jasper;
 
     private Date naData = new Date();
@@ -234,7 +235,7 @@ public class RelatorioGeralMB implements Serializable {
                 }
                 sb.append(b.getConectivoParaConsulta());
             }
-            
+
             sb.append("order by a.nome");
 
             alunos = (ArrayList<Aluno>) alunoDAO.gerarRelatorioDinamico(sb.toString(), blocosParametros);
@@ -244,12 +245,12 @@ public class RelatorioGeralMB implements Serializable {
 
             limparVariaveis();
         } catch (DAOException e) {
-            FacesUtils.addErrorMessage("Erro ao montar consulta: "+e.getCause());
+            FacesUtils.addErrorMessage("Erro ao montar consulta: " + e.getCause());
         }
     }
 
     public String exportarPDF() {
-         try {
+        try {
             Relatorio<Aluno> report = new Relatorio<>();
 
             if (alunos == null) {
@@ -269,11 +270,11 @@ public class RelatorioGeralMB implements Serializable {
                 limparBlocosDeConculta();
             }
         } catch (Exception e) {
-            FacesUtils.addErrorMessage("Erro ao gerar relatório: "+e.getMessage());
+            FacesUtils.addErrorMessage("Erro ao gerar relatório: " + e.getMessage());
         }
-
+        limparMemoria();
         return "relatorio";
-    }   
+    }
 
     public void removerDaConsulta() {
         blocos.remove(itemEscolhido);
@@ -314,8 +315,9 @@ public class RelatorioGeralMB implements Serializable {
             Logger.getLogger(RelatorioMB.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public String reset() {
+        limparMemoria();
         return "relatorio-geral.xhtml" + "?faces-redirect=true";
     }
 
@@ -349,6 +351,47 @@ public class RelatorioGeralMB implements Serializable {
             }
         }
         return "esclhido";
+    }
+
+    /**
+     * Método usado para liberar memória. Foi necessário adicionar este método
+     * porque, possivelmente, está havendo vazamento de memória, fazendo com que
+     * a aplicação pare de funcionar. Basicamente o método irá anular as referências
+     * das variáveis, sinalizando para o Garbage Collector realizar a coleta.
+     */
+    private void limparMemoria() {
+        alunoDAO = null;
+        bairroDAO = null;
+        municipioDAO = null;
+        paisDAO = null;
+        logo = null;
+        jasper = null;
+        naData = null;
+        data1 = null;
+        data2 = null;
+        parametros = null;
+        conectivos = null;
+        conectivoEscolhido = null;
+        sexo = null;
+        blocos = null;
+        blocosParametros = null;
+        itemEscolhido = null;
+        alunos = null;
+        bairros = null;
+        municipios = null;
+        paises = null;
+        idMS = null;
+        idBS = null;
+        idPS = null;
+        sexoLista = null;
+    }
+    
+    /**
+     * Ao sair da página executa o método @limparMemoria.
+     */
+    @PreDestroy
+    private void saindoDaPagina(){
+        limparMemoria();
     }
 //==========================================================================
 

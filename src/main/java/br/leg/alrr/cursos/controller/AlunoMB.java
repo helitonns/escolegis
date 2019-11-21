@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Named;
@@ -206,6 +207,10 @@ public class AlunoMB implements Serializable {
                             matricula.setUnidade(u.getUnidade());
                             matricula.setStatus(true);
                             matriculaDAO.salvar(matricula);
+
+                            //liberar memória
+                            matricula = null;
+                            gc = null;
                         } else {
                             FacesUtils.addWarnMessageFlashScoped("Este aluno já está matriculado na turma!!!");
                         }
@@ -237,6 +242,10 @@ public class AlunoMB implements Serializable {
                                 matricula.setUnidade(u.getUnidade());
                                 matricula.setStatus(true);
                                 matriculaDAO.salvar(matricula);
+
+                                //liberar memória
+                                matricula = null;
+                                gc = null;
                             } else {
                                 FacesUtils.addWarnMessageFlashScoped("Este aluno já está matriculado na turma!!!");
                             }
@@ -249,10 +258,16 @@ public class AlunoMB implements Serializable {
                     FacesUtils.addWarnMessageFlashScoped("O CPF de número " + aluno.getCpf() + " já está cadastrado!!!");
                 }
             }
+
+            //liberar memória
+            u = null;
         } catch (DAOException e) {
             FacesUtils.addErrorMessageFlashScoped(e.getMessage() + ": " + e.getCause());
         }
         FacesUtils.removeBean("cpf");
+
+        //liberar memória
+        limparMemoria();
         return "aluno.xhtml" + "?faces-redirect=true";
     }
 
@@ -303,7 +318,41 @@ public class AlunoMB implements Serializable {
         bairro = new Bairro();
     }
 
+    /**
+     * Método usado para liberar memória. Foi necessário adicionar este método
+     * porque, possivelmente, está havendo vazamento de memória, fazendo com que
+     * a aplicação pare de funcionar. Basicamente o método irá anular as referências
+     * das variáveis, sinalizando para o Garbage Collector realizar a coleta.
+     */
+    private void limparMemoria() {
+        alunoDAO = null;
+        municipioDAO = null;
+        bairroDAO = null;
+        turmaDAO = null;
+        matriculaDAO = null;
+        paisDAO = null;
+        paises = null;
+        municipios = null;
+        bairros = null;
+        turmas = null;
+        aluno = null;
+        endereco = null;
+        municipio = null;
+        bairro = null;
+        pais = null;
+        turma = null;
+        idMunicipio = null;
+    }
+    
+    /**
+     * Ao sair da página executa o método @limparMemoria.
+     */
+    @PreDestroy
+    private void saindoDaPagina(){
+        limparMemoria();
+    }
 //==========================================================================
+
     public Aluno getAluno() {
         return aluno;
     }
