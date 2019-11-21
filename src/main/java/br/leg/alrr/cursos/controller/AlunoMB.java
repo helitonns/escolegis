@@ -19,6 +19,7 @@ import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.annotation.PostConstruct;
@@ -178,51 +179,19 @@ public class AlunoMB implements Serializable {
 
     public String salvarAluno() {
         try {
-            UsuarioComUnidade u = (UsuarioComUnidade) FacesUtils.getBean("usuario");
-            aluno.setUnidade(u.getUnidade());
 
-            endereco.setBairro(bairro);
-            aluno.setEndereco(endereco);
-            aluno.setPaisDeOrigem(new Pais(pais));
+            if (verificarSeOAlunoPodeSerCadastradoPelaIdade(aluno.getDataNascimento())) {
 
-            if (aluno.getId() != null) {
-                alunoDAO.atualizar(aluno);
-                FacesUtils.addInfoMessageFlashScoped("Aluno atualizado com sucesso!!!");
+                UsuarioComUnidade u = (UsuarioComUnidade) FacesUtils.getBean("usuario");
+                aluno.setUnidade(u.getUnidade());
 
-                //FAZENDO A MATRICULA NA TURMA
-                if (matricularNaTurma && turma.getId() != null) {
-                    //verificar se a turma alcançou o seu termo final, realizar a operação se não alcançou
-                    if (!turmaDAO.turmaAlcancouSeuTermoFinal(turma)) {
-                        if (!turmaDAO.verificarSeAlunoJaEstaMatriculadoNaTurma(aluno, turma)) {
-                            turma.getAlunos().add(aluno);
-                            turmaDAO.atualizar(turma);
-                            FacesUtils.addInfoMessageFlashScoped("Aluno matriculado na turma com sucesso!!!");
+                endereco.setBairro(bairro);
+                aluno.setEndereco(endereco);
+                aluno.setPaisDeOrigem(new Pais(pais));
 
-                            //FAZENDO A MATRÍCULA NO CURSO
-                            Matricula matricula = new Matricula();
-                            GregorianCalendar gc = new GregorianCalendar();
-                            matricula.setDataMatricula(gc.getTime());
-                            matricula.setAluno(aluno);
-                            matricula.setCurso(turma.getModulo().getCurso());
-                            matricula.setUnidade(u.getUnidade());
-                            matricula.setStatus(true);
-                            matriculaDAO.salvar(matricula);
-
-                            //liberar memória
-                            matricula = null;
-                            gc = null;
-                        } else {
-                            FacesUtils.addWarnMessageFlashScoped("Este aluno já está matriculado na turma!!!");
-                        }
-                    } else {
-                        FacesUtils.addWarnMessageFlashScoped("Não foi possível realizar a matrícula do aluno na turma, pois esta já terminou!!!");
-                    }
-                }
-
-            } else {
-                if (alunoDAO.cpfUnico(aluno.getCpf())) {
-                    alunoDAO.salvar(aluno);
-                    FacesUtils.addInfoMessageFlashScoped("Aluno salvo com sucesso!!!");
+                if (aluno.getId() != null) {
+                    alunoDAO.atualizar(aluno);
+                    FacesUtils.addInfoMessageFlashScoped("Aluno atualizado com sucesso!!!");
 
                     //FAZENDO A MATRICULA NA TURMA
                     if (matricularNaTurma && turma.getId() != null) {
@@ -249,18 +218,55 @@ public class AlunoMB implements Serializable {
                             } else {
                                 FacesUtils.addWarnMessageFlashScoped("Este aluno já está matriculado na turma!!!");
                             }
-
                         } else {
                             FacesUtils.addWarnMessageFlashScoped("Não foi possível realizar a matrícula do aluno na turma, pois esta já terminou!!!");
                         }
                     }
-                } else {
-                    FacesUtils.addWarnMessageFlashScoped("O CPF de número " + aluno.getCpf() + " já está cadastrado!!!");
-                }
-            }
 
-            //liberar memória
-            u = null;
+                } else {
+                    if (alunoDAO.cpfUnico(aluno.getCpf())) {
+                        alunoDAO.salvar(aluno);
+                        FacesUtils.addInfoMessageFlashScoped("Aluno salvo com sucesso!!!");
+
+                        //FAZENDO A MATRICULA NA TURMA
+                        if (matricularNaTurma && turma.getId() != null) {
+                            //verificar se a turma alcançou o seu termo final, realizar a operação se não alcançou
+                            if (!turmaDAO.turmaAlcancouSeuTermoFinal(turma)) {
+                                if (!turmaDAO.verificarSeAlunoJaEstaMatriculadoNaTurma(aluno, turma)) {
+                                    turma.getAlunos().add(aluno);
+                                    turmaDAO.atualizar(turma);
+                                    FacesUtils.addInfoMessageFlashScoped("Aluno matriculado na turma com sucesso!!!");
+
+                                    //FAZENDO A MATRÍCULA NO CURSO
+                                    Matricula matricula = new Matricula();
+                                    GregorianCalendar gc = new GregorianCalendar();
+                                    matricula.setDataMatricula(gc.getTime());
+                                    matricula.setAluno(aluno);
+                                    matricula.setCurso(turma.getModulo().getCurso());
+                                    matricula.setUnidade(u.getUnidade());
+                                    matricula.setStatus(true);
+                                    matriculaDAO.salvar(matricula);
+
+                                    //liberar memória
+                                    matricula = null;
+                                    gc = null;
+                                } else {
+                                    FacesUtils.addWarnMessageFlashScoped("Este aluno já está matriculado na turma!!!");
+                                }
+
+                            } else {
+                                FacesUtils.addWarnMessageFlashScoped("Não foi possível realizar a matrícula do aluno na turma, pois esta já terminou!!!");
+                            }
+                        }
+                    } else {
+                        FacesUtils.addWarnMessageFlashScoped("O CPF de número " + aluno.getCpf() + " já está cadastrado!!!");
+                    }
+                }
+                //liberar memória
+                u = null;
+            } else {
+                FacesUtils.addWarnMessageFlashScoped("O aluno não pode ser cadastrado no sistema, pois não possui 16 anos completos e nem irá completá-lo pelos próximos 3 meses!!!");
+            }
         } catch (DAOException e) {
             FacesUtils.addErrorMessageFlashScoped(e.getMessage() + ": " + e.getCause());
         }
@@ -321,8 +327,9 @@ public class AlunoMB implements Serializable {
     /**
      * Método usado para liberar memória. Foi necessário adicionar este método
      * porque, possivelmente, está havendo vazamento de memória, fazendo com que
-     * a aplicação pare de funcionar. Basicamente o método irá anular as referências
-     * das variáveis, sinalizando para o Garbage Collector realizar a coleta.
+     * a aplicação pare de funcionar. Basicamente o método irá anular as
+     * referências das variáveis, sinalizando para o Garbage Collector realizar
+     * a coleta.
      */
     private void limparMemoria() {
         alunoDAO = null;
@@ -343,13 +350,72 @@ public class AlunoMB implements Serializable {
         turma = null;
         idMunicipio = null;
     }
-    
+
     /**
      * Ao sair da página executa o método @limparMemoria.
      */
     @PreDestroy
-    private void saindoDaPagina(){
+    private void saindoDaPagina() {
         limparMemoria();
+    }
+
+    /**
+     * O sistema trabalha e cadastra pessoas que tenham 16 anos ou mais. Então,
+     * o método em questão verifica se o aluno a ser cadastrado possui ou não os
+     * 16 anos. Caso tenha 16 anos completos ou que, pelo menos, falte no máximo
+     * 3 meses para completá-los o sistema irá permitir o seu cadastro, caso
+     * contrário, o sistema emitirá uma mensagem de alerta não permitindo o seu
+     * cadastro. O método não é tão rígido, neste sentido ele irá trabalhar apenas
+     * com os anos e meses, desconsiderando os dias.
+     *
+     * @param dataDeNascimento variável que representa a data de nascimento do
+     * aluno.
+     *
+     * @return o sistema retornará um valor booleano, se o valor for verdadeiro
+     * o aluno terá 16 completos ou estará faltando no máximo 3 meses para
+     * completá-lo, se o valor for falso, significa que o aluno não tem 16 anos
+     * completos, ele não deve ser cadastrado no sistema.
+     */
+    public boolean verificarSeOAlunoPodeSerCadastradoPelaIdade(Date dataDeNascimento) {
+        if (dataDeNascimento != null) {
+            //variável que representa a data atual
+            GregorianCalendar g1 = new GregorianCalendar();
+            //variável que representa a data de nascimento do aluno
+            GregorianCalendar g2 = new GregorianCalendar();
+            g2.setTime(dataDeNascimento);
+            //com essa operação se obtem a idade geral do aluno
+            int idade = g1.get(GregorianCalendar.YEAR) - g2.get(GregorianCalendar.YEAR);
+            //variável que representa o mês atual
+            int mesAtual = g1.get(GregorianCalendar.MONTH) + 1;
+            //variável que representa o mês de nascimento do aluno
+            int mesDaIdade = g2.get(GregorianCalendar.MONTH) + 1;
+            //variável usada para verificar se o aluno completou o ano completo ou se falta alguns meses para completá-lo
+            int fracaoDeMeses = mesAtual - mesDaIdade;
+
+            //se o aluno possui 17 anos ou mais o sistema irá retornar verdaderiro
+            if (idade > 16) {
+                return true;
+            } //se o aluno possui 16 anos, é necessário saber se é 16 anos completos ou não
+            else if (idade == 16) {
+                //se fracaoDeMeses for igual a zero, o aluno completou o ano
+                if (fracaoDeMeses == 0) {
+                    return true;
+                } //se fracaoDeMeses for maior que zero, o aluno completou o ano e possui mais alguns meses de vida
+                else if (fracaoDeMeses > 0) {
+                    return true;
+                } //se fracaoDeMeses for menor que zero, o aluno não completou o ano, deve-se verificar quantos meses faltam para ele completar o ano
+                else if (fracaoDeMeses < 0) {
+                    //adiciona mais 3 (que foi o limite estabelecido pela regra de negócio) meses a data atual
+                    int mesesAdionais = mesAtual + 3;
+                    //se com os meses adionais foi possível chegar ou passar do mês de aniversário do aluno o método retornará verdadeiro, caso contrário falso
+                    return mesesAdionais >= mesDaIdade;
+                }
+            } //se o aluno possui menos de 16 anos o sistema irá retorna falso
+            else if (idade < 16) {
+                return false;
+            }
+        }
+        return false;
     }
 //==========================================================================
 

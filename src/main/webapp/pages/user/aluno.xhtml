@@ -76,12 +76,18 @@
                                 </h:panelGrid>
                             </div>
 
+                            
+                            <div class="ui-g-12 ui-md-3">
+                                <p:message for="idDataNascimentoAluno" showSummary="true" showDetail="false"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-9"/>
+                            
                             <div class="ui-g-12 ui-md-3">
                                 <div class="ui-inputgroup">
                                     <h:panelGroup styleClass="md-inputfield">
-                                        <p:calendar id="idDataNascimentoAluno" value="#{alunoMB.aluno.dataNascimento}"  pattern="dd/MM/yyyy" style="margin-top: 11px;" mask="99/99/9999" showOn="button"/> 
-                                        <label>Data de nascimento:</label>
-                                        <p:message for="idDataNascimentoAluno" showSummary="false" showDetail="false"/>
+                                        <p:calendar id="idDataNascimentoAluno" value="#{alunoMB.aluno.dataNascimento}"  pattern="dd/MM/yyyy" style="margin-top: 11px;" mask="99/99/9999" showOn="button" required="true" requiredMessage="Campo obrigatório"/> 
+                                        <label>Data de nascimento: *</label>
                                     </h:panelGroup>     
                                 </div>
                             </div>
