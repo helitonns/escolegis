@@ -4,6 +4,7 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 template="../../WEB-INF/template.xhtml">
 
     <ui:define name="breadcrumb">
@@ -89,8 +90,8 @@
                             <div style="margin-left: 20px;">Frequência da aula</div>
                             <div class="ui-g ui-fluid form-group">
                                 <div class="ui-g-12 ui-md-12">
-                                    <p:dataTable id="idListaFrequenciaDaAula" value="#{frequenciaMB.frequenciaDaAula}" var="varFrequenciaDaAula" reflow="true" style="width: 100%;" emptyMessage=" ">
-                                        <p:column headerText="Aluno">
+                                    <p:dataTable id="idListaFrequenciaDaAula" value="#{frequenciaMB.frequenciaDaAula}" var="varFrequenciaDaAula" reflow="true" style="width: 100%;" emptyMessage=" " paginator="true" rows="10" >
+                                        <p:column headerText="Aluno" sortBy="#{varFrequenciaDaAula.aluno.nome}" filterBy="#{varFrequenciaDaAula.aluno.nome}">
                                             <h:outputText value="#{varFrequenciaDaAula.aluno.nome}" />
                                         </p:column>
                                         <p:column headerText="Data da aula">
@@ -106,9 +107,12 @@
                                             <h:outputText value="#{varFrequenciaDaAula.faltaJustificada ? 'Sim' : 'Não'}"  style="color:blue" rendered="#{varFrequenciaDaAula.faltaJustificada}"/>
                                             <h:outputText value="#{varFrequenciaDaAula.faltaJustificada ? 'Sim' : 'Não'}"  rendered="#{!varFrequenciaDaAula.faltaJustificada}"/>
                                         </p:column>
+                                        <f:facet name="footer">
+                                            Total de alunos: #{fn:length(frequenciaMB.frequenciaDaAula)}
+                                        </f:facet>
                                     </p:dataTable>
                                 </div>
-                                
+
                                 <div class="ui-g-12 ui-md-6"/>
                                 <div class="ui-g-12 ui-md-3">
                                     <p:commandButton value="Ir para justificar falta" icon="ui-icon-view-list" action="#{frequenciaMB.irParaJustificarFalta()}" ajax="false" style="width: 100%; margin-top: 5px;"/>

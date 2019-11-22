@@ -5,6 +5,7 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:stella="http://stella.caelum.com.br/faces2"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 template="../../WEB-INF/template.xhtml">
 
     <ui:define name="breadcrumb">
@@ -123,7 +124,7 @@
 
 
                                 <div class="ui-g-12 ui-md-12" style="margin-top: 10px;">
-                                    <p:dataTable value="#{matriculaMB.alunosJaMatriculados}" var="varAlunoJaMatriculados" reflow="true" rowKey="#{varAlunoJaMatriculados.id}" emptyMessage=" ">
+                                    <p:dataTable value="#{matriculaMB.alunosJaMatriculados}" var="varAlunoJaMatriculados" reflow="true" rowKey="#{varAlunoJaMatriculados.id}" paginator="true" rows="10" emptyMessage=" ">
                                         <p:column headerText="CPF" sortBy="#{varAlunoJaMatriculados.aluno.cpf}" filterBy="#{varAlunoJaMatriculados.aluno.cpf}"  style="width: 130px;">
                                             <h:outputText value="#{varAlunoJaMatriculados.aluno.cpf}" />
                                         </p:column>
@@ -144,6 +145,9 @@
                                                 <p:tooltip value="Irá cancelar a matrícula do aluno no curso e nas respectivas turmas" for="btnCancelarMatricula"/>
                                             </p:commandButton>
                                         </p:column>
+                                        <f:facet name="footer">
+                                        Total de alunos: #{fn:length(matriculaMB.alunosJaMatriculados)}
+                                    </f:facet>
                                     </p:dataTable>
                                 </div>
                             </div>

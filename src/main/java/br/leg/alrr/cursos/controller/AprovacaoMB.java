@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
@@ -48,12 +49,12 @@ public class AprovacaoMB implements Serializable {
     private ArrayList<BlocoParametro> blocoDeParametros;
 
     private StringBuilder query;
-    
+
     private boolean incluirNomeNapesquisa;
     private boolean incluirDataInicioNaPesquisa;
     private boolean incluirDataTerminoNaPesquisa;
     private int porcentagemDePresenca;
-    
+
     private GeneratorPDF gerarPdf;
 
     //==========================================================================
@@ -130,12 +131,13 @@ public class AprovacaoMB implements Serializable {
 
     public String verificarAprovados() {
         FacesUtils.setBean("curso", curso);
-        return "aprovados.xhtml" + "?faces-redirect=true"; 
+        return "aprovados.xhtml" + "?faces-redirect=true";
     }
 
     /**
-     * Monta a lista de alunos, contando quantas aulas houve na turma e de quantas aulas ele participou.
-     * Setando os valores de campos transientes, para serem exibidos em página própria.
+     * Monta a lista de alunos, contando quantas aulas houve na turma e de
+     * quantas aulas ele participou. Setando os valores de campos transientes,
+     * para serem exibidos em página própria.
      */
     public void montarListaDeAlunos() {
         try {
@@ -160,45 +162,71 @@ public class AprovacaoMB implements Serializable {
         FacesUtils.removeBean("curso");
     }
 
-    public void imprimirCertificadoIndividual(){
+    public void imprimirCertificadoIndividual() {
         try {
             gerarPdf = new GeneratorPDF();
             //seta curso em aluno
             aluno.setCurso(curso);
-            
+
             gerarPdf.certificado(aluno);
-            
+
         } catch (Exception e) {
-        	FacesUtils.addErrorMessage("Erro ao imprimir certificado individual: "+e.getCause());
+            FacesUtils.addErrorMessage("Erro ao imprimir certificado individual: " + e.getCause());
         }
     }
-    
-    public void imprimirTodosOsCertificados(){
+
+    public void imprimirTodosOsCertificados() {
         try {
             gerarPdf = new GeneratorPDF();
-            
+
             List<Aluno> alunosAprovados = new ArrayList();
-            
+
             //verifica e seleciona os alunos aprovados
             for (Aluno a : alunos) {
-                if (((a.getQuantidadeDePresencas()*100)/a.getQuantidadeDeAulas()) >= porcentagemDePresenca) {
+                if (((a.getQuantidadeDePresencas() * 100) / a.getQuantidadeDeAulas()) >= porcentagemDePresenca) {
                     a.setCurso(curso);
                     alunosAprovados.add(a);
                 }
             }
-            
+
             //imprimir os certificados dos alunos aprovados
             gerarPdf.certificados(alunosAprovados);
-            
+
         } catch (Exception e) {
-            FacesUtils.addErrorMessage("Erro ao imprimir todos os certificados: "+e.getCause());
+            FacesUtils.addErrorMessage("Erro ao imprimir todos os certificados: " + e.getCause());
         }
     }
-    
-    
-    
+
     public String cancelar() {
         return "verificar-aprovacao.xhtml" + "?faces-redirect=true";
+    }
+
+    /**
+     * Método usado para liberar memória. Foi necessário adicionar este método
+     * porque, possivelmente, está havendo vazamento de memória, fazendo com que
+     * a aplicação pare de funcionar. Basicamente o método irá anular as
+     * referências das variáveis, sinalizando para o Garbage Collector realizar
+     * a coleta.
+     */
+    private void limparMemoria() {
+        cursoDAO = null;
+        turmaDAO = null;
+        frequenciaDAO = null;
+        curso = null;
+        aluno = null;
+        cursos = null;
+        turmas = null;
+        alunos = null;
+        blocoDeParametros = null;
+        query = null;
+    }
+
+    /**
+     * Ao sair da página executa o método @limparMemoria.
+     */
+    @PreDestroy
+    public void saindoDaPagina() {
+        limparMemoria();
     }
 
     //==========================================================================
@@ -257,6 +285,5 @@ public class AprovacaoMB implements Serializable {
     public void setAluno(Aluno aluno) {
         this.aluno = aluno;
     }
-    
-    
+
 }

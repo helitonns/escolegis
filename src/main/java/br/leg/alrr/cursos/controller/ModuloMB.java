@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 
@@ -198,12 +199,13 @@ public class ModuloMB implements Serializable {
     private void listarModulosDoCurso(Long id) throws DAOException {
         try {
             Curso c = cursoDAO.buscarPorID(id);
-            
+
+            modulosDoCurso = null;
             modulosDoCurso = new ArrayList<>();
             blocoModuloDisciplinas = new ArrayList<>();
-            
+
             modulosDoCurso = (ArrayList<Modulo>) moduloDAO.listarModulosAtivosPorCurso(c);
-            
+
             //PEGAR AS DISCIPLINAS DO MÓDULO
             for (Modulo m : modulosDoCurso) {
                 m.setDisciplinas(moduloDAO.pegarDisciplinasDoModulo(m));
@@ -240,6 +242,39 @@ public class ModuloMB implements Serializable {
                 FacesUtils.addErrorMessage(e.getMessage());
             }
         }
+    }
+
+    /**
+     * Método usado para liberar memória. Foi necessário adicionar este método
+     * porque, possivelmente, está havendo vazamento de memória, fazendo com que
+     * a aplicação pare de funcionar. Basicamente o método irá anular as
+     * referências das variáveis, sinalizando para o Garbage Collector realizar
+     * a coleta.
+     */
+    private void limparMemoria() {
+        moduloDAO = null;
+        cursoDAO = null;
+        turmaDAO = null;
+        disciplinaDAO = null;
+        grupoDdisciplinaDAO = null;
+        modulo = null;
+        cursos = null;
+        grupoDisciplinas = null;
+        disciplinas = null;
+        disciplinasSelecionadas = null;
+        disciplinasAdicionadas = null;
+        blocoModuloDisciplinas = null;
+        blocoModuloDisciplina = null;
+        removerDisciplina = null;
+        modulosDoCurso = null;
+    }
+
+    /**
+     * Ao sair da página executa o método @limparMemoria.
+     */
+    @PreDestroy
+    public void saindoDaPagina() {
+        limparMemoria();
     }
 //==========================================================================
 

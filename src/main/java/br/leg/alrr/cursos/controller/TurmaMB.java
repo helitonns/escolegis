@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 
@@ -114,6 +115,8 @@ public class TurmaMB implements Serializable {
             montarTurma = false;
 
             //BUSCA AS TURMAS DO CURSO SELECIONADO
+            turmas = null;
+            turmas = new ArrayList<>();
             turmas = (ArrayList<Turma>) turmaDAO.listarTurmasIniciadasPorCurso(new Curso(id));
 
         } catch (DAOException e) {
@@ -124,16 +127,18 @@ public class TurmaMB implements Serializable {
     private void listarModulosDoCurso(Long id) throws DAOException {
         try {
             Curso c = cursoDAO.buscarPorID(id);
+            blocoModuloDisciplinas = null;
             blocoModuloDisciplinas = new ArrayList<>();
+            modulosDoCurso = null;
             modulosDoCurso = new ArrayList<>();
 
             modulosDoCurso = (ArrayList<Modulo>) moduloDAO.listarModulosAtivosPorCurso(c);
-            
+
             //PEGAR AS DISCIPLINAS DO MÓDULO
             for (Modulo m : modulosDoCurso) {
                 m.setDisciplinas(moduloDAO.pegarDisciplinasDoModulo(m));
             }
-            
+
             for (Modulo m : modulosDoCurso) {
                 for (Disciplina d : m.getDisciplinas()) {
                     BlocoModuloDisciplina b = new BlocoModuloDisciplina(m.getId(), m.getNome(), d.getId(), d.getNome());
@@ -141,7 +146,7 @@ public class TurmaMB implements Serializable {
                 }
             }
             Collections.sort(blocoModuloDisciplinas);
-            
+
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());
         }
@@ -149,6 +154,7 @@ public class TurmaMB implements Serializable {
 
     private void listarHorarios() {
         try {
+            horarios = null;
             horarios = (ArrayList<Horario>) horarioDAO.listarAtivos();
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());
@@ -370,6 +376,45 @@ public class TurmaMB implements Serializable {
 
     public String cancelar() {
         return "turma.xhtml" + "?faces-redirect=true";
+    }
+
+    /**
+     * Método usado para liberar memória. Foi necessário adicionar este método
+     * porque, possivelmente, está havendo vazamento de memória, fazendo com que
+     * a aplicação pare de funcionar. Basicamente o método irá anular as
+     * referências das variáveis, sinalizando para o Garbage Collector realizar
+     * a coleta.
+     */
+    private void limparMemoria() {
+        cursoDAO = null;
+        moduloDAO = null;
+        horarioDAO = null;
+        matriculaDAO = null;
+        turmaDAO = null;
+        frequenciaDAO = null;
+        cursos = null;
+        horarios = null;
+        modulosDoCurso = null;
+        turmas = null;
+        alunos = null;
+        alunosSelecionados = null;
+        alunosDaTurma = null;
+        blocoModuloDisciplinas = null;
+        diasDaSemanaSelecionados = null;
+        turma = null;
+        blocoModuloDisciplina = null;
+        diasDaSemana = null;
+        modulo = null;
+        disciplina = null;
+        alunoExcluidoDaTurma = null;
+    }
+
+    /**
+     * Ao sair da página executa o método @limparMemoria.
+     */
+    @PreDestroy
+    public void saindoDaPagina() {
+        limparMemoria();
     }
 //==========================================================================
 

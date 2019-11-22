@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
@@ -101,6 +102,30 @@ public class BairroMB implements Serializable {
 
     public String cancelar() {
         return "bairro.xhtml" + "?faces-redirect=true";
+    }
+
+    /**
+     * Método usado para liberar memória. Foi necessário adicionar este método
+     * porque, possivelmente, está havendo vazamento de memória, fazendo com que
+     * a aplicação pare de funcionar. Basicamente o método irá anular as
+     * referências das variáveis, sinalizando para o Garbage Collector realizar
+     * a coleta.
+     */
+    private void limparMemoria() {
+        bairroDAO = null;
+        municipioDAO = null;
+        bairro = null;
+        municipio = null;
+        bairros = null;
+        municipios = null;
+    }
+
+    /**
+     * Ao sair da página executa o método @limparMemoria.
+     */
+    @PreDestroy
+    public void saindoDaPagina() {
+        limparMemoria();
     }
 
     //==========================================================================

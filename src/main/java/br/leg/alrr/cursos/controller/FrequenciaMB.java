@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -132,6 +133,7 @@ public class FrequenciaMB implements Serializable {
     public void selecionarCurso(ValueChangeEvent event) {
         try {
             Long id = Long.parseLong(event.getNewValue().toString());
+            turmas = null;
             turmas = (ArrayList<Turma>) turmaDAO.listarTurmasIniciadasPorCurso(new Curso(id));
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());
@@ -142,6 +144,7 @@ public class FrequenciaMB implements Serializable {
         try {
             haAlunosFaltosos = false;
             justificarFrequencia = false;
+            frequencias = null;
             frequencias = new ArrayList<>();
 
             for (Aluno a : turma.getAlunos()) {
@@ -166,7 +169,7 @@ public class FrequenciaMB implements Serializable {
             //COM ISSO O SISTEMA PASSA A ATUALIZAR AS FREQUÊNCIAS PASSADAS. EM CASO NEGATIVO, O SISTEMA SALVA AS FREQUÊNCIAS PASSADAS SEM VERIFICAR.
             Frequencia fv = frequencias.get(0);
             fv.setDataFrequencia(dataDaFrequencia);
-            
+
             if (!frequenciaDAO.verificarSeAFrequenciaJaFoiLancada(fv)) {
                 for (Frequencia f : frequencias) {
                     f.setDataFrequencia(dataDaFrequencia);
@@ -179,7 +182,7 @@ public class FrequenciaMB implements Serializable {
                 }
                 FacesUtils.addInfoMessageFlashScoped("Frequência atualizada com sucesso!!");
             }
-            
+
             //DESTA FORMA DEMOVA BASTANTE PARA SALVAR A FREQUÊNCIA, PORQUE O SISTEMA VERIFICAVA SE CADA ALUNO POSSUI FREQUÊNCIA PARA O DIA PASSADO
             //            for (Frequencia f : frequencias) {
             //                f.setDataFrequencia(dataDaFrequencia);
@@ -203,6 +206,7 @@ public class FrequenciaMB implements Serializable {
     public void buscarAlunosFaltosos() {
         try {
             exibirListaDeAluno = false;
+            frequenciaDosFaltosos = null;
             frequenciaDosFaltosos = new ArrayList<>();
             frequenciaDosFaltosos = (ArrayList<Frequencia>) frequenciaDAO.listarAlunosFaltosos(turma, dataDaFrequencia);
             if (frequenciaDosFaltosos.size() >= 1) {
@@ -279,6 +283,7 @@ public class FrequenciaMB implements Serializable {
 
     public void listarAulasDaTurma() {
         try {
+            frequencias = null;
             frequencias = (ArrayList<Frequencia>) frequenciaDAO.listarAulasDaTurma(turma);
             exibirListaDeAulasDaTurma = true;
         } catch (DAOException e) {
@@ -288,15 +293,17 @@ public class FrequenciaMB implements Serializable {
 
     public void listarFrequenciaDaAula() {
         try {
+            frequenciaDaAula = null;
             frequenciaDaAula = (ArrayList<Frequencia>) frequenciaDAO.listarFrequenciaDaAula(frequencia);
             exibirFrequenciaDaAula = true;
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());
         }
     }
-    
+
     public void listarFrequenciaDaAulaParaEditar() {
         try {
+            frequencias = null;
             frequencias = (ArrayList<Frequencia>) frequenciaDAO.listarFrequenciaDaAula(turma, dataDaFrequencia);
             exibirListaDeAluno = true;
         } catch (DAOException e) {
@@ -326,9 +333,37 @@ public class FrequenciaMB implements Serializable {
         }
         return "frequencia.xhtml" + "?faces-redirect=true";
     }
-    
+
     public String cancelar() {
         return "frequencia.xhtml" + "?faces-redirect=true";
+    }
+
+    /**
+     * Método usado para liberar memória. Foi necessário adicionar este método
+     * porque, possivelmente, está havendo vazamento de memória, fazendo com que
+     * a aplicação pare de funcionar. Basicamente o método irá anular as
+     * referências das variáveis, sinalizando para o Garbage Collector realizar
+     * a coleta.
+     */
+    private void limparMemoria() {
+        cursoDAO = null;
+        turmaDAO = null;
+        frequenciaDAO = null;
+        cursos = null;
+        turmas = null;
+        frequencias = null;
+        frequenciaDosFaltosos = null;
+        frequenciaDaAula = null;
+        turma = null;
+        frequencia = null;
+    }
+
+    /**
+     * Ao sair da página executa o método @limparMemoria.
+     */
+    @PreDestroy
+    public void saindoDaPagina() {
+        limparMemoria();
     }
 //==========================================================================
 

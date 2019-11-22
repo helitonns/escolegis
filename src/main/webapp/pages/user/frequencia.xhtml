@@ -4,6 +4,7 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 template="../../WEB-INF/template.xhtml">
 
     <ui:define name="breadcrumb">
@@ -96,7 +97,7 @@
                             </div>
 
                             <div class="ui-g-12 ui-md-12">
-                                <p:dataTable id="idListaDeAlunos" value="#{frequenciaMB.frequencias}" rendered="#{frequenciaMB.exibirListaDeAluno}" reflow="true"  var="varFrequencia" style="width: 100%;" emptyMessage=" ">
+                                <p:dataTable id="idListaDeAlunos" value="#{frequenciaMB.frequencias}" rendered="#{frequenciaMB.exibirListaDeAluno}" reflow="true"  var="varFrequencia" style="width: 100%;" emptyMessage=" " paginator="true" rows="10" >
                                     <f:facet name="{Exporters}">
                                         <div style="float:right;padding-top: 5px;">
                                             <h:commandLink>
@@ -105,7 +106,7 @@
                                             </h:commandLink>
                                         </div>
                                     </f:facet>
-                                    <p:column headerText="Aluno">
+                                    <p:column headerText="Aluno" sortBy="#{varFrequencia.aluno.nome}" filterBy="#{varFrequencia.aluno.nome}">
                                         <h:outputText value="#{varFrequencia.aluno.nome}"/>
                                     </p:column>
                                     <p:column headerText="Situação" style="width: 220px">
@@ -113,6 +114,9 @@
                                             <p:tooltip value="Clique para selecoinar o Status" for="idPresencaStatus"/>
                                         </p:selectBooleanButton>
                                     </p:column>
+                                    <f:facet name="footer">
+                                        Total de alunos: #{fn:length(frequenciaMB.frequencias)}
+                                    </f:facet>
                                 </p:dataTable>
 
                                 <p:dataTable id="idListaDeAlunosFaltosos" value="#{frequenciaMB.frequenciaDosFaltosos}" rendered="#{frequenciaMB.haAlunosFaltosos}" reflow="true" var="varFrequenciaFaltosa" style="width: 100%;" emptyMessage=" ">
@@ -126,7 +130,7 @@
                                     </p:column>
                                 </p:dataTable>
                             </div>
-                            
+
                             <div class="ui-g-12 ui-md-8"/>
                             <div class="ui-g-12 ui-md-2">
                                 <p:commandButton value="EXCEL" ajax="false" styleClass="green-btn" style="width: 210px; float: right" rendered="#{frequenciaMB.exibirListaDeAluno || frequenciaMB.haAlunosFaltosos}">

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
@@ -212,7 +213,39 @@ public class DeclaracaoMB implements Serializable {
         return "declaracao.xhtml" + "?faces-redirect=true";
     }
 
+    /**
+     * Método usado para liberar memória. Foi necessário adicionar este método
+     * porque, possivelmente, está havendo vazamento de memória, fazendo com que
+     * a aplicação pare de funcionar. Basicamente o método irá anular as
+     * referências das variáveis, sinalizando para o Garbage Collector realizar
+     * a coleta.
+     */
+    private void limparMemoria() {
+        alunoDAO = null;
+        turmaDAO = null;
+        cursoDAO = null;
+        matriculaDAO = null;
+        frequenciaDAO = null;
+        diretorDAO = null;
+        alunos = null;
+        turmas = null;
+        matriculas = null;
+        aluno = null;
+        turma = null;
+        curso = null;
+        matricula = null;
+        gerarPdf = null;
+    }
+
+    /**
+     * Ao sair da página executa o método @limparMemoria.
+     */
+    @PreDestroy
+    public void saindoDaPagina() {
+        limparMemoria();
+    }
 //==============================================================================
+
     public ArrayList<Aluno> getAlunos() {
         return alunos;
     }

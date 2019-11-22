@@ -4,6 +4,7 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 template="../../WEB-INF/template.xhtml">
 
     <ui:define name="breadcrumb">
@@ -230,7 +231,7 @@
                             <div style="margin-left: 20px;">Alunos já inscritos na turma</div>
                             <div class="ui-g ui-fluid form-group">
                                 <div class="ui-g-12 ui-md-12">
-                                    <p:dataTable id="idTabelaAlunosDaTurma" value="#{turmaMB.alunosDaTurma}" var="varAlunoListagem" emptyMessage=" ">
+                                    <p:dataTable id="idTabelaAlunosDaTurma" value="#{turmaMB.alunosDaTurma}" var="varAlunoListagem" emptyMessage=" " paginator="true" rows="10" >
                                         <p:column headerText="CPF" filterBy="#{varAlunoListagem.cpf}" style="width: 150px">
                                             <h:outputText value="#{varAlunoListagem.cpf}" />
                                         </p:column>
@@ -242,6 +243,9 @@
                                                 <p:tooltip value="Cancela a matrícula apenas nesta turma!" for="btnCancelarMatricula"/>
                                             </p:commandButton>
                                         </p:column>
+                                        <f:facet name="footer">
+                                            Total de alunos: #{fn:length(turmaMB.alunosDaTurma)}
+                                        </f:facet>
                                     </p:dataTable>
                                 </div>
                                 <p:dialog header="Exclusão" widgetVar="modal_excluir" modal="true" height="100" width="550">
@@ -260,13 +264,13 @@
                                         </h:panelGrid>
                                     </f:facet>
                                 </p:dialog>
-                            </div>
-                            
-                            <div class="ui-g-12 ui-md-9"/>
-                            <div class="ui-g-12 ui-md-3">
-                                <p:commandButton value="EXCEL" ajax="false" styleClass="green-btn">
-                                    <p:dataExporter type="xls" target="idTabelaAlunosDaTurma" fileName="alunos_inscritos_na_turma"/>
-                                </p:commandButton>
+
+                                <div class="ui-g-12 ui-md-9"/>
+                                <div class="ui-g-12 ui-md-3">
+                                    <p:commandButton value="EXCEL" ajax="false" styleClass="green-btn">
+                                        <p:dataExporter type="xls" target="idTabelaAlunosDaTurma" fileName="alunos_inscritos_na_turma"/>
+                                    </p:commandButton>
+                                </div>
                             </div>
                         </div>
                     </h:panelGroup>

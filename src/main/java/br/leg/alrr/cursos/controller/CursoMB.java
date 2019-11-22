@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
@@ -53,6 +54,7 @@ public class CursoMB implements Serializable {
 
     private void listarCurso() {
         try {
+            cursos = null;
             cursos = new ArrayList<>();
             UsuarioComUnidade u = (UsuarioComUnidade) FacesUtils.getBean("usuario");
             cursos = (ArrayList<Curso>) cursoDAO.listarCursosIniciadosPorUnidade(u.getUnidade());
@@ -138,7 +140,7 @@ public class CursoMB implements Serializable {
                     matriculaDAO.excluirMatriculaPorCurso(curso);
                     cursoDAO.remover(curso);
                     FacesUtils.addInfoMessage("Curso removido com sucesso!");
-                }else{
+                } else {
                     FacesUtils.addWarnMessage("O Curso não pode ser removido, porque há modulos a ele vinculados!");
                 }
             }
@@ -150,6 +152,30 @@ public class CursoMB implements Serializable {
 
     public String cancelar() {
         return "curso.xhtml" + "?faces-redirect=true";
+    }
+
+    /**
+     * Método usado para liberar memória. Foi necessário adicionar este método
+     * porque, possivelmente, está havendo vazamento de memória, fazendo com que
+     * a aplicação pare de funcionar. Basicamente o método irá anular as
+     * referências das variáveis, sinalizando para o Garbage Collector realizar
+     * a coleta.
+     */
+    private void limparMemoria() {
+        cursoDAO = null;
+        turmaDAO = null;
+        matriculaDAO = null;
+        moduloDAO = null;
+        curso = null;
+        cursos = null;
+    }
+
+    /**
+     * Ao sair da página executa o método @limparMemoria.
+     */
+    @PreDestroy
+    public void saindoDaPagina() {
+        limparMemoria();
     }
 
     //==========================================================================

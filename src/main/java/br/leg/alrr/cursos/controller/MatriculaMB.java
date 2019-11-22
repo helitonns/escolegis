@@ -194,6 +194,33 @@ public class MatriculaMB implements Serializable {
     public String cancelar() {
         return "matricula.xhtml" + "?faces-redirect=true";
     }
+
+    /**
+     * Método usado para liberar memória. Foi necessário adicionar este método
+     * porque, possivelmente, está havendo vazamento de memória, fazendo com que
+     * a aplicação pare de funcionar. Basicamente o método irá anular as
+     * referências das variáveis, sinalizando para o Garbage Collector realizar
+     * a coleta.
+     */
+    private void limparMemoria() {
+        cursoDAO = null;
+        alunoDAO = null;
+        matriculaDAO = null;
+        turmaDAO = null;
+        cursos = null;
+        alunos = null;
+        alunosJaMatriculados = null;
+        curso = null;
+        aluno = null;
+        matricula = null;
+    }
+    
+    /**
+     * Ao sair da página executa o método @limparMemoria.
+     */
+    public void saindoDaPagina(){
+        limparMemoria();
+    }
 //==========================================================================
 
     public Curso getCurso() {
