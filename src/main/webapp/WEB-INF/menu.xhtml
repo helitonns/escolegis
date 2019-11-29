@@ -30,6 +30,7 @@
                                 <p:menuitem id="sm_curso_matricula" value="Matrícula no curso" icon="contact_mail" outcome="/pages/user/matricula" rendered="#{startMB.admin || startMB.superAdmin}"/>
                                 <p:menuitem id="sm_curso_turma" value="Turma" icon="group" outcome="/pages/user/turma" rendered="#{startMB.admin || startMB.superAdmin}"/>
                                 <p:menuitem id="sm_curso_frequencia" value="Frequência" icon="event_available" outcome="/pages/user/frequencia" />
+                                <p:menuitem id="sm_curso_frequencia_arquivo" value="Frequência com arquivo" icon="event_available" outcome="/pages/user/frequencia-com-arquivo" />
                                 <p:menuitem id="sm_curso_visualizar_frequencia" value="Visualizar frequência" icon="event" outcome="/pages/user/visualizar-frequencia" />
                                 <p:menuitem id="sm_curso_verificar_aprovacao" value="Verificar aprovação" icon="done_all" outcome="/pages/user/verificar-aprovacao" />
                             </p:submenu>
@@ -63,7 +64,9 @@
                                 <p:menuitem id="sm_ru_relatorio" value="Relatório por Matrícula" icon="assignment" outcome="/pages/relatorio/relatorio" />
                             </p:submenu>
                             
-                            <p:menuitem id="menu_relatorio" value="Relatórios " icon="assignment" outcome="/pages/user/relatorio" rendered="#{!startMB.usuarioRelatorio}"/>
+                            <p:menuitem id="menu_relatorio" value="Relatórios" icon="assignment" outcome="/pages/user/relatorio" rendered="#{!startMB.usuarioRelatorio}"/>
+                            
+                            <p:menuitem id="menu_estatistica" value="Estatísticas " icon="pie_chart" outcome="/pages/user/estatistica" rendered="#{!startMB.usuarioRelatorio}"/>
                             
                         </sm:menu>
                         

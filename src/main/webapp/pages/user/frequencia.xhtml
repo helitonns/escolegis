@@ -46,8 +46,11 @@
                                     <p:column headerText="Curso" groupRow="true">
                                         <h:outputText value="#{varTurma.modulo.curso.nome}" />
                                     </p:column>
-                                    <p:column headerText="Módulo">
+                                    <p:column headerText="Módulo" style="width: 130px">
                                         <h:outputText value="#{varTurma.modulo.nome}" />
+                                    </p:column>
+                                    <p:column headerText="ID Turma" style="width: 90px">
+                                        <h:outputText value="#{varTurma.id}"/>
                                     </p:column>
                                     <p:column headerText="Turma">
                                         <h:outputText value="#{varTurma.nome}"/>
@@ -106,6 +109,9 @@
                                             </h:commandLink>
                                         </div>
                                     </f:facet>
+                                    <p:column headerText="ID Aluno" sortBy="#{varFrequencia.aluno.id}" filterBy="#{varFrequencia.aluno.id}">
+                                        <h:outputText value="#{varFrequencia.aluno.id}"/>
+                                    </p:column>
                                     <p:column headerText="Aluno" sortBy="#{varFrequencia.aluno.nome}" filterBy="#{varFrequencia.aluno.nome}">
                                         <h:outputText value="#{varFrequencia.aluno.nome}"/>
                                     </p:column>
@@ -120,6 +126,9 @@
                                 </p:dataTable>
 
                                 <p:dataTable id="idListaDeAlunosFaltosos" value="#{frequenciaMB.frequenciaDosFaltosos}" rendered="#{frequenciaMB.haAlunosFaltosos}" reflow="true" var="varFrequenciaFaltosa" style="width: 100%;" emptyMessage=" ">
+                                    <p:column headerText="ID Aluno">
+                                        <h:outputText value="#{varFrequenciaFaltosa.aluno.id}"/>
+                                    </p:column>
                                     <p:column headerText="Aluno">
                                         <h:outputText value="#{varFrequenciaFaltosa.aluno.nome}"/>
                                     </p:column>

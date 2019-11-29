@@ -8,10 +8,10 @@
         <!--<jta-data-source>alrr-ds</jta-data-source>-->
    
         <!-- HOMOLOGACAO -->
-        <jta-data-source>homologacao</jta-data-source>
+        <!--<jta-data-source>homologacao</jta-data-source>-->
    
         <!-- PRODUCAO -->
-        <!--<jta-data-source>alrr</jta-data-source>-->
+        <jta-data-source>alrr</jta-data-source>
         <properties>
             <!--SEM ESSA CONFIGURAÇÃO NÃO FUNCIONA-->
             <!--<property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"/>-->

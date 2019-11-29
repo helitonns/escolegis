@@ -11,10 +11,16 @@ import br.leg.alrr.cursos.persistence.TurmaDAO;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
 import br.leg.alrr.cursos.util.Relatorio;
+import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -25,6 +31,14 @@ import javax.faces.event.ValueChangeEvent;
 
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.primefaces.event.FileUploadEvent;
 
 /**
  *
@@ -61,6 +75,9 @@ public class FrequenciaMB implements Serializable {
     private boolean justificarFrequencia;
     private boolean haAlunosFaltosos;
     private Date dataDaFrequencia;
+
+    private XSSFWorkbook arquivoExcel;
+    private XSSFSheet planilha;
 
 //==========================================================================
     @PostConstruct
@@ -364,6 +381,122 @@ public class FrequenciaMB implements Serializable {
     @PreDestroy
     public void saindoDaPagina() {
         limparMemoria();
+    }
+
+    //==========================================================================
+    // Código para lançamento de frequência através de um arquivo excel.
+    /**
+     * Método que recebe o arquivo pelo fileUpload.
+     *
+     * @param event
+     */
+    public void handleFileUpload(FileUploadEvent event) {
+        try {
+            arquivoExcel = new XSSFWorkbook();
+            arquivoExcel = (XSSFWorkbook) WorkbookFactory.create(event.getFile().getInputstream());
+            planilha = arquivoExcel.getSheetAt(0);
+        } catch (IOException | EncryptedDocumentException e) {
+            FacesUtils.addErrorMessage("Houve um erro na importação do arquivo!!!");
+        }
+    }
+
+    /**
+     * Cancela a operação redirecionando para a mesma página.
+     *
+     * @return
+     */
+    public String cancelarFrequenciaComArquivo() {
+        return "frequencia-com-arquivo.xhtml" + "?faces-redirect=true";
+    }
+
+    /**
+     * <p>
+     * Método que salva as frequências a partir de um arquivo xlsx. Este arquivo
+     * deve vir em um determinado layout. A primeira linha do arquivo deve
+     * trazer as seguintes informações: a primeira coluna deve conter o id da
+     * turma para a qual será lançada a frequência; as demais colunas devem
+     * conter as datas das aulas no formato de dd/MM/aaaa. A partir da segunda
+     * linha o arquivo deverá as seguintes informações: a primeira coluna deve
+     * conter o id do aluno para o qual será lançada a frequência; as demais
+     * colunas trará um dos seguintes valores: "P", "F" ou "FJ". Sendo que "P"
+     * seguinifica presença, "F" falta e "FJ" fata justificada.
+     * </p>
+     *
+     * @return
+     */
+    public String salvarFrequenciaPorArquivo() {
+        try {
+            //ArrayList para percorrer as linhas da planilha
+            ArrayList<Row> linhasDaPlanilha = (ArrayList<Row>) itaratorToList(planilha.iterator());
+
+            //pega a primeira linha do arquivo, que conterá o ID da turma e as datas das aulas
+            Row row = linhasDaPlanilha.get(0);
+            ArrayList<Cell> primeiraLinha = (ArrayList<Cell>) itaratorToList(row.cellIterator());
+
+            //remove a primeira linha
+            linhasDaPlanilha.remove(0);
+
+            //Será executado enquanto houver linhas para ser percorridas
+            for (Row linha : linhasDaPlanilha) {
+
+                //ArrayList usado para percorrer as colunas de cada linha
+                ArrayList<Cell> colunasDaLinha = (ArrayList<Cell>) itaratorToList(linha.cellIterator());
+
+                //será executado enquanto houver colunas para ser percorridas
+                for (int i = 1; i < colunasDaLinha.size(); i++) {
+
+                    Frequencia frequenciaDoArquivo = new Frequencia();
+
+                    //===============================================================================
+                    //Trabalha a primeira linha do aquivo, pegando o id da turma e as datas das aulas
+                    //seta a turma na frequência
+                    Double idDaTurma = primeiraLinha.get(0).getNumericCellValue();
+                    frequenciaDoArquivo.setTurma(new Turma(idDaTurma.longValue()));
+
+                    //seta a data da frequência
+                    frequenciaDoArquivo.setDataFrequencia(primeiraLinha.get(i).getDateCellValue());
+                    //===============================================================================
+
+                    //===============================================================================
+                    //Trabalha a partir da segunda linha do arquivo, pegando o id dos alunos e o status da frequência
+                    //Seta o aluno
+                    Double idDoAluno = colunasDaLinha.get(0).getNumericCellValue();
+                    frequenciaDoArquivo.setAluno(new Aluno(idDoAluno.longValue()));
+
+                    //seta o status da frequência
+                    String statusDaFrequencia = colunasDaLinha.get(i).getStringCellValue();
+                    //CASO EM QUE HOUVE FALTA
+                    if (statusDaFrequencia.equalsIgnoreCase("F")) {
+                        frequenciaDoArquivo.setPresenca(false);
+                    } //CASO EM QUE HOUVE FALTA JUSTIFICADA
+                    else if (statusDaFrequencia.equalsIgnoreCase("FJ")) {
+                        frequenciaDoArquivo.setPresenca(false);
+                        frequenciaDoArquivo.setFaltaJustificada(true);
+                    } //EM QUALQUER OUTRO CASO SERÁ ATRIBUIDO PRESENÇA PARA O ALUNO
+                    else {
+                        frequenciaDoArquivo.setPresenca(true);
+                    }
+                    //===============================================================================
+
+                    frequencias.add(frequenciaDoArquivo);
+                }
+            }
+
+            //É AQUI QUE AS FREQUÊNCIAS SERÃO EFETICAMENTE SALVAS
+            for (Frequencia f : frequencias) {
+                frequenciaDAO.salvar(f);
+            }
+            FacesUtils.addInfoMessageFlashScoped("Frequências salvas com sucesso!!!");
+        } catch (DAOException e) {
+            FacesUtils.addErrorMessageFlashScoped("Houve um erro ao salvar frequência por arquivo!!!");
+        }
+        return "frequencia-com-arquivo.xhtml" + "?faces-redirect=true";
+    }
+
+    private List<?> itaratorToList(Iterator<?> i) {
+        List l = new ArrayList<>();
+        i.forEachRemaining(n -> l.add(n));
+        return l;
     }
 //==========================================================================
 
