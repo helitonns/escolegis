@@ -1,12 +1,16 @@
 package br.leg.alrr.cursos.controller;
 
 import br.leg.alrr.cursos.model.Acesso;
+import br.leg.alrr.cursos.model.Usuario;
 import br.leg.alrr.cursos.persistence.AcessoDAO;
+import br.leg.alrr.cursos.persistence.AutorizacaoDAO;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
 import java.io.Serializable;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 
 import javax.annotation.PostConstruct;
@@ -19,6 +23,7 @@ import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.CategoryAxis;
 import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.LineChartModel;
+import org.primefaces.model.chart.PieChartModel;
 
 /**
  *
@@ -33,25 +38,42 @@ public class EstatisticaMB implements Serializable {
     @EJB
     private AcessoDAO acessoDAO;
 
+    @EJB
+    private AutorizacaoDAO autorizacaoDAO;
+
     private ArrayList<Acesso> acessos;
     private ArrayList<HoraQuantidade> horasQuantidades;
+    private ArrayList<UsuarioQuantidade> usuarioQuantidades;
+    private ArrayList<Usuario> usuarios;
 
     private Long quantidadeDeAcesso;
 
     private LocalDate dataParaPesquisa;
-    
+    private LocalDate data1ParaPesquisa;
+    private LocalDate data2ParaPesquisa;
+
     private LineChartModel grafico;
+    private PieChartModel graficoPizza;
+
+    private Long idUsuario;
 
     //==========================================================================
     @PostConstruct
     public void init() {
         limparForm();
 
-        listarAcessosDoDia();
-        
-        criarAsHorasDoDia();
-        contarOsAcessosParaCadaHora();
-        criarGrafico();
+        if (FacesUtils.getURL().contains("estatistica-usuario")) {
+            listarUsuariosDoSistema();
+            definirAsDatasDaSemana();
+            listarAcessosDaSemana();
+            contarOsAcessosParaCadaUsuario();
+            criarGraficoPizza();
+        } else {
+            listarAcessosDoDia();
+            criarAsHorasDoDia();
+            contarOsAcessosParaCadaHora();
+            criarGrafico();
+        }
     }
 
     private void contarAcessosDoDia() {
@@ -75,10 +97,47 @@ public class EstatisticaMB implements Serializable {
 
     private void limparForm() {
         dataParaPesquisa = LocalDate.now();
+        idUsuario = 0l;
+        usuarios = new ArrayList<>();
     }
 
     public String cancelar() {
         return "estatistica.xhtml" + "?faces-redirect=true";
+    }
+
+    private void listarUsuariosDoSistema() {
+        try {
+            String[] s = FacesUtils.getURL().split("/");
+            usuarios = (ArrayList<Usuario>) autorizacaoDAO.listarUsuariosQueTemPermissaoNoSistema(s[1]);
+        } catch (DAOException e) {
+            FacesUtils.addErrorMessage(e.getMessage());
+        }
+    }
+
+    private void definirAsDatasDaSemana() {
+        LocalDate hoje = LocalDate.now();
+        data1ParaPesquisa = hoje.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        data2ParaPesquisa = hoje.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
+    }
+
+    private void listarAcessosDaSemana() {
+        try {
+            acessos = null;
+            acessos = new ArrayList<>();
+            acessos = (ArrayList<Acesso>) acessoDAO.listarAcessosPorIntervaloDeDatas(data1ParaPesquisa, data2ParaPesquisa);
+        } catch (DAOException e) {
+            FacesUtils.addErrorMessage(e.getMessage());
+        }
+    }
+
+    public void listarAcessosDaSemanaPorUsuario() {
+        try {
+            acessos = null;
+            acessos = new ArrayList<>();
+            acessos = (ArrayList<Acesso>) acessoDAO.listarAcessosPorUsuarioEIntervaloDeDatas(new Usuario(idUsuario), data1ParaPesquisa, data2ParaPesquisa);
+        } catch (DAOException e) {
+            FacesUtils.addErrorMessage(e.getMessage());
+        }
     }
 
     //==========================================================================
@@ -111,15 +170,15 @@ public class EstatisticaMB implements Serializable {
                 }
             }
         }
-        
+
         ArrayList<HoraQuantidade> horasParaExcluir = new ArrayList<>();
-        
+
         for (HoraQuantidade hq : horasQuantidades) {
             if (hq.getQuantidade() == 0) {
                 horasParaExcluir.add(hq);
             }
         }
-        
+
         horasQuantidades.removeAll(horasParaExcluir);
     }
 
@@ -131,26 +190,63 @@ public class EstatisticaMB implements Serializable {
         for (HoraQuantidade hq : horasQuantidades) {
             acessos.set(hq.getHora().toString(), hq.getQuantidade());
         }
-        
+
         model.addSeries(acessos);
         return model;
     }
-    
+
     private void criarGrafico() {
         grafico = popularGrafico();
         grafico.setTitle("Acessos do dia");
         grafico.setLegendPosition("e");
         grafico.setShowPointLabels(true);
         grafico.getAxes().put(AxisType.X, new CategoryAxis("Horas"));
-        
+
         Axis yAxis = grafico.getAxis(AxisType.Y);
         yAxis.setLabel("Quantidade");
         yAxis.setMin(0);
         yAxis.setTickAngle(5);
         yAxis.setTickCount(5);
     }
-    //==========================================================================
 
+    //--------------------------------------------------------------------------
+    private void contarOsAcessosParaCadaUsuario() {
+        try {
+            usuarioQuantidades = null;
+            usuarioQuantidades = new ArrayList<>();
+            
+            for (Usuario u : usuarios) {
+                usuarioQuantidades.add(new UsuarioQuantidade(u,acessoDAO.contarAcessosPorUsuarioEIntervaloDeDatas(u, data1ParaPesquisa, data2ParaPesquisa)));
+            }
+
+            ArrayList<UsuarioQuantidade> usuariosParaExcluir = new ArrayList<>();
+
+            for (UsuarioQuantidade uq : usuarioQuantidades) {
+                if (uq.getQuantidade() == 0) {
+                    usuariosParaExcluir.add(uq);
+                }
+            }
+
+            usuarioQuantidades.removeAll(usuariosParaExcluir);
+        } catch (Exception e) {
+        }
+    }
+
+     private void criarGraficoPizza() {
+        graficoPizza = new PieChartModel();
+ 
+         for (UsuarioQuantidade uq : usuarioQuantidades) {
+             graficoPizza.set(uq.usuario.getLogin(), uq.getQuantidade());
+         }
+ 
+        graficoPizza.setTitle("Quantidade de acessos por usuário na semana");
+        graficoPizza.setLegendPosition("e");
+        graficoPizza.setFill(false);
+        graficoPizza.setShowDataLabels(true);
+        graficoPizza.setDiameter(150);
+        graficoPizza.setShadow(false);
+    }
+    //==========================================================================
     /**
      * Método usado para liberar memória. Foi necessário adicionar este método
      * porque, possivelmente, está havendo vazamento de memória, fazendo com que
@@ -164,6 +260,7 @@ public class EstatisticaMB implements Serializable {
         quantidadeDeAcesso = null;
         dataParaPesquisa = null;
         horasQuantidades = null;
+        usuarios = null;
     }
 
     /**
@@ -194,6 +291,38 @@ public class EstatisticaMB implements Serializable {
     public LineChartModel getGrafico() {
         return grafico;
     }
+
+    public ArrayList<Usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    public Long getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(Long idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public LocalDate getData1ParaPesquisa() {
+        return data1ParaPesquisa;
+    }
+
+    public void setData1ParaPesquisa(LocalDate data1ParaPesquisa) {
+        this.data1ParaPesquisa = data1ParaPesquisa;
+    }
+
+    public LocalDate getData2ParaPesquisa() {
+        return data2ParaPesquisa;
+    }
+
+    public void setData2ParaPesquisa(LocalDate data2ParaPesquisa) {
+        this.data2ParaPesquisa = data2ParaPesquisa;
+    }
+
+    public PieChartModel getGraficoPizza() {
+        return graficoPizza;
+    }
     //==========================================================================
     private class HoraQuantidade {
 
@@ -223,7 +352,36 @@ public class EstatisticaMB implements Serializable {
         public void setQuantidade(Long quantidade) {
             this.quantidade = quantidade;
         }
+    }
 
+    private class UsuarioQuantidade {
+
+        private Usuario usuario;
+        private Long quantidade;
+
+        public UsuarioQuantidade() {
+        }
+
+        public UsuarioQuantidade(Usuario u, Long quantidade) {
+            this.usuario = u;
+            this.quantidade = quantidade;
+        }
+
+        public Usuario getUsuario() {
+            return usuario;
+        }
+
+        public void setUsuario(Usuario usuario) {
+            this.usuario = usuario;
+        }
+
+        public Long getQuantidade() {
+            return quantidade;
+        }
+
+        public void setQuantidade(Long quantidade) {
+            this.quantidade = quantidade;
+        }
     }
 
 }

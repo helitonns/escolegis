@@ -1,0 +1,105 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Estatísticas por usuário</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div class="ui-g ui-fluid form-group">
+                            <div class="ui-g-12 ui-md-12">
+                                <h:outputText value="Quantidade de acessos por usuário na semana: #{estatisticaMB.acessos.size()}"/>     
+                            </div>
+                            
+                            <div class="ui-g-12 ui-md-3">
+                                <h:outputText value="Usuário" />
+                            </div>
+                            <div class="ui-g-12 ui-md-3">
+                                <h:outputText value="Data 1" />
+                            </div>
+                            <div class="ui-g-12 ui-md-3">
+                                <h:outputText value="Data 2" />
+                            </div>
+                            <div class="ui-g-12 ui-md-3"/>
+                            
+                            <div class="ui-g-12 ui-md-3">
+                                <p:selectOneMenu id="idSelectUsuario" value="#{estatisticaMB.idUsuario}" required="true" requiredMessage="Campo obrigatório" style="margin-top: 10px;">
+                                    <f:selectItem itemLabel="Selecione o usuário" noSelectionOption="true"/>
+                                    <f:selectItems value="#{estatisticaMB.usuarios}" var="varUsuario" itemValue="#{varUsuario.id}" itemLabel="#{varUsuario.login}" />
+                                </p:selectOneMenu> 
+                            </div>
+                            <div class="ui-g-12 ui-md-3" style="margin-top: 10px">
+                                <p:calendar id="IdDataPesquisa1" value="#{estatisticaMB.data1ParaPesquisa}"  pattern="dd/MM/yyyy" mask="99/99/9999" showOn="button" required="true" requiredMessage="Campo obrigatório">
+                                    <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                                </p:calendar> 
+                            </div>
+                            <div class="ui-g-12 ui-md-3" style="margin-top: 10px">
+                                <p:calendar id="IdDataPesquisa2" value="#{estatisticaMB.data2ParaPesquisa}"  pattern="dd/MM/yyyy" mask="99/99/9999" showOn="button" required="true" requiredMessage="Campo obrigatório">
+                                    <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                                </p:calendar> 
+                            </div>
+                            <div class="ui-g-12 ui-md-3">
+                                <p:commandButton value="Pesquisar" icon="ui-icon-search" action="#{estatisticaMB.listarAcessosDaSemanaPorUsuario()}" ajax="false" />
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card card-w-title" style="margin-top: 5px">
+                        <div class="ui-g ui-fluid form-group">
+                            <div class="ui-g-12 ui-md-12">
+                                <p:chart type="pie" model="#{estatisticaMB.graficoPizza}" style="width:100%;height:300px" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </h:form>
+
+        <h:form id="form2">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card card-w-title"> 
+                        <div style="margin-left: 20px;">Acessos do dia corrente</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable var="acessos_var" value="#{estatisticaMB.acessos}" reflow="true" rowKey="#{acessos_var.id}" paginator="true" rows="10" emptyMessage=" ">
+                                    <p:column headerText="Usuário" sortBy="#{acessos_var.usuario.login}" filterBy="#{acessos_var.usuario.login}" groupRow="true">
+                                        <h:outputText value="#{acessos_var.usuario.login}" />
+                                    </p:column>
+                                    <p:column headerText="Data" sortBy="#{acessos_var.dataDeAcesso}" filterBy="#{acessos_var.dataDeAcesso}">
+                                        <h:outputText value="#{acessos_var.dataDeAcesso}">
+                                            <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Hora" sortBy="#{acessos_var.momentoDoAcesso}" filterBy="#{acessos_var.momentoDoAcesso}">
+                                        <h:outputText value="#{acessos_var.momentoDoAcesso}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
