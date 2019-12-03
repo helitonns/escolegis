@@ -42,6 +42,7 @@
                             <div class="ui-g-12 ui-md-3">
                                 <p:selectOneMenu id="idSelectUsuario" value="#{estatisticaMB.idUsuario}" required="true" requiredMessage="Campo obrigatório" style="margin-top: 10px;">
                                     <f:selectItem itemLabel="Selecione o usuário" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel=" - Todos os usuários - " itemValue="#{0}"/>
                                     <f:selectItems value="#{estatisticaMB.usuarios}" var="varUsuario" itemValue="#{varUsuario.id}" itemLabel="#{varUsuario.login}" />
                                 </p:selectOneMenu> 
                             </div>
@@ -56,7 +57,7 @@
                                 </p:calendar> 
                             </div>
                             <div class="ui-g-12 ui-md-3">
-                                <p:commandButton value="Pesquisar" icon="ui-icon-search" action="#{estatisticaMB.listarAcessosDaSemanaPorUsuario()}" ajax="false" />
+                                <p:commandButton value="Pesquisar" icon="ui-icon-search" action="#{estatisticaMB.listarAcessosDoPeriodoPorUsuario()}" ajax="false" />
                             </div>
                         </div>
                     </div>

@@ -65,7 +65,7 @@ public class EstatisticaMB implements Serializable {
         if (FacesUtils.getURL().contains("estatistica-usuario")) {
             listarUsuariosDoSistema();
             definirAsDatasDaSemana();
-            listarAcessosDaSemana();
+            listarAcessosDoPeriodo();
             contarOsAcessosParaCadaUsuario();
             criarGraficoPizza();
         } else {
@@ -120,7 +120,7 @@ public class EstatisticaMB implements Serializable {
         data2ParaPesquisa = hoje.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
     }
 
-    private void listarAcessosDaSemana() {
+    private void listarAcessosDoPeriodo() {
         try {
             acessos = null;
             acessos = new ArrayList<>();
@@ -130,11 +130,19 @@ public class EstatisticaMB implements Serializable {
         }
     }
 
-    public void listarAcessosDaSemanaPorUsuario() {
+    public void listarAcessosDoPeriodoPorUsuario() {
         try {
             acessos = null;
             acessos = new ArrayList<>();
-            acessos = (ArrayList<Acesso>) acessoDAO.listarAcessosPorUsuarioEIntervaloDeDatas(new Usuario(idUsuario), data1ParaPesquisa, data2ParaPesquisa);
+            if (idUsuario != 0l) {
+                acessos = (ArrayList<Acesso>) acessoDAO.listarAcessosPorUsuarioEIntervaloDeDatas(new Usuario(idUsuario), data1ParaPesquisa, data2ParaPesquisa);
+            }else{
+                acessos = (ArrayList<Acesso>) acessoDAO.listarAcessosPorIntervaloDeDatas(data1ParaPesquisa, data2ParaPesquisa);
+            }
+            
+            contarOsAcessosParaCadaUsuario();
+            criarGraficoPizza();
+            
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());
         }
@@ -214,38 +222,50 @@ public class EstatisticaMB implements Serializable {
         try {
             usuarioQuantidades = null;
             usuarioQuantidades = new ArrayList<>();
-            
-            for (Usuario u : usuarios) {
-                usuarioQuantidades.add(new UsuarioQuantidade(u,acessoDAO.contarAcessosPorUsuarioEIntervaloDeDatas(u, data1ParaPesquisa, data2ParaPesquisa)));
-            }
 
-            ArrayList<UsuarioQuantidade> usuariosParaExcluir = new ArrayList<>();
-
-            for (UsuarioQuantidade uq : usuarioQuantidades) {
-                if (uq.getQuantidade() == 0) {
-                    usuariosParaExcluir.add(uq);
+            //Quando for escolhido um usuário em específico
+            if (idUsuario != 0l) {
+                for (Usuario u : usuarios) {
+                    if (u.getId().equals(idUsuario)) {
+                        usuarioQuantidades.add(new UsuarioQuantidade(u, acessoDAO.contarAcessosPorUsuarioEIntervaloDeDatas(u, data1ParaPesquisa, data2ParaPesquisa)));
+                        break;
+                    }
                 }
-            }
+            } //Quando não for escolhido um usuário em específico, ou seja, todos os usuário
+            else {
+                for (Usuario u : usuarios) {
+                    usuarioQuantidades.add(new UsuarioQuantidade(u, acessoDAO.contarAcessosPorUsuarioEIntervaloDeDatas(u, data1ParaPesquisa, data2ParaPesquisa)));
+                }
 
-            usuarioQuantidades.removeAll(usuariosParaExcluir);
-        } catch (Exception e) {
+                ArrayList<UsuarioQuantidade> usuariosParaExcluir = new ArrayList<>();
+
+                for (UsuarioQuantidade uq : usuarioQuantidades) {
+                    if (uq.getQuantidade() == 0) {
+                        usuariosParaExcluir.add(uq);
+                    }
+                }
+                usuarioQuantidades.removeAll(usuariosParaExcluir);
+            }
+        } catch (DAOException e) {
+            FacesUtils.addErrorMessage(e.getMessage());
         }
     }
 
-     private void criarGraficoPizza() {
+    private void criarGraficoPizza() {
         graficoPizza = new PieChartModel();
- 
-         for (UsuarioQuantidade uq : usuarioQuantidades) {
-             graficoPizza.set(uq.usuario.getLogin(), uq.getQuantidade());
-         }
- 
-        graficoPizza.setTitle("Quantidade de acessos por usuário na semana");
+
+        for (UsuarioQuantidade uq : usuarioQuantidades) {
+            graficoPizza.set(uq.usuario.getLogin(), uq.getQuantidade());
+        }
+
+        graficoPizza.setTitle("Quantidade de acessos por usuário no período");
         graficoPizza.setLegendPosition("e");
         graficoPizza.setFill(false);
         graficoPizza.setShowDataLabels(true);
         graficoPizza.setDiameter(150);
         graficoPizza.setShadow(false);
     }
+
     //==========================================================================
     /**
      * Método usado para liberar memória. Foi necessário adicionar este método
@@ -323,6 +343,7 @@ public class EstatisticaMB implements Serializable {
     public PieChartModel getGraficoPizza() {
         return graficoPizza;
     }
+
     //==========================================================================
     private class HoraQuantidade {
 
