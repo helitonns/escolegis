@@ -224,15 +224,18 @@
                                     <p:column headerText="Nome" sortBy="#{m.aluno.nome}" filterBy="#{m.aluno.nome}">
                                         <h:outputText value="#{m.aluno.nome}" />
                                     </p:column>
-                                    <p:column headerText="D. Nascimento" sortBy="#{m.aluno.dataNascimento}">
+                                    <p:column headerText="D. Nascimento" sortBy="#{m.aluno.dataNascimento}" style="width: 150px">
                                         <h:outputText value="#{m.aluno.dataNascimento}">
                                             <f:convertDateTime pattern="dd/MM/yyyy"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column headerText="Contato" >
+                                    <p:column headerText="Contato" style="width: 150px">
                                         <h:outputText value="#{m.aluno.celular}" />
                                         <h:outputText value=" - " rendered="#{(m.aluno.celular != '') and (m.aluno.fixo != '')}"/>
                                         <h:outputText value="#{m.aluno.fixo}" />
+                                    </p:column>
+                                    <p:column headerText="Email" >
+                                        <h:outputText value="#{m.aluno.email}" />
                                     </p:column>
                                     <f:facet name="footer">
                                         Total de alunos: #{fn:length(relatorioMB.matriculas)}
