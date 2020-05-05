@@ -97,7 +97,13 @@ public class StartMB implements Serializable {
                 acessoDAO.salvar(acesso);
                 //==========================================================
                 
-                return "/pages/user/verificar-cpf.xhtml" + "?faces-redirect=true";
+                if (usuario.getNome() == null || usuario.getMatricula() == null) {
+                    FacesUtils.addWarnMessageFlashScoped("O usuário está com o nome ou matrícula não preenchidos. Complete o seu perfil!");
+                    return "/pages/user/perfil.xhtml" + "?faces-redirect=true";
+                } else {
+                    return "/pages/user/verificar-cpf.xhtml" + "?faces-redirect=true";
+                }
+                
             } else {
                 FacesUtils.addErrorMessageFlashScoped("Usuário e/ou senha incorreto");
             }
@@ -133,6 +139,19 @@ public class StartMB implements Serializable {
         }
     }
 
+    public String salvarNomeMatricula() {
+
+        try {
+            usuarioDAO.atualizar(usuario);
+            FacesUtils.addInfoMessage("Usuário atualizado com sucesso!!!");
+//            Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método StartMB.salvarNomeMatricula().");
+            return "verificar-cpf.xhtml" + "?faces-redirect=true";
+        } catch (DAOException e) {
+            FacesUtils.addErrorMessage("Erro au atualizar senha.");
+        }
+        return null;
+    }
+    
     public String retornarUnidadeAtiva() {
         try {
             UsuarioComUnidade u = (UsuarioComUnidade) FacesUtils.getBean("usuario");

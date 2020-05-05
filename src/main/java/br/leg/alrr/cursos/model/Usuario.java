@@ -28,12 +28,18 @@ public class Usuario implements Serializable, Comparable<Usuario> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String nome;
+    private String matricula;
+    
     @Column(unique = true)
     private String login;
-
+    
     private String senha;
-
+    
     private boolean status;
+    
+    @Column(nullable = true)
+    private boolean bloqueado;
 
     //========================================================================//
     public Usuario() {
@@ -110,6 +116,31 @@ public class Usuario implements Serializable, Comparable<Usuario> {
         }
         return true;
     }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
+    }
+
+    public boolean isBloqueado() {
+        return bloqueado;
+    }
+
+    public void setBloqueado(boolean bloqueado) {
+        this.bloqueado = bloqueado;
+    }
+    
     
     
 }

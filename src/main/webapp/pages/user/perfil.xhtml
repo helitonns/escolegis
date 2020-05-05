@@ -1,0 +1,68 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:stella="http://stella.caelum.com.br/faces2"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/verificar-cpf">Verificar CPF</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px;">Perfil</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div class="ui-g ui-fluid form-group">
+
+                            
+                            
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idNomeUsuario" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idMatriculaUsuario" showSummary="true" showDetail="false"/>
+                            </div>
+                            
+                            <div class="ui-g-12 ui-md-4"/>
+                            
+                            <!-- ############ PRIMEIRA LINHA #############-->
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idNomeUsuario" value="#{startMB.usuario.nome}" converter="upper" required="true" requiredMessage="Campo obrigatório!"/>
+                                        <label>Digite o nome completo do usuário</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idMatriculaUsuario" value="#{startMB.usuario.matricula}" required="true" requiredMessage="Campo obrigatório!"/>
+                                        <label>Digite a matrícula do usuário</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:commandButton value="Salvar"  action="#{startMB.salvarNomeMatricula}" ajax="false" icon="ui-icon-check" style="width: 100%;"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-12" style="min-height: 200px;"/>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

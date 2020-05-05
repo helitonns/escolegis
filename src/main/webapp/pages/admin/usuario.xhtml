@@ -26,6 +26,38 @@
                         <div style="margin-left: 20px;">Gerenciar usuários</div>
 
                         <div class="ui-g ui-fluid form-group" style="margin-top: 10px">
+                            
+                            
+                            
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idNomeUsuario" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <p:message for="idMatriculaUsuario" showSummary="true" showDetail="false"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-4"/>
+                            
+                            <!-- ############ PRIMEIRA LINHA #############-->
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idNomeUsuario" value="#{usuarioMB.usuario.nome}" converter="upper" required="true" requiredMessage="Campo obrigatório!"/>
+                                        <label>Digite o nome completo do usuário</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="idMatriculaUsuario" value="#{usuarioMB.usuario.matricula}" required="true" requiredMessage="Campo obrigatório!"/>
+                                        <label>Digite a matrícula do usuário</label>
+                                    </h:panelGroup>     
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-4"/>
+                            
+                            
+                            
 
                             <div class="ui-g-12 ui-md-4">
                                 <p:message for="idLoginUsuario" showSummary="true" showDetail="false"/>
@@ -35,14 +67,14 @@
                             </div>
 
                             <div class="ui-g-12 ui-md-4">
-                                <!--<p:message for="idUnidadeUsuario" showSummary="true" showDetail="false"/>-->
+                                <p:message for="idTipoUsuario" showSummary="true" showDetail="false"/>
                             </div>
 
                             <!-- ############ PRIMEIRA LINHA #############-->
                             <div class="ui-g-12 ui-md-4">
                                 <div class="ui-inputgroup">
                                     <h:panelGroup styleClass="md-inputfield">
-                                        <p:inputText id="idLoginUsuario" value="#{usuarioMB.usuario.login}" required="true"/>
+                                        <p:inputText id="idLoginUsuario" value="#{usuarioMB.usuario.login}" required="true" requiredMessage="Campo obrigatório!"/>
                                         <label>Digite o login do usuário</label>
                                     </h:panelGroup>     
                                 </div>
@@ -51,7 +83,7 @@
                             <div class="ui-g-12 ui-md-4">
                                 <div class="ui-inputgroup">
                                     <h:panelGroup styleClass="md-inputfield">
-                                        <p:password id="idSenhaUsuario" value="#{usuarioMB.senha}" required="true">
+                                        <p:password id="idSenhaUsuario" value="#{usuarioMB.senha}" required="true" requiredMessage="Campo obrigatório!">
                                             <f:validateLength minimum="8"/>
                                             <p:tooltip for="idSenhaUsuario" value="A senha deve ter no mínimo 8 dígitos, 1 letra maiúscula, 1 letra minúscula e 1 número"/>
                                         </p:password>
@@ -62,7 +94,7 @@
 
                             <!-- ############ SEGUNDA LINHA #############-->
                             <div class="ui-g-12 ui-md-4">
-                                <p:selectOneMenu id="idTipoUsuario" label="Tipo Usuário" value="#{usuarioMB.idPermissao}" required="true" >
+                                <p:selectOneMenu id="idTipoUsuario" label="Tipo Usuário" value="#{usuarioMB.idPermissao}" required="true" requiredMessage="Campo obrigatório!">
                                     <f:selectItem itemLabel="Selecione o tipo de usuário" noSelectionOption="true"/>
                                     <f:selectItems value="#{usuarioMB.permissoes}" var="tu" itemLabel="#{tu.descricao}" itemValue="#{tu.id}" />                            
                                 </p:selectOneMenu>

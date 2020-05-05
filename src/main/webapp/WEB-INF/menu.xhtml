@@ -14,65 +14,103 @@
                         <sm:menu>
 
                             <p:submenu id="sub_menu_aluno" label="Aluno" icon="person" rendered="#{!startMB.usuarioRelatorio}">
+                                <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
                                 <p:menuitem id="sm_aluno_verificar_cpf" value="Verificar CPF" icon="search" outcome="/pages/user/verificar-cpf"/>
-                                <p:menuitem id="sm_aluno_aluno"         value="Aluno" icon="person" outcome="/pages/user/aluno"/>
                                 <p:menuitem id="sm_aluno_listar_editar" value="Listar / Editar Aluno" icon="list" outcome="/pages/user/listar-editar-aluno"/>
+                                <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                <p:menuitem id="sm_aluno_aluno"         value="Aluno" icon="person" outcome="/pages/user/aluno"/>
                                 <p:menuitem id="sm_aluno_meus_cursos"   value="Meus Cursos" icon="books" outcome="/pages/user/meus-cursos"/>
+                                <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
                                 <p:menuitem id="sm_aluno_declaracord"   value="Declarações" icon="assignment" outcome="/pages/user/declaracao"/>
+                                <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
                             </p:submenu> 
 
                             <p:submenu id="sub_menu_curso" label="Secretaria" icon="book" rendered="#{!startMB.usuarioRelatorio}">
-                                <p:menuitem id="sm_curso_horario" value="Horário" icon="access_time" outcome="/pages/user/horario" rendered="#{startMB.admin || startMB.superAdmin}"/>
-                                <p:menuitem id="sm_curso_grupo_disciplina" value="Grupo Disciplina" icon="collections_bookmark" outcome="/pages/user/grupo-disciplina" rendered="#{startMB.admin || startMB.superAdmin}"/>
-                                <p:menuitem id="sm_curso_disciplina" value="Disciplina" icon="bookmark" outcome="/pages/user/disciplina" rendered="#{startMB.admin || startMB.superAdmin}"/>
-                                <p:menuitem id="sm_curso_curso" value="Curso" icon="&#xE14F;" outcome="/pages/user/curso"/>
-                                <p:menuitem id="sm_curso_modulo" value="Módulo" icon="&#xE14D;" outcome="/pages/user/modulo" rendered="#{startMB.admin || startMB.superAdmin}"/>
-                                <p:menuitem id="sm_curso_matricula" value="Matrícula no curso" icon="contact_mail" outcome="/pages/user/matricula" rendered="#{startMB.admin || startMB.superAdmin}"/>
-                                <p:menuitem id="sm_curso_turma" value="Turma" icon="group" outcome="/pages/user/turma" rendered="#{startMB.admin || startMB.superAdmin}"/>
-                                <p:menuitem id="sm_curso_frequencia" value="Frequência" icon="event_available" outcome="/pages/user/frequencia" />
-                                <p:menuitem id="sm_curso_frequencia_arquivo" value="Frequência com arquivo" icon="event_available" outcome="/pages/user/frequencia-com-arquivo" />
-                                <p:menuitem id="sm_curso_visualizar_frequencia" value="Visualizar frequência" icon="event" outcome="/pages/user/visualizar-frequencia" />
-                                <p:menuitem id="sm_curso_verificar_aprovacao" value="Verificar aprovação" icon="done_all" outcome="/pages/user/verificar-aprovacao" />
+                                <f:attribute name="mega" value="true" />
+
+                                <p:submenu id="t1" label="Dados gerais" icon="&#xE896;">
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                    <p:menuitem id="sm_curso_horario" value="Horário" icon="access_time" outcome="/pages/user/horario" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                    <p:menuitem id="sm_curso_grupo_disciplina" value="Grupo Disciplina" icon="collections_bookmark" outcome="/pages/user/grupo-disciplina" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                    <p:menuitem id="sm_curso_disciplina" value="Disciplina" icon="bookmark" outcome="/pages/user/disciplina" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                </p:submenu>
+
+
+                                <p:submenu id="t2" label="Dados de curso" icon="&#xE896;">
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                    <p:menuitem id="sm_curso_curso" value="Curso" icon="&#xE14F;" outcome="/pages/user/curso"/>
+                                    <p:menuitem id="sm_curso_modulo" value="Módulo" icon="&#xE14D;" outcome="/pages/user/modulo" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                    <p:menuitem id="sm_curso_matricula" value="Matrícula no curso" icon="contact_mail" outcome="/pages/user/matricula" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                    <p:menuitem id="sm_curso_turma" value="Turma" icon="group" outcome="/pages/user/turma" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                </p:submenu>
+
+                                <p:submenu id="t3" label="Dados de frequência" icon="&#xE896;">
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                    <p:menuitem id="sm_curso_frequencia" value="Frequência" icon="event_available" outcome="/pages/user/frequencia" />
+                                    <p:menuitem id="sm_curso_frequencia_arquivo" value="Frequência com arquivo" icon="event_available" outcome="/pages/user/frequencia-com-arquivo" />
+                                    <p:menuitem id="sm_curso_visualizar_frequencia" value="Visualizar frequência" icon="event" outcome="/pages/user/visualizar-frequencia" />
+                                    <p:menuitem id="sm_curso_verificar_aprovacao" value="Verificar aprovação" icon="done_all" outcome="/pages/user/verificar-aprovacao" />
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                </p:submenu>
+
                             </p:submenu>
-                            
+
                             <p:submenu id="sub_menu_sistema_legado" label="Sistema Legado" icon="&#xE896;" rendered="false">
                                 <p:menuitem id="sm_sl_aluno" value="Aluno Legado" icon="&#xE30B;" outcome="/sample" />
                                 <p:menuitem id="sm_sl_listar" value="Listar aluno Legado" icon="&#xE890;" outcome="/forms" />
                                 <p:menuitem id="sm_sl_matricula" value="Matricula Legada" icon="&#xE3EC;" outcome="/data" />
                                 <p:menuitem id="sm_sl_relatorio" value="Relatório Legado" icon="&#xE14F;" outcome="/panel" />
                             </p:submenu>
-                            
+
                             <p:submenu id="sub_menu_configuracoes_gerais" label="Configurações Gerais" icon="settings" rendered="#{!startMB.usuarioRelatorio}">
-                                <p:menuitem id="sm_cg_pais" value="País" icon="flag" outcome="/pages/user/pais"/>
-                                <p:menuitem id="sm_cg_municipio" value="Município" icon="people" outcome="/pages/admin/municipio" rendered="#{startMB.admin || startMB.superAdmin}"/>
-                                <p:menuitem id="sm_cg_bairro" value="Bairro" icon="person_pin_circle" outcome="/pages/user/bairro" />
-                                <p:menuitem id="sm_cg_unidade" value="Unidade" icon="business" outcome="/pages/superadmin/unidade" rendered="#{startMB.superAdmin}"/>
-                                <p:menuitem id="sm_cg_diretor" value="Diretor" icon="person_outline" outcome="/pages/admin/diretor" rendered="#{startMB.admin || startMB.superAdmin}"/>
-                                <p:menuitem id="sm_cg_usuario" value="Usuário" icon="person" outcome="/pages/admin/usuario" rendered="#{startMB.admin || startMB.superAdmin}"/>
-                                <p:menuitem id="sm_cg_super_usuario" value="Super Usuário" icon="person_add" outcome="/pages/superadmin/superusuario" rendered="#{startMB.superAdmin}"/>
-                                <p:menuitem id="sm_cg_sistema" value="Sistemas" icon="settings" outcome="/pages/superadmin/sistema" rendered="#{startMB.superAdmin}"/>
-                                <p:menuitem id="sm_cg_permissao" value="Privilégio" icon="lock" outcome="/pages/superadmin/privilegio" rendered="#{startMB.superAdmin}"/>
-                                <p:menuitem id="sm_cg_autorizacao" value="Autorizações" icon="lock_outline" outcome="/pages/superadmin/autorizacao" rendered="#{startMB.superAdmin}"/>
+                                <f:attribute name="mega" value="true" />
+
+                                <p:submenu id="t4" label="Dados de endereço" icon="&#xE896;">
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                    <p:menuitem id="sm_cg_pais" value="País" icon="flag" outcome="/pages/user/pais"/>
+                                    <p:menuitem id="sm_cg_municipio" value="Município" icon="people" outcome="/pages/admin/municipio" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                    <p:menuitem id="sm_cg_bairro" value="Bairro" icon="person_pin_circle" outcome="/pages/user/bairro" />
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                </p:submenu>
+
+                                <p:submenu id="t5" label="Dados da unidade" icon="&#xE896;">
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                    <p:menuitem id="sm_cg_unidade" value="Unidade" icon="business" outcome="/pages/superadmin/unidade" rendered="#{startMB.superAdmin}"/>
+                                    <p:menuitem id="sm_cg_diretor" value="Diretor" icon="person_outline" outcome="/pages/admin/diretor" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                </p:submenu>
+
+                                <p:submenu id="t6" label="Dados de usuário" icon="&#xE896;">
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                    <p:menuitem id="sm_cg_usuario" value="Usuário" icon="person" outcome="/pages/admin/usuario" rendered="#{startMB.admin || startMB.superAdmin}"/>
+                                    <p:menuitem id="sm_cg_super_usuario" value="Super Usuário" icon="person_add" outcome="/pages/superadmin/superusuario" rendered="#{startMB.superAdmin}"/>
+                                    <p:menuitem id="sm_cg_sistema" value="Sistemas" icon="settings" outcome="/pages/superadmin/sistema" rendered="#{startMB.superAdmin}"/>
+                                    <p:menuitem id="sm_cg_permissao" value="Privilégio" icon="lock" outcome="/pages/superadmin/privilegio" rendered="#{startMB.superAdmin}"/>
+                                    <p:menuitem id="sm_cg_autorizacao" value="Autorizações" icon="lock_outline" outcome="/pages/superadmin/autorizacao" rendered="#{startMB.superAdmin}"/>
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                </p:submenu>
                             </p:submenu>
-                            
+
                             <p:submenu id="sub_menu_aluno_r" label="Aluno" icon="person" rendered="#{startMB.usuarioRelatorio}">
                                 <p:menuitem id="sm_aluno_listar_editar_r" value="Listar / Editar Aluno" icon="list" outcome="/pages/relatorio/listar-editar-aluno"/>
                             </p:submenu> 
-                            
+
                             <p:submenu id="sub_menu_relatorio_usuario_relatorio" label="Relatório" icon="assignment" rendered="#{startMB.usuarioRelatorio}">
                                 <p:menuitem id="sm_ru_geral" value="Relatório Geral" icon="assignment" outcome="/pages/relatorio/relatorio-geral"/>
                                 <p:menuitem id="sm_ru_relatorio" value="Relatório por Matrícula" icon="assignment" outcome="/pages/relatorio/relatorio" />
                             </p:submenu>
-                            
+
                             <p:menuitem id="menu_relatorio" value="Relatórios" icon="assignment" outcome="/pages/user/relatorio" rendered="#{!startMB.usuarioRelatorio}"/>
-                            
+
                             <p:submenu id="menu_estatistica" label="Estatísticas" icon="assignment" rendered="#{startMB.superAdmin}">
                                 <p:menuitem id="menu_estatistica_acesso" value="Estatísticas por acesso" icon="pie_chart" outcome="/pages/user/estatistica"/>
                                 <p:menuitem id="menu_estatistica_usuario" value="Estatísticas por usuário" icon="pie_chart" outcome="/pages/user/estatistica-usuario"/>
                             </p:submenu>
-                            
+
                         </sm:menu>
-                        
+
                     </h:form>
                 </div>
             </div>
