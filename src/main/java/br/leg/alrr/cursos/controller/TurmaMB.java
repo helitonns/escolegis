@@ -2,6 +2,8 @@ package br.leg.alrr.cursos.controller;
 
 import br.leg.alrr.cursos.business.BlocoModuloDisciplina;
 import br.leg.alrr.cursos.business.DiasDaSemana;
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Aluno;
 import br.leg.alrr.cursos.model.Curso;
 import br.leg.alrr.cursos.model.Disciplina;
@@ -13,6 +15,7 @@ import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.CursoDAO;
 import br.leg.alrr.cursos.persistence.FrequenciaDAO;
 import br.leg.alrr.cursos.persistence.HorarioDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.MatriculaDAO;
 import br.leg.alrr.cursos.persistence.ModuloDAO;
 import br.leg.alrr.cursos.persistence.TurmaDAO;
@@ -60,6 +63,9 @@ public class TurmaMB implements Serializable {
 
     @EJB
     private FrequenciaDAO frequenciaDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private ArrayList<Curso> cursos;
     private ArrayList<Horario> horarios;
@@ -95,6 +101,8 @@ public class TurmaMB implements Serializable {
         diasDaSemana.add("SEX");
         diasDaSemana.add("SAB");
         diasDaSemana.add("DOM");
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     private void listarCurso() {
@@ -225,12 +233,14 @@ public class TurmaMB implements Serializable {
 
                 turmaDAO.atualizar(turma);
                 FacesUtils.addInfoMessageFlashScoped("Turma atulizada com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método TurmaMB.salvarTurma() para atualizar a turma "+ turma.getId()+".");
             } else {
                 turma.setAlunos(alunosSelecionados);
                 turma.setModulo(modulo);
                 turma.setDisciplina(disciplina);
                 turmaDAO.salvar(turma);
                 FacesUtils.addInfoMessageFlashScoped("Turma salva com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método TurmaMB.salvarTurma() para salvar a turma "+ turma.getId()+".");
             }
             limparForm();
 
@@ -246,6 +256,7 @@ public class TurmaMB implements Serializable {
             turmaDAO.atualizar(turma);
             limparForm();
             FacesUtils.addInfoMessage("Turma concluída com sucesso!");
+            Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método TurmaMB.concluirTurma() para concluir a turma "+ turma.getId()+".");
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());
         }
@@ -350,6 +361,7 @@ public class TurmaMB implements Serializable {
                         alunosDaTurma.remove(a);
                         turmaDAO.atualizar(turma);
                         FacesUtils.addInfoMessage("Matricula cancelada com sucesso!");
+                        Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método TurmaMB.removerAlunoDaTurma() para remover o aluno "+a.getId()+" a turma "+ turma.getId()+".");
                         limparForm();
                         break;
                     }
@@ -367,6 +379,7 @@ public class TurmaMB implements Serializable {
                 frequenciaDAO.excluirFrequenciaPorTurma(turma);
                 turmaDAO.remover(turma);
                 FacesUtils.addInfoMessage("Turma removida com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método TurmaMB.removerTurma() para excluir a turma "+ turma.getId()+".");
             }
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());

@@ -1,10 +1,13 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Acesso;
 import br.leg.alrr.cursos.model.Autorizacao;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.AcessoDAO;
 import br.leg.alrr.cursos.persistence.AutorizacaoDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.UsuarioComUnidadeDAO;
 import br.leg.alrr.cursos.util.Criptografia;
 import br.leg.alrr.cursos.util.DAOException;
@@ -39,6 +42,9 @@ public class StartMB implements Serializable {
     
     @EJB
     private AcessoDAO acessoDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private UsuarioComUnidade usuario;
     private Autorizacao autorizacao;
@@ -61,6 +67,7 @@ public class StartMB implements Serializable {
                 usuario = usuarioDAO.pesquisarPorLoginESenha(login, Criptografia.criptografarEmMD5(senha));
                 if (usuario != null && usuario.isStatus()) {
                     FacesUtils.setBean("usuario", usuario);
+                    Loger.registrar(logSistemaDAO, TipoAcao.ENTRAR, "O usuário entrou o sistema.");
                     return "/pages/user/verificar-cpf.xhtml" + "?faces-redirect=true";
                 } else {
                     FacesUtils.addErrorMessageFlashScoped("Usuário e/ou senha incorreto");
@@ -86,16 +93,7 @@ public class StartMB implements Serializable {
                 FacesUtils.setBean("usuario", usuario);
                 FacesUtils.setBean("autorizacao", autorizacao);
                 
-                //==========================================================
-                // Código que incrementa a estatística de acesso na aplicação
-                Acesso acesso = new Acesso();
-                ZoneId zone1 = ZoneId.of("America/Boa_Vista");
-                
-                acesso.setDataDeAcesso(LocalDate.now(zone1));
-                acesso.setMomentoDoAcesso(LocalTime.now(zone1));
-                acesso.setUsuario(usuario);
-                acessoDAO.salvar(acesso);
-                //==========================================================
+                Loger.registrar(logSistemaDAO, TipoAcao.ENTRAR, "O usuário entrou o sistema.");
                 
                 if (usuario.getNome() == null || usuario.getMatricula() == null) {
                     FacesUtils.addWarnMessageFlashScoped("O usuário está com o nome ou matrícula não preenchidos. Complete o seu perfil!");
@@ -117,6 +115,7 @@ public class StartMB implements Serializable {
 
     public String sair() {
         try {
+            Loger.registrar(logSistemaDAO, TipoAcao.SAIR, "O usuário fez saiu do sistema.");
             FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         } catch (Exception e) {
         }
@@ -129,9 +128,11 @@ public class StartMB implements Serializable {
                 usuario.setSenha(Criptografia.criptografarEmMD5(senha1));
                 usuarioDAO.atualizar(usuario);
                 FacesUtils.addInfoMessage("Senha atualizada com sucesso!!!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método StartMB.trocarSenha().", "A senha fo atualizada com sucesso.");
             } else {
                 FacesUtils.addWarnMessage("A senha deve atender aos seguintes requisitos: ter no mínimo 8 caracteres, possuir letra minúcula 'a', "
                         + "possuir letra maiúscula 'A' e número '123'!!!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método StartMB.trocarSenha().", "A senha não foi atualizada porque não atendeu aos requisitos mínimos.");
             }
 
         } catch (DAOException e) {
@@ -144,7 +145,7 @@ public class StartMB implements Serializable {
         try {
             usuarioDAO.atualizar(usuario);
             FacesUtils.addInfoMessage("Usuário atualizado com sucesso!!!");
-//            Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método StartMB.salvarNomeMatricula().");
+            Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método StartMB.salvarNomeMatricula().");
             return "verificar-cpf.xhtml" + "?faces-redirect=true";
         } catch (DAOException e) {
             FacesUtils.addErrorMessage("Erro au atualizar senha.");

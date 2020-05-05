@@ -1,5 +1,7 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Aluno;
 import br.leg.alrr.cursos.model.Curso;
 import br.leg.alrr.cursos.model.Diretor;
@@ -9,6 +11,7 @@ import br.leg.alrr.cursos.persistence.AlunoDAO;
 import br.leg.alrr.cursos.persistence.CursoDAO;
 import br.leg.alrr.cursos.persistence.DiretorDAO;
 import br.leg.alrr.cursos.persistence.FrequenciaDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.MatriculaDAO;
 import br.leg.alrr.cursos.persistence.TurmaDAO;
 import br.leg.alrr.cursos.util.DAOException;
@@ -50,6 +53,9 @@ public class DeclaracaoMB implements Serializable {
 
     @EJB
     private DiretorDAO diretorDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private ArrayList<Aluno> alunos;
     private ArrayList<Turma> turmas;
@@ -69,6 +75,8 @@ public class DeclaracaoMB implements Serializable {
     @PostConstruct
     public void init() {
         limparForm();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     public void pesquisarAluno() {
@@ -87,6 +95,8 @@ public class DeclaracaoMB implements Serializable {
             FacesUtils.addErrorMessage(e.getMessage());
         }
         aluno = new Aluno();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método DeclaracaoMB.pesquisarAluno().");
     }
 
     public void prepararDeclaracaoDeMatricula() {
@@ -94,6 +104,8 @@ public class DeclaracaoMB implements Serializable {
             exibirTabelaDeTurmas = true;
             exibirTabelaDeCurso = false;
             turmas = (ArrayList<Turma>) turmaDAO.listarTurmasIniciadasPorAluno(aluno);
+            
+            Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método DeclaracaoMB.prepararDeclaracaoDeMatricula().");
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());
         }
@@ -141,6 +153,8 @@ public class DeclaracaoMB implements Serializable {
             //remover das matriculas os cursos nos quais o aluno não passou
             matriculas.removeAll(cursosEmQueOAlunoNaoPassou);
 
+            Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método DeclaracaoMB.prepararDeclaracaoDeConclusao().");
+            
         } catch (Exception e) {
             FacesUtils.addErrorMessage(e.getMessage());
         }
@@ -155,6 +169,8 @@ public class DeclaracaoMB implements Serializable {
             aluno.setDiretor(diretores.get(0));
 
             gerarPdf.declaracaoMatricula(aluno);
+            
+            Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método DeclaracaoMB.imprimirDeclaracaoDeMatricula().");
         } catch (IOException | DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());
         }
@@ -172,6 +188,8 @@ public class DeclaracaoMB implements Serializable {
             aluno.setDiretor(diretores.get(0));
 
             gerarPdf.declaracaoConclusaoCurso(aluno);
+            
+            Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método DeclaracaoMB.imprimirDeclaracaoDeConclusao().");
         } catch (IOException | DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());
         }
@@ -190,6 +208,8 @@ public class DeclaracaoMB implements Serializable {
             }
 
             gerarPdf.declaracaoTodosCursosConcluidos(matriculas);
+            
+            Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método DeclaracaoMB.imprimirDeclaracaoDeConclusaoDeTodosOsCursos().");
         } catch (IOException | DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());
         }

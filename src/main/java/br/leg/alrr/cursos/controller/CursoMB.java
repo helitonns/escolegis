@@ -1,9 +1,12 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Curso;
 import br.leg.alrr.cursos.model.Turma;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.CursoDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.MatriculaDAO;
 import br.leg.alrr.cursos.persistence.ModuloDAO;
 import br.leg.alrr.cursos.persistence.TurmaDAO;
@@ -39,6 +42,9 @@ public class CursoMB implements Serializable {
 
     @EJB
     private ModuloDAO moduloDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private Curso curso;
 
@@ -50,6 +56,8 @@ public class CursoMB implements Serializable {
     @PostConstruct
     public void init() {
         limparForm();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     private void listarCurso() {
@@ -79,9 +87,11 @@ public class CursoMB implements Serializable {
             if (curso.getId() != null) {
                 cursoDAO.atualizar(curso);
                 FacesUtils.addInfoMessageFlashScoped("Curso atualizado com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método CursoMB.salvarCurso() para atualizar o curso "+ curso.getId()+".");
             } else {
                 cursoDAO.salvar(curso);
                 FacesUtils.addInfoMessageFlashScoped("Curso salvo com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método CursoMB.salvarCurso() para atualizar o curso "+ curso.getId()+".");
             }
         } catch (DAOException e) {
             FacesUtils.addErrorMessageFlashScoped(e.getMessage());
@@ -97,9 +107,11 @@ public class CursoMB implements Serializable {
             if (curso.getId() != null) {
                 cursoDAO.atualizar(curso);
                 FacesUtils.addInfoMessage("Curso atualizado com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método CursoMB.salvarCurso() para atualizar o curso "+ curso.getId()+".");
             } else {
                 cursoDAO.salvar(curso);
                 FacesUtils.addInfoMessage("Curso salvo com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método CursoMB.salvarCurso() para atualizar o curso "+ curso.getId()+".");
             }
             FacesUtils.setBean("idCurso", curso.getId());
             return "modulo.xhtml" + "?faces-redirect=true";
@@ -127,6 +139,7 @@ public class CursoMB implements Serializable {
                 turmaDAO.atualizar(t);
             }
             FacesUtils.addInfoMessageFlashScoped("Curso concluído com sucesso!!!");
+            Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método CursoMB.concluirCurso() para concluir o curso "+ curso.getId()+".");
         } catch (DAOException e) {
             FacesUtils.addErrorMessageFlashScoped(e.getMessage());
         }
@@ -140,6 +153,7 @@ public class CursoMB implements Serializable {
                     matriculaDAO.excluirMatriculaPorCurso(curso);
                     cursoDAO.remover(curso);
                     FacesUtils.addInfoMessage("Curso removido com sucesso!");
+                    Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método CursoMB.removerCurso() para excluir o curso "+ curso.getId()+".");
                 } else {
                     FacesUtils.addWarnMessage("O Curso não pode ser removido, porque há modulos a ele vinculados!");
                 }

@@ -1,11 +1,14 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Bairro;
 import br.leg.alrr.cursos.model.Endereco;
 import br.leg.alrr.cursos.model.Municipio;
 import br.leg.alrr.cursos.model.Unidade;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.BairroDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.MunicipioDAO;
 import br.leg.alrr.cursos.persistence.UnidadeDAO;
 import br.leg.alrr.cursos.util.DAOException;
@@ -38,6 +41,9 @@ public class UnidadeMB implements Serializable {
 
     @EJB
     private BairroDAO bairroDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private ArrayList<Unidade> unidades;
     private ArrayList<Municipio> municipios;
@@ -57,6 +63,8 @@ public class UnidadeMB implements Serializable {
     public void init() {
         limparForm();
         listarMunicipio();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     public String salvarUnidade() {
@@ -66,9 +74,11 @@ public class UnidadeMB implements Serializable {
             if (unidade.getId() != null) {
                 unidadeDAO.atualizar(unidade);
                 FacesUtils.addInfoMessageFlashScoped("Unidade atualizada com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método UnidadeMB.salvarUnidade() para atualizar o unidade "+ unidade.getId()+".");
             } else {
                 unidadeDAO.salvar(unidade);
                 FacesUtils.addInfoMessageFlashScoped("Unidade salva com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método UnidadeMB.salvarUnidade() para atualizar o unidade "+ unidade.getId()+".");
             }
         } catch (DAOException e) {
             FacesUtils.addErrorMessageFlashScoped(e.getMessage());
@@ -81,6 +91,7 @@ public class UnidadeMB implements Serializable {
             if (removerUnidade) {
                 unidadeDAO.remover(unidade);
                 FacesUtils.addInfoMessage("Unidade removida com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método UnidadeMB.removerUnidade() para excluir o unidade "+ unidade.getId()+".");
             }
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());

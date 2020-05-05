@@ -1,7 +1,10 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Horario;
 import br.leg.alrr.cursos.persistence.HorarioDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
 import java.io.Serializable;
@@ -21,10 +24,16 @@ import javax.faces.view.ViewScoped;
 public class HorarioMB implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private Horario horario;
-    private ArrayList<Horario> horarios;
+    
     @EJB
     private HorarioDAO horarioDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
+    
+    private Horario horario;
+    private ArrayList<Horario> horarios;
+    
     private Horario horarioSelecionado;
 
     private boolean removerHorario = false;
@@ -33,6 +42,8 @@ public class HorarioMB implements Serializable {
     @PostConstruct
     public void init() {
         limparForm();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     public void limparForm() {
@@ -48,11 +59,13 @@ public class HorarioMB implements Serializable {
             if (horario.getId() != null) {
                 horarioDAO.atualizar(horario);
                 FacesUtils.addInfoMessageFlashScoped("Horário atualizado com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método HorarioMB.salvarHorario() para atualizar o horário "+ horario.getId()+".");
             } else {
                 //verifica se o horário já está cadastrado, se não procede ao cadastramento
                 if (horarioDAO.horarioNaoCadastrado(horario.getDescricao())) {
                     horarioDAO.salvar(horario);
                     FacesUtils.addInfoMessageFlashScoped("Horário salvo com sucesso!");
+                    Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método HorarioMB.salvarHorario() para salvar o horário "+ horario.getId()+".");
                 } else {
                     FacesUtils.addWarnMessageFlashScoped("Horário já cadastrado!!!");
                 }
@@ -78,6 +91,7 @@ public class HorarioMB implements Serializable {
             if (removerHorario) {
                 horarioDAO.remover(horarioSelecionado);
                 FacesUtils.addInfoMessage("Horário removido com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método HorarioMB.removerHorario() para excluir o horário "+ horario.getId()+".");
             }
             removerHorario = false;
             limparForm();

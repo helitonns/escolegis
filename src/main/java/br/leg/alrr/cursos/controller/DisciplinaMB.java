@@ -1,10 +1,13 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Disciplina;
 import br.leg.alrr.cursos.model.GrupoDisciplina;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.DisciplinaDAO;
 import br.leg.alrr.cursos.persistence.GrupoDisciplinaDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
 import java.io.Serializable;
@@ -30,6 +33,9 @@ public class DisciplinaMB implements Serializable {
 
     @EJB
     private GrupoDisciplinaDAO grupoDisciplinaDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private Disciplina disciplina;
 
@@ -47,6 +53,8 @@ public class DisciplinaMB implements Serializable {
         disciplinas = new ArrayList<>();
         listarGrupoDisciplina();
         listarDisciplina();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     private void listarDisciplina() {
@@ -89,10 +97,12 @@ public class DisciplinaMB implements Serializable {
             if (disciplina.getId() != null) {
                 disciplinaDAO.atualizar(disciplina);
                 FacesUtils.addInfoMessageFlashScoped("Disciplina atualizada com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método DisciplinaMB.salvarDisciplina() para atualizar a disciplina "+ disciplina.getId()+".");
             } else {
                 if (disciplinaDAO.disciplinaNaoCadastrada(disciplina.getNome())) {
                     disciplinaDAO.salvar(disciplina);
                     FacesUtils.addInfoMessageFlashScoped("Disciplina salva com sucesso!");
+                    Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método DisciplinaMB.salvarDisciplina() para salvar a disciplina "+ disciplina.getId()+".");
                 } else {
                     FacesUtils.addWarnMessageFlashScoped("Disciplina já cadastrada!!!");
                 }
@@ -108,6 +118,7 @@ public class DisciplinaMB implements Serializable {
             if (removerDisciplina) {
                 disciplinaDAO.remover(disciplina);
                 FacesUtils.addInfoMessage("Disciplina removida com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método DisciplinaMB.removerDisciplina() para salvar a disciplina "+ disciplina.getId()+".");
             }
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());

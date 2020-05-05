@@ -3,13 +3,16 @@ package br.leg.alrr.cursos.controller;
 import br.leg.alrr.cursos.model.Bairro;
 import br.leg.alrr.cursos.business.BlocoConsulta;
 import br.leg.alrr.cursos.business.BlocoParametro;
+import br.leg.alrr.cursos.business.Loger;
 import br.leg.alrr.cursos.business.Sexo;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Aluno;
 import br.leg.alrr.cursos.model.Municipio;
 import br.leg.alrr.cursos.model.Pais;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.AlunoDAO;
 import br.leg.alrr.cursos.persistence.BairroDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.MunicipioDAO;
 import br.leg.alrr.cursos.persistence.PaisDAO;
 import br.leg.alrr.cursos.util.DAOException;
@@ -54,6 +57,9 @@ public class RelatorioGeralMB implements Serializable {
 
     @EJB
     private PaisDAO paisDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private InputStream logo;
 
@@ -112,6 +118,8 @@ public class RelatorioGeralMB implements Serializable {
 
         listarMunicipio();
         listarPaises();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     public void incluirNaConsulta() {
@@ -169,6 +177,7 @@ public class RelatorioGeralMB implements Serializable {
                 break;
         }
         blocos.add(b);
+        Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método RelatorioGeralMB.incluirNaConsulta().");
     }
 
     public void montarConsulta() {
@@ -244,6 +253,7 @@ public class RelatorioGeralMB implements Serializable {
             blocos = new ArrayList<>();
 
             limparVariaveis();
+            Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método RelatorioGeralMB.montarConsulta().");
         } catch (DAOException e) {
             FacesUtils.addErrorMessage("Erro ao montar consulta: " + e.getCause());
         }
@@ -269,6 +279,7 @@ public class RelatorioGeralMB implements Serializable {
                 report.getRelatorio(alunos);
                 limparBlocosDeConculta();
             }
+            Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método RelatorioGeralMB.exportarPDF().");
         } catch (Exception e) {
             FacesUtils.addErrorMessage("Erro ao gerar relatório: " + e.getMessage());
         }

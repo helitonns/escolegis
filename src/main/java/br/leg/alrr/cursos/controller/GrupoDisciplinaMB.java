@@ -1,8 +1,11 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.GrupoDisciplina;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.GrupoDisciplinaDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
 import java.io.Serializable;
@@ -25,6 +28,9 @@ public class GrupoDisciplinaMB implements Serializable {
 
     @EJB
     private GrupoDisciplinaDAO grupoDisciplinaDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private GrupoDisciplina grupoDisciplina;
 
@@ -39,6 +45,8 @@ public class GrupoDisciplinaMB implements Serializable {
         grupoDisciplina.setStatus(true);
         grupoDisciplinas = new ArrayList<>();
         listarGrupoDisciplina();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     private void listarGrupoDisciplina() {
@@ -66,10 +74,12 @@ public class GrupoDisciplinaMB implements Serializable {
             if (grupoDisciplina.getId() != null) {
                 grupoDisciplinaDAO.atualizar(grupoDisciplina);
                 FacesUtils.addInfoMessageFlashScoped("GrupoDisciplina atualizado com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método GrupoDisciplinaMB.salvarGrupoDisciplina() para atualizar o grupo "+ grupoDisciplina.getId()+".");
             } else {
                 if (grupoDisciplinaDAO.grupoDisciplinaNaoCadastrado(grupoDisciplina.getNome())) {
                     grupoDisciplinaDAO.salvar(grupoDisciplina);
                     FacesUtils.addInfoMessageFlashScoped("GrupoDisciplina salvo com sucesso!");
+                    Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método GrupoDisciplinaMB.salvarGrupoDisciplina() para salvar o grupo "+ grupoDisciplina.getId()+".");
                 } else {
                     FacesUtils.addWarnMessageFlashScoped("Grupo de Disciplina já cadastrado!!!");
                 }
@@ -86,6 +96,7 @@ public class GrupoDisciplinaMB implements Serializable {
             if (removerGrupoDisciplina) {
                 grupoDisciplinaDAO.remover(grupoDisciplina);
                 FacesUtils.addInfoMessage("GrupoDisciplina removido com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método GrupoDisciplinaMB.removerGrupoDisciplina() para excluir o grupo "+ grupoDisciplina.getId()+".");
             }
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());

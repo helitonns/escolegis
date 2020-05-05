@@ -1,5 +1,7 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Autorizacao;
 import br.leg.alrr.cursos.model.Privilegio;
 import br.leg.alrr.cursos.model.Sistema;
@@ -7,6 +9,7 @@ import br.leg.alrr.cursos.model.Unidade;
 import br.leg.alrr.cursos.model.Usuario;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.AutorizacaoDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.PrivilegioDAO;
 import br.leg.alrr.cursos.persistence.SistemaDAO;
 import br.leg.alrr.cursos.persistence.UnidadeDAO;
@@ -50,6 +53,9 @@ public class AutorizacaoMB implements Serializable {
     
     @EJB
     private UnidadeDAO unidadeDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private ArrayList<Privilegio> permissoes;
     private ArrayList<Sistema> sistemas;
@@ -74,6 +80,8 @@ public class AutorizacaoMB implements Serializable {
         listarSistema();
         listarUsuarios();
         listarUnidades();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     private void listarSistema() {
@@ -158,6 +166,7 @@ public class AutorizacaoMB implements Serializable {
             if (autorizacao.getId() != null) {
                 autorizacaoDAO.atualizar(autorizacao);
                 FacesUtils.addInfoMessageFlashScoped("Autorização atualizada com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método AutorizacaoMB.salvarAutorizacao() para atualizar a autorização "+ autorizacao.getId()+".");
             } else {
                 if (!autorizacaoDAO.verificarSeHaAutorizacaoParaUsuarioNoSistema(autorizacao.getUsuario(), new Sistema(idSistema))) {
                     
@@ -167,6 +176,7 @@ public class AutorizacaoMB implements Serializable {
                     
                     autorizacaoDAO.salvar(autorizacao);
                     FacesUtils.addInfoMessageFlashScoped("Autorização salva com sucesso!");
+                    Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método AutorizacaoMB.salvarAutorizacao() para salvar a autorização "+ autorizacao.getId()+".");
                 } else {
                     FacesUtils.addWarnMessageFlashScoped("O usuário já possui autorização no sistema!");
                 }
@@ -184,6 +194,7 @@ public class AutorizacaoMB implements Serializable {
             if (removerAutorizacao) {
                 autorizacaoDAO.remover(autorizacao);
                 FacesUtils.addInfoMessage("Autorização removida com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método AutorizacaoMB.removerAutorizacao() para excluir a autorização "+ autorizacao.getId()+".");
             }
             limparForm();
         } catch (DAOException e) {

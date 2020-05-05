@@ -1,12 +1,14 @@
 package br.leg.alrr.cursos.controller;
 
-import br.leg.alrr.cursos.business.TipoUsuario;
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Autorizacao;
 import br.leg.alrr.cursos.model.Privilegio;
 import br.leg.alrr.cursos.model.Unidade;
 import br.leg.alrr.cursos.model.Usuario;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.AutorizacaoDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.PrivilegioDAO;
 import br.leg.alrr.cursos.persistence.UnidadeDAO;
 import br.leg.alrr.cursos.persistence.UsuarioComUnidadeDAO;
@@ -44,6 +46,9 @@ public class UsuarioMB implements Serializable {
 
     @EJB
     private PrivilegioDAO permissaoDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private Autorizacao autorizacao;
     private UsuarioComUnidade usuario;
@@ -63,6 +68,8 @@ public class UsuarioMB implements Serializable {
     @PostConstruct
     public void init() {
         limparForm();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     public void limparForm() {
@@ -114,6 +121,7 @@ public class UsuarioMB implements Serializable {
                     autorizacao.setPrivilegio(new Privilegio(idPermissao));
                     autorizacaoDAO.atualizar(autorizacao);
                     FacesUtils.addInfoMessageFlashScoped("Usuário atualizado com sucesso!");
+                    Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método UsuarioMB.salvarUsuario() para atualizar o usuário "+ usuario.getId()+".");
                 } else {
                     //verifica se já há usuario cadastrado com o mesmo login
                     if (!usuarioDAO.haUsuarioComUnidadeComEsteLogin(usuario.getLogin())) {
@@ -124,6 +132,7 @@ public class UsuarioMB implements Serializable {
                         autorizacao.setStatus(true);
                         autorizacaoDAO.salvar(autorizacao);
                         FacesUtils.addInfoMessageFlashScoped("Usuário salvo com sucesso!");
+                        Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método UsuarioMB.salvarUsuario() para salvar o usuário "+ usuario.getId()+".");
                     } else {
                         FacesUtils.addWarnMessageFlashScoped("O usuário não pode ser cadastrado, pois já há um usuário com este mesmo login!!!");
                     }
@@ -149,6 +158,7 @@ public class UsuarioMB implements Serializable {
                     autorizacao.setPrivilegio(new Privilegio(idPermissao));
                     autorizacaoDAO.atualizar(autorizacao);
                     FacesUtils.addInfoMessageFlashScoped("Usuário atualizado com sucesso!");
+                    Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método UsuarioMB.salvarSuperUsuario() para atualizar o usuário "+ usuario.getId()+".");
                 } else {
                     //verifica se já há usuario cadastrado com o mesmo login
                     if (!usuarioDAO.haUsuarioComUnidadeComEsteLogin(usuario.getLogin())) {
@@ -159,6 +169,7 @@ public class UsuarioMB implements Serializable {
                         autorizacao.setStatus(true);
                         autorizacaoDAO.salvar(autorizacao);
                         FacesUtils.addInfoMessageFlashScoped("Usuário salvo com sucesso!");
+                        Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método UsuarioMB.salvarSuperUsuario() para salvar o usuário "+ usuario.getId()+".");
                     } else {
                         FacesUtils.addWarnMessageFlashScoped("O usuário não pode ser cadastrado, pois já há um usuário com este mesmo login!!!");
                     }
@@ -214,6 +225,7 @@ public void listarUsuarios() {
                 autorizacaoDAO.remover(autorizacao);
                 usuarioDAO.remover(usuario);
                 FacesUtils.addInfoMessage("Usuário removido com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método UsuarioMB.removerUsuario() para excluir o usuário "+ usuario.getId()+".");
             }
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());

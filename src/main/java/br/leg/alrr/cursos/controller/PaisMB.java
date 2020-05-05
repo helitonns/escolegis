@@ -1,6 +1,9 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Pais;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.PaisDAO;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
@@ -26,6 +29,9 @@ public class PaisMB implements Serializable {
 
     @EJB
     private PaisDAO paisDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private Pais pais;
 
@@ -39,6 +45,8 @@ public class PaisMB implements Serializable {
     @PostConstruct
     public void init() {
         limparForm();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     public String salvarPais() {
@@ -46,9 +54,11 @@ public class PaisMB implements Serializable {
             if (pais.getId() != null) {
                 paisDAO.atualizar(pais);
                 FacesUtils.addInfoMessageFlashScoped("Pais atualizado com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método PaisMB.salvarPais() para atualizar o país "+ pais.getId()+".");
             } else {
                 paisDAO.salvar(pais);
                 FacesUtils.addInfoMessageFlashScoped("Pais salvo com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método PaisMB.salvarPais() para salvar o país "+ pais.getId()+".");
             }
         } catch (DAOException e) {
             FacesUtils.addErrorMessageFlashScoped(e.getMessage());
@@ -69,6 +79,7 @@ public class PaisMB implements Serializable {
             if (removerPaisSelecionado) {
                 paisDAO.remover(paisSelecionado);
                 FacesUtils.addInfoMessage("País removido com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método PaisMB.removerPais() para excluir o país "+ pais.getId()+".");
             }
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());

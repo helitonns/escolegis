@@ -1,7 +1,10 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Diretor;
 import br.leg.alrr.cursos.persistence.DiretorDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
 import java.io.Serializable;
@@ -24,6 +27,9 @@ public class DiretorMB implements Serializable {
 
     @EJB
     private DiretorDAO diretorDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private Diretor diretor;
 
@@ -37,6 +43,8 @@ public class DiretorMB implements Serializable {
     @PostConstruct
     public void init() {
         limparForm();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     public String salvarDiretor() {
@@ -44,9 +52,11 @@ public class DiretorMB implements Serializable {
             if (diretor.getId() != null) {
                 diretorDAO.atualizar(diretor);
                 FacesUtils.addInfoMessageFlashScoped("Diretor atualizado com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método DiretorMB.salvarDiretor() para atualizar o(a) diretor(a) "+ diretor.getId()+".");
             } else {
                 diretorDAO.salvar(diretor);
                 FacesUtils.addInfoMessageFlashScoped("Diretor salvo com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método DiretorMB.salvarDiretor() para salvar o(a) diretor(a) "+ diretor.getId()+".");
             }
         } catch (DAOException e) {
             FacesUtils.addErrorMessageFlashScoped(e.getMessage());
@@ -67,6 +77,7 @@ public class DiretorMB implements Serializable {
             if (removerDiretor) {
                 diretorDAO.remover(diretorSelecionado);
                 FacesUtils.addInfoMessage("Diretor removido com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método DiretorMB.removerDiretor() para excluir o(a) diretor(a) "+ diretor.getId()+".");
             }
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());

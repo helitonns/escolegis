@@ -1,5 +1,7 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Aluno;
 import br.leg.alrr.cursos.model.Curso;
 import br.leg.alrr.cursos.model.Frequencia;
@@ -7,15 +9,13 @@ import br.leg.alrr.cursos.model.Turma;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.CursoDAO;
 import br.leg.alrr.cursos.persistence.FrequenciaDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.TurmaDAO;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
 import br.leg.alrr.cursos.util.Relatorio;
 import java.io.IOException;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -33,7 +33,6 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -58,6 +57,9 @@ public class FrequenciaMB implements Serializable {
 
     @EJB
     private FrequenciaDAO frequenciaDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private ArrayList<Curso> cursos;
     private ArrayList<Turma> turmas;
@@ -117,6 +119,8 @@ public class FrequenciaMB implements Serializable {
         } catch (Exception e) {
             FacesUtils.addErrorMessage("Erro ao tentar editar aluno.");
         }
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     private void limparForm() {
@@ -209,6 +213,7 @@ public class FrequenciaMB implements Serializable {
             //                    frequenciaDAO.atualizar(f);
             //                }
             //            }
+            Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método FrequenciaMB.salvarFrequencia() para salvar a frequênciia.");
         } catch (DAOException e) {
             FacesUtils.addErrorMessageFlashScoped(e.getMessage());
         }
@@ -243,9 +248,11 @@ public class FrequenciaMB implements Serializable {
                     frequenciaDAO.atualizar(f);
                     if (f.isFaltaJustificada()) {
                         FacesUtils.addInfoMessageFlashScoped("A falta do aluno(a): " + f.getAluno().getCpf() + " - " + f.getAluno().getNome() + ", foi justificada!!!");
+                        Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método FrequenciaMB.justificarFalta() para justificar a frequênciia do aluno "+f.getAluno().getId()+".");
                     }
                 } else {
                     FacesUtils.addWarnMessageFlashScoped("A falta do aluno(a): " + f.getAluno().getCpf() + " - " + f.getAluno().getNome() + ", NÃO foi justificada, pois já excedeu o número máximo de justificação!!!");
+                    Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método FrequenciaMB.justificarFalta() para justificar a frequênciia do aluno "+f.getAluno().getId()+", mas não pôde, pois o ele já excedeu o número de faltas.");
                 }
             }
         } catch (DAOException e) {
@@ -274,6 +281,7 @@ public class FrequenciaMB implements Serializable {
         } else {
             report.getFrequencia(frequencias);
         }
+        Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método FrequenciaMB.imprimirFrequencia().");
     }
 
     public void imprimirFrequencia2() {
@@ -296,6 +304,7 @@ public class FrequenciaMB implements Serializable {
         } else {
             report.getFrequencia2(frequencias);
         }
+        Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método FrequenciaMB.imprimirFrequencia2().");
     }
 
     public void listarAulasDaTurma() {
@@ -487,6 +496,7 @@ public class FrequenciaMB implements Serializable {
                 frequenciaDAO.salvar(f);
             }
             FacesUtils.addInfoMessageFlashScoped("Frequências salvas com sucesso!!!");
+            Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método FrequenciaMB.salvarFrequenciaPorArquivo() para salvar a frequênciia.");
         } catch (DAOException e) {
             FacesUtils.addErrorMessageFlashScoped("Houve um erro ao salvar frequência por arquivo!!!");
         }

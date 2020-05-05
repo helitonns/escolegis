@@ -1,16 +1,19 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
 import br.leg.alrr.cursos.model.Bairro;
 import br.leg.alrr.cursos.model.Aluno;
 import br.leg.alrr.cursos.model.Endereco;
 import br.leg.alrr.cursos.model.Municipio;
 import br.leg.alrr.cursos.business.Sexo;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Matricula;
 import br.leg.alrr.cursos.model.Pais;
 import br.leg.alrr.cursos.model.Turma;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.BairroDAO;
 import br.leg.alrr.cursos.persistence.AlunoDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.MatriculaDAO;
 import br.leg.alrr.cursos.persistence.MunicipioDAO;
 import br.leg.alrr.cursos.persistence.PaisDAO;
@@ -57,6 +60,9 @@ public class AlunoMB implements Serializable {
 
     @EJB
     private PaisDAO paisDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private ArrayList<Pais> paises;
     private ArrayList<Municipio> municipios;
@@ -112,6 +118,8 @@ public class AlunoMB implements Serializable {
         }
 
         listarTurmasAtivas();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     private void listarTurmasAtivas() {
@@ -164,6 +172,9 @@ public class AlunoMB implements Serializable {
             FacesUtils.addWarnMessage("Informe o CPF!!!");
         }
         limparMemoria();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método AlunoMB.verificarSeCpfCadastrado().");
+        
         return null;
     }
 
@@ -192,6 +203,7 @@ public class AlunoMB implements Serializable {
                 if (aluno.getId() != null) {
                     alunoDAO.atualizar(aluno);
                     FacesUtils.addInfoMessageFlashScoped("Aluno atualizado com sucesso!!!");
+                    Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método AlunoMB.salvarAluno() para atualizar o aluno "+ aluno.getId()+".");
 
                     //FAZENDO A MATRICULA NA TURMA
                     if (matricularNaTurma && turma.getId() != null) {
@@ -211,6 +223,8 @@ public class AlunoMB implements Serializable {
                                 matricula.setUnidade(u.getUnidade());
                                 matricula.setStatus(true);
                                 matriculaDAO.salvar(matricula);
+                                
+                                Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método AlunoMB.salvarAluno() para matricular o aluno "+ aluno.getId()+" na turma "+turma.getId()+".");
 
                                 //liberar memória
                                 matricula = null;
@@ -227,6 +241,7 @@ public class AlunoMB implements Serializable {
                     if (alunoDAO.cpfUnico(aluno.getCpf())) {
                         alunoDAO.salvar(aluno);
                         FacesUtils.addInfoMessageFlashScoped("Aluno salvo com sucesso!!!");
+                        Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método AlunoMB.salvarAluno() para salvar o aluno "+ aluno.getId()+".");
 
                         //FAZENDO A MATRICULA NA TURMA
                         if (matricularNaTurma && turma.getId() != null) {
@@ -246,7 +261,9 @@ public class AlunoMB implements Serializable {
                                     matricula.setUnidade(u.getUnidade());
                                     matricula.setStatus(true);
                                     matriculaDAO.salvar(matricula);
-
+                                    
+                                    Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método AlunoMB.salvarAluno() para matricular o aluno "+ aluno.getId()+" na turma "+turma.getId()+".");
+                                    
                                     //liberar memória
                                     matricula = null;
                                     gc = null;
@@ -313,6 +330,9 @@ public class AlunoMB implements Serializable {
         try {
             bairro.setMunicipio(municipio);
             bairroDAO.salvar(bairro);
+            
+            Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método AtividadeMB.salvarBairro() para salvar o bairro "+ bairro.getId()+".");
+            
             cancelarBairro();
         } catch (DAOException e) {
             FacesUtils.addInfoMessage(e.getMessage());

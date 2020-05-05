@@ -1,11 +1,14 @@
 package br.leg.alrr.cursos.controller;
 
 import br.leg.alrr.cursos.business.BlocoParametro;
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Aluno;
 import br.leg.alrr.cursos.model.Curso;
 import br.leg.alrr.cursos.model.Turma;
 import br.leg.alrr.cursos.persistence.CursoDAO;
 import br.leg.alrr.cursos.persistence.FrequenciaDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.TurmaDAO;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
@@ -39,6 +42,9 @@ public class AprovacaoMB implements Serializable {
 
     @EJB
     private FrequenciaDAO frequenciaDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private Curso curso;
     private Aluno aluno;
@@ -71,6 +77,8 @@ public class AprovacaoMB implements Serializable {
                 FacesUtils.addErrorMessage(e.getMessage());
             }
         }
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     private void limparForm() {
@@ -119,6 +127,8 @@ public class AprovacaoMB implements Serializable {
             } else {
                 FacesUtils.addWarnMessage("Selecione pelo menos um campo para realizar a consulta!");
             }
+            
+            Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método AprovacaoMB.pesquisarCurso().");
             limparForm();
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());
@@ -156,6 +166,7 @@ public class AprovacaoMB implements Serializable {
                     alunos.add(novoAluno);
                 }
             }
+            Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método AprovacaoMB.montarListaDeAlunos().");
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage());
         }
@@ -169,7 +180,8 @@ public class AprovacaoMB implements Serializable {
             aluno.setCurso(curso);
 
             gerarPdf.certificado(aluno);
-
+            
+            Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método AprovacaoMB.imprimirCertificadoIndividual().");
         } catch (Exception e) {
             FacesUtils.addErrorMessage("Erro ao imprimir certificado individual: " + e.getCause());
         }
@@ -192,6 +204,7 @@ public class AprovacaoMB implements Serializable {
             //imprimir os certificados dos alunos aprovados
             gerarPdf.certificados(alunosAprovados);
 
+            Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método AprovacaoMB.imprimirTodosOsCertificados().");
         } catch (Exception e) {
             FacesUtils.addErrorMessage("Erro ao imprimir todos os certificados: " + e.getCause());
         }

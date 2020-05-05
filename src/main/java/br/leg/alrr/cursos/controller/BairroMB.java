@@ -1,8 +1,11 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Bairro;
 import br.leg.alrr.cursos.model.Municipio;
 import br.leg.alrr.cursos.persistence.BairroDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.MunicipioDAO;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
@@ -30,6 +33,9 @@ public class BairroMB implements Serializable {
 
     @EJB
     private MunicipioDAO municipioDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private Bairro bairro;
     private Municipio municipio;
@@ -44,6 +50,8 @@ public class BairroMB implements Serializable {
     public void init() {
         listarMunicipio();
         limparForm();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     private void listarBairro() {
@@ -69,9 +77,11 @@ public class BairroMB implements Serializable {
             if (bairro.getId() != null) {
                 bairroDAO.atualizar(bairro);
                 FacesUtils.addInfoMessageFlashScoped("Bairro atualizado com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método BairroMB.salvarBairro() para atualizar o bairro "+ municipio.getId()+".");
             } else {
                 bairroDAO.salvar(bairro);
                 FacesUtils.addInfoMessageFlashScoped("Bairro salvo com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método BairroMB.salvarBairro() para salvar o bairro "+ municipio.getId()+".");
             }
             limparForm();
         } catch (DAOException e) {
@@ -85,6 +95,7 @@ public class BairroMB implements Serializable {
             if (removerBairro) {
                 bairroDAO.remover(bairro);
                 FacesUtils.addInfoMessage("Bairro removido com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método BairroMB.removerBairro() para excluir o bairro "+ municipio.getId()+".");
             }
             limparForm();
         } catch (DAOException e) {

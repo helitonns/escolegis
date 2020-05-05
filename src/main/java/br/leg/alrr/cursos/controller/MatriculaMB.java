@@ -1,5 +1,7 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Aluno;
 import br.leg.alrr.cursos.model.Curso;
 import br.leg.alrr.cursos.model.Matricula;
@@ -7,6 +9,7 @@ import br.leg.alrr.cursos.model.Turma;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.AlunoDAO;
 import br.leg.alrr.cursos.persistence.CursoDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.MatriculaDAO;
 import br.leg.alrr.cursos.persistence.TurmaDAO;
 import br.leg.alrr.cursos.util.DAOException;
@@ -42,6 +45,9 @@ public class MatriculaMB implements Serializable {
 
     @EJB
     private TurmaDAO turmaDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private ArrayList<Curso> cursos;
     private ArrayList<Aluno> alunos;
@@ -68,6 +74,8 @@ public class MatriculaMB implements Serializable {
         } catch (Exception e) {
             FacesUtils.addErrorMessage("Erro ao tentar matricular aluno.");
         }
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     private void listarCursosAtivos() {
@@ -91,6 +99,8 @@ public class MatriculaMB implements Serializable {
             } else {
                 FacesUtils.addWarnMessage("Indique o CPF ou o nome do aluno!");
             }
+            
+            Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método MatriculaMB.pesquisarAluno().");
         } catch (DAOException e) {
             aluno = new Aluno();
             FacesUtils.addErrorMessage(e.getMessage());
@@ -115,6 +125,7 @@ public class MatriculaMB implements Serializable {
                 if (matricula.getId() != null) {
                     matriculaDAO.atualizar(matricula);
                     FacesUtils.addInfoMessageFlashScoped("Matrícula atualizada com sucesso!!!");
+                    Loger.registrar(logSistemaDAO, TipoAcao.ATUALIZAR, "O usuário executou o método MatriculaMB.matricular() para atualizar a mátricula "+ matricula.getId()+".");
                 } //salvar
                 else {
                     GregorianCalendar gc = new GregorianCalendar();
@@ -126,6 +137,7 @@ public class MatriculaMB implements Serializable {
                     if (b) {
                         matriculaDAO.salvar(matricula);
                         FacesUtils.addInfoMessageFlashScoped("Matrícula salva com sucesso!!!");
+                        Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método MatriculaMB.matricular() para salvar a mátricula "+ matricula.getId()+".");
                     } else {
                         FacesUtils.addWarnMessageFlashScoped("O aluno já está matriculado neste curso!");
                     }
@@ -158,6 +170,7 @@ public class MatriculaMB implements Serializable {
                 //cancelar matricula
                 matriculaDAO.remover(matricula);
                 FacesUtils.addInfoMessage("Matrícula cancelada com sucesso!!!");
+                Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método MatriculaMB.cancelarMatricula() para excluir a mátricula "+ matricula.getId()+".");
                 limparForm();
             }
         } catch (DAOException e) {

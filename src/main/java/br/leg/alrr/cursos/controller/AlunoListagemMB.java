@@ -1,9 +1,12 @@
 package br.leg.alrr.cursos.controller;
 
+import br.leg.alrr.cursos.business.Loger;
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Aluno;
 import br.leg.alrr.cursos.model.Curso;
 import br.leg.alrr.cursos.model.Turma;
 import br.leg.alrr.cursos.persistence.AlunoDAO;
+import br.leg.alrr.cursos.persistence.LogSistemaDAO;
 import br.leg.alrr.cursos.persistence.TurmaDAO;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
@@ -30,6 +33,9 @@ public class AlunoListagemMB implements Serializable {
 
     @EJB
     private TurmaDAO turmaDAO;
+    
+    @EJB
+    private LogSistemaDAO logSistemaDAO;
 
     private ArrayList<Aluno> alunos;
     private ArrayList<Turma> turmas;
@@ -44,6 +50,8 @@ public class AlunoListagemMB implements Serializable {
     @PostConstruct
     public void init() {
         limparForm();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     public void pesquisarAluno() {
@@ -63,6 +71,8 @@ public class AlunoListagemMB implements Serializable {
             FacesUtils.addWarnMessage("Sem resultado!");
         }
         aluno = new Aluno();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método AlunoListagemMB.pesquisarAluno().");
     }
 
     public String removerAluno() {
@@ -70,6 +80,7 @@ public class AlunoListagemMB implements Serializable {
             if (removerAluno) {
                 alunoDAO.remover(aluno);
                 FacesUtils.addInfoMessageFlashScoped("Aluno removido com sucesso!");
+                Loger.registrar(logSistemaDAO, TipoAcao.APAGAR, "O usuário executou o método AlunoListagemMB.removerAluno() para excluir o aluno "+ aluno.getId()+".");
             }
         } catch (Exception e) {
             FacesUtils.addErrorMessageFlashScoped(e.getCause().toString());
@@ -86,6 +97,7 @@ public class AlunoListagemMB implements Serializable {
         } catch (DAOException e) {
             FacesUtils.addErrorMessage(e.getMessage() + ": " + e.getCause());
         }
+        Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método AlunoListagemMB.pegarTurma().");
     }
 
     public String editarAluno() {
