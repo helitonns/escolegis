@@ -6,6 +6,7 @@ import br.leg.alrr.cursos.business.BlocoParametro;
 import br.leg.alrr.cursos.business.Loger;
 import br.leg.alrr.cursos.business.Sexo;
 import br.leg.alrr.cursos.business.TipoAcao;
+import br.leg.alrr.cursos.business.TipoCadastro;
 import br.leg.alrr.cursos.model.Aluno;
 import br.leg.alrr.cursos.model.Municipio;
 import br.leg.alrr.cursos.model.Pais;
@@ -57,7 +58,7 @@ public class RelatorioGeralMB implements Serializable {
 
     @EJB
     private PaisDAO paisDAO;
-    
+
     @EJB
     private LogSistemaDAO logSistemaDAO;
 
@@ -68,12 +69,15 @@ public class RelatorioGeralMB implements Serializable {
     private Date naData = new Date();
     private Date data1 = new Date();
     private Date data2 = new Date();
+   
     private List<SelectItem> parametros;
     private List<SelectItem> conectivos;
+    
     private int parametroEscolhido = 7;
     private String conectivoEscolhido = "";
     private boolean simNao = false;
     private String sexo = "";
+    private TipoCadastro tipoCadastro = TipoCadastro.EAD;
 
     private ArrayList<BlocoConsulta> blocos;
     private ArrayList<BlocoParametro> blocosParametros;
@@ -108,6 +112,8 @@ public class RelatorioGeralMB implements Serializable {
         parametros.add(new SelectItem(13, "Município"));
         parametros.add(new SelectItem(14, "Bairro"));
         parametros.add(new SelectItem(15, "País"));
+        parametros.add(new SelectItem(20, "Data de cadastro"));
+        parametros.add(new SelectItem(21, "Tipo cadastro"));
 
         conectivos.add(new SelectItem("-", "-"));
         conectivos.add(new SelectItem("E", "E"));
@@ -118,8 +124,8 @@ public class RelatorioGeralMB implements Serializable {
 
         listarMunicipio();
         listarPaises();
-        
-        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
+
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL() + ".");
     }
 
     public void incluirNaConsulta() {
@@ -174,6 +180,14 @@ public class RelatorioGeralMB implements Serializable {
                 b.setValor1(idPS);
                 b.setTexto(nomeDoPaisSelecionado());
                 idPS = 0l;
+                break;
+            case 20:
+                b.setValor1(naData);
+                naData = new Date();
+                break;
+            case 21:
+                b.setValor1(tipoCadastro);
+                tipoCadastro = tipoCadastro.EAD;
                 break;
         }
         blocos.add(b);
@@ -236,6 +250,18 @@ public class RelatorioGeralMB implements Serializable {
                     case 15:
                         sb.append("a.paisDeOrigem.id =:idPais ");
                         bp.setParametro("idPais");
+                        bp.setValor(b.getValor1());
+                        blocosParametros.add(bp);
+                        break;
+                    case 20:
+                        sb.append("a.dataDeCadastro >=:dataCadastro and a.dataDeCadastro <=:dataCadastro ");
+                        bp.setParametro("dataCadastro");
+                        bp.setValor(b.getValor1());
+                        blocosParametros.add(bp);
+                        break;
+                    case 21:
+                        sb.append("a.tipoCadastro =:tipoCadastro ");
+                        bp.setParametro("tipoCadastro");
                         bp.setValor(b.getValor1());
                         blocosParametros.add(bp);
                         break;
@@ -367,8 +393,9 @@ public class RelatorioGeralMB implements Serializable {
     /**
      * Método usado para liberar memória. Foi necessário adicionar este método
      * porque, possivelmente, está havendo vazamento de memória, fazendo com que
-     * a aplicação pare de funcionar. Basicamente o método irá anular as referências
-     * das variáveis, sinalizando para o Garbage Collector realizar a coleta.
+     * a aplicação pare de funcionar. Basicamente o método irá anular as
+     * referências das variáveis, sinalizando para o Garbage Collector realizar
+     * a coleta.
      */
     private void limparMemoria() {
         alunoDAO = null;
@@ -396,12 +423,12 @@ public class RelatorioGeralMB implements Serializable {
         idPS = null;
         sexoLista = null;
     }
-    
+
     /**
      * Ao sair da página executa o método @limparMemoria.
      */
     @PreDestroy
-    private void saindoDaPagina(){
+    private void saindoDaPagina() {
         limparMemoria();
     }
 //==========================================================================
@@ -538,4 +565,11 @@ public class RelatorioGeralMB implements Serializable {
         this.idPS = idPS;
     }
 
+    public TipoCadastro getTipoCadastro() {
+        return tipoCadastro;
+    }
+
+    public void setTipoCadastro(TipoCadastro tipoCadastro) {
+        this.tipoCadastro = tipoCadastro;
+    }
 }

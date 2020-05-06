@@ -1,6 +1,7 @@
 package br.leg.alrr.cursos.model;
 
 import br.leg.alrr.cursos.business.Sexo;
+import br.leg.alrr.cursos.business.TipoCadastro;
 import br.leg.alrr.cursos.util.StringUtils;
 import java.io.Serializable;
 import java.util.Date;
@@ -77,6 +78,12 @@ public class Aluno implements Serializable, Comparable<Aluno> {
 
     @ManyToOne
     private Unidade unidade;
+    
+    @Enumerated(EnumType.STRING)
+    private TipoCadastro tipoCadastro;
+    
+    @Temporal(TemporalType.DATE)
+    private Date dataDeCadastro;
     
     @Transient
     private Curso curso;
@@ -288,6 +295,22 @@ public class Aluno implements Serializable, Comparable<Aluno> {
         } else  {
             return -1;
         }
+    }
+
+    public TipoCadastro getTipoCadastro() {
+        return tipoCadastro;
+    }
+
+    public void setTipoCadastro(TipoCadastro tipoCadastro) {
+        this.tipoCadastro = tipoCadastro;
+    }
+
+    public Date getDataDeCadastro() {
+        return dataDeCadastro;
+    }
+
+    public void setDataDeCadastro(Date dataDeCadastro) {
+        this.dataDeCadastro = dataDeCadastro;
     }
     
 }

@@ -150,6 +150,9 @@
 
                                 <!-- IDADE INTERVALO 2-->
                                 <p:inputText id="id-idade-intervalo2" value="#{relatorioMB.idade}" style="width: 100%;" placeholder="Digite a idade 2" rendered="#{relatorioMB.parametroEscolhido eq 19 ? true : false}"/>
+                                
+                                <!--DATA  DE CADASTRO-->
+                                <p:calendar value="#{relatorioMB.naData}" pattern="dd/MM/yyyy" mask="99/99/9999" showOn="button" rendered="#{relatorioMB.parametroEscolhido eq 20 ? true : false}"/>
 
                             </div>
 

@@ -7,6 +7,7 @@ import br.leg.alrr.cursos.model.Endereco;
 import br.leg.alrr.cursos.model.Municipio;
 import br.leg.alrr.cursos.business.Sexo;
 import br.leg.alrr.cursos.business.TipoAcao;
+import br.leg.alrr.cursos.business.TipoCadastro;
 import br.leg.alrr.cursos.model.Matricula;
 import br.leg.alrr.cursos.model.Pais;
 import br.leg.alrr.cursos.model.Turma;
@@ -79,6 +80,7 @@ public class AlunoMB implements Serializable {
     private Turma turma;
 
     private Sexo sexo = Sexo.MASCULINO;
+    private TipoCadastro tipoCadastro = TipoCadastro.EAD;
     private Long idMunicipio;
     private boolean editandoALuno;
     private boolean matricularNaTurma;
@@ -239,6 +241,8 @@ public class AlunoMB implements Serializable {
 
                 } else {
                     if (alunoDAO.cpfUnico(aluno.getCpf())) {
+                        GregorianCalendar gc = new GregorianCalendar();
+                        aluno.setDataDeCadastro(gc.getTime());
                         alunoDAO.salvar(aluno);
                         FacesUtils.addInfoMessageFlashScoped("Aluno salvo com sucesso!!!");
                         Loger.registrar(logSistemaDAO, TipoAcao.SALVAR, "O usuário executou o método AlunoMB.salvarAluno() para salvar o aluno "+ aluno.getId()+".");
@@ -254,7 +258,6 @@ public class AlunoMB implements Serializable {
 
                                     //FAZENDO A MATRÍCULA NO CURSO
                                     Matricula matricula = new Matricula();
-                                    GregorianCalendar gc = new GregorianCalendar();
                                     matricula.setDataMatricula(gc.getTime());
                                     matricula.setAluno(aluno);
                                     matricula.setCurso(turma.getModulo().getCurso());
@@ -535,4 +538,11 @@ public class AlunoMB implements Serializable {
         this.pais = pais;
     }
 
+    public TipoCadastro getTipoCadastro() {
+        return tipoCadastro;
+    }
+
+    public void setTipoCadastro(TipoCadastro tipoCadastro) {
+        this.tipoCadastro = tipoCadastro;
+    }
 }

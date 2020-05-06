@@ -101,8 +101,13 @@
                                 <p:menuitem id="sm_ru_geral" value="Relatório Geral" icon="assignment" outcome="/pages/relatorio/relatorio-geral"/>
                                 <p:menuitem id="sm_ru_relatorio" value="Relatório por Matrícula" icon="assignment" outcome="/pages/relatorio/relatorio" />
                             </p:submenu>
+                            
+                            <p:submenu id="sub_menu_relatorio" label="Relatório" icon="assignment" rendered="#{!startMB.usuarioRelatorio}">
+                                <p:menuitem id="sm_ru_geral_u" value="Relatório Geral" icon="assignment" outcome="/pages/user/relatorio-geral"/>
+                                <p:menuitem id="sm_ru_relatorio_u" value="Relatório por Matrícula" icon="assignment" outcome="/pages/user/relatorio" />
+                            </p:submenu>
 
-                            <p:menuitem id="menu_relatorio" value="Relatórios" icon="assignment" outcome="/pages/user/relatorio" rendered="#{!startMB.usuarioRelatorio}"/>
+                            
 
                             <p:submenu id="menu_estatistica" label="Estatísticas" icon="assignment" rendered="#{startMB.superAdmin}">
                                 <p:menuitem id="menu_estatistica_acesso" value="Estatísticas por acesso" icon="pie_chart" outcome="/pages/user/estatistica"/>

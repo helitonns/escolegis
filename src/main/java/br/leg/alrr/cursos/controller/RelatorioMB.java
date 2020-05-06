@@ -61,7 +61,7 @@ public class RelatorioMB implements Serializable {
 
     @EJB
     private PaisDAO paisDAO;
-    
+
     @EJB
     private LogSistemaDAO logSistemaDAO;
 
@@ -130,6 +130,7 @@ public class RelatorioMB implements Serializable {
         parametros.add(new SelectItem(17, "Com idade igual ou menor"));
         parametros.add(new SelectItem(18, "Com idade intervalo 1"));
         parametros.add(new SelectItem(19, "Com idade intervalo 2"));
+        //parametros.add(new SelectItem(20, "Data de cadastro no sistema"));
 
         conectivos.add(new SelectItem("-", "-"));
         conectivos.add(new SelectItem("E", "E"));
@@ -141,8 +142,8 @@ public class RelatorioMB implements Serializable {
         listarMunicipio();
         listarCurso();
         listarPaises();
-        
-        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
+
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL() + ".");
     }
 
     public void incluirNaConsulta() {
@@ -247,9 +248,13 @@ public class RelatorioMB implements Serializable {
                 b.setValor1(idade);
                 idade = 0;
                 break;
+            case 20:
+                b.setValor1(naData);
+                naData = new Date();
+                break;
         }
         blocos.add(b);
-        
+
         Loger.registrar(logSistemaDAO, TipoAcao.EXECUTAR, "O usuário executou o método RelatorioMB.incluirNaConsulta().");
     }
 
@@ -381,6 +386,12 @@ public class RelatorioMB implements Serializable {
                     case 19:
                         sb.append("YEAR(m.aluno.dataNascimento) >= :ano2 ");
                         bp.setParametro("ano2");
+                        bp.setValor(b.getValor1());
+                        blocosParametros.add(bp);
+                        break;
+                    case 20:
+                        sb.append("m.aluno.dataDeCadastro >=:naData and m.aluno.dataDeCadastro <=:naData2 ");
+                        bp.setParametro("naData");
                         bp.setValor(b.getValor1());
                         blocosParametros.add(bp);
                         break;

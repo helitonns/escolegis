@@ -85,13 +85,17 @@ public class BlocoConsulta {
             case 15:
                 return ("de alunos que têm como país de origem: " + texto.toUpperCase() + s);
             case 16:
-                return ("de alunos com idade maior ou igual: " + (int)valor1 + " anos");
+                return ("de alunos com idade maior ou igual: " + (int) valor1 + " anos");
             case 17:
-                return ("de alunos com idade menor ou igual: " + (int)valor1 + " anos");
+                return ("de alunos com idade menor ou igual: " + (int) valor1 + " anos");
             case 18:
-                return ("de alunos com idade entre: " + (int)valor1);
+                return ("de alunos com idade entre: " + (int) valor1);
             case 19:
-                return ("e: " + (int)valor1 + " anos");
+                return ("e: " + (int) valor1 + " anos");
+            case 20:
+                return ("data de cadastro " + sdf.format((Date) valor1) + s).toLowerCase();
+            case 21:
+                return ("tipo de cadastro " + valor1.toString());
             default:
                 break;
         }

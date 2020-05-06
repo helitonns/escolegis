@@ -101,6 +101,13 @@
                                 
                                 <!-- DATA DE CADASTRO -->
                                 <p:calendar id="dataCadastro" value="#{relatorioGeralMB.naData}" pattern="dd/MM/yyyy" mask="99/99/9999" showOn="button" rendered="#{relatorioGeralMB.parametroEscolhido eq 20 ? true : false}"/>
+                            
+                                <!-- TIPO DE CADASTRO -->
+                                <p:selectOneMenu value="#{relatorioGeralMB.tipoCadastro}" rendered="#{relatorioGeralMB.parametroEscolhido eq 21 ? true : false}" required="false">
+                                    <f:selectItem itemLabel="Selecione o tipo de cadastro" />
+                                    <f:selectItems value="#{relatorioGeralMB.tipoCadastro.lista}" var="var_tc" itemLabel="#{var_tc.value}" itemValue="#{var_tc.value}" />
+                                </p:selectOneMenu>
+                                
                             </div>
 
                             <div class="ui-g-12 ui-md-4">
@@ -118,7 +125,7 @@
                             <div class="ui-g-12 ui-md-12">
                                 <h:panelGroup id="montar-consulta" rendered="#{relatorioGeralMB.blocosSize}">
                                     <p:panel style="width: 100%">
-                                        <h:outputText value="Pesquisar matrículas "/>
+                                        <h:outputText value="Pesquisar alunos com "/>
                                         <c:forEach var="d" items="${relatorioGeralMB.blocos}"  varStatus="status" >
                                             <h:outputText value="${d.valor}"/>
                                             <p:commandButton id="btnRemoverDaConculta" icon="ui-icon-remove" styleClass="orange-btn"  action="#{relatorioGeralMB.removerDaConsulta}" style="float: right; margin-bottom: 2px;" ajax="false" update="@form">
@@ -163,16 +170,11 @@
                                     <p:column headerText="T. Cadastro" style="width: 120px">
                                         <h:outputText value="#{m.tipoCadastro.value}"/>
                                     </p:column>
-                                    <p:column headerText="D. Nascimento" style="width: 120px">
-                                        <h:outputText value="#{m.dataNascimento}">
-                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
-                                        </h:outputText>
+                                    <p:column headerText="CPF">
+                                        <h:outputText value="#{m.cpf}" />
                                     </p:column>
                                     <p:column headerText="Nome" sortBy="#{m.nome}" filterBy="#{m.nome}">
                                         <h:outputText value="#{m.nome}" />
-                                    </p:column>
-                                    <p:column headerText="Sexo" sortBy="#{m.sexo}" filterBy="#{m.sexo}">
-                                        <h:outputText value="#{m.sexo}" />
                                     </p:column>
                                     <p:column headerText="Bairro" sortBy="#{m.endereco.bairro.nome}" filterBy="#{m.endereco.bairro.nome}">
                                         <h:outputText value="#{m.endereco.bairro.nome}" />

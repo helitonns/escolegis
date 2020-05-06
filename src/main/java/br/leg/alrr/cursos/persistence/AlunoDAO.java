@@ -2,6 +2,7 @@ package br.leg.alrr.cursos.persistence;
 
 import br.leg.alrr.cursos.business.BlocoParametro;
 import br.leg.alrr.cursos.business.Sexo;
+import br.leg.alrr.cursos.business.TipoCadastro;
 import br.leg.alrr.cursos.model.Aluno;
 import br.leg.alrr.cursos.model.Matricula;
 import br.leg.alrr.cursos.model.Unidade;
@@ -139,7 +140,12 @@ public class AlunoDAO {
                     d.setTime((Date) b.getValor());
                     q.setParameter("dia", d.get(Calendar.DAY_OF_MONTH));
                     q.setParameter("mes", d.get(Calendar.MONTH) + 1);
-                } else if (b.getParametro().equals("dataNascimento1")) {
+                } 
+                else if (b.getParametro().equals("dataCadastro")) {
+                    d.setTime((Date) b.getValor());
+                    q.setParameter("dataCadastro", d.getTime());
+                }
+                else if (b.getParametro().equals("dataNascimento1")) {
                     d.setTime((Date) b.getValor());
                     q.setParameter("dia1", d.get(Calendar.DAY_OF_MONTH));
                     q.setParameter("mes1", d.get(Calendar.MONTH) + 1);
@@ -151,10 +157,17 @@ public class AlunoDAO {
                     q.setParameter(b.getParametro(), (boolean) b.getValor());
                 } else if (b.getParametro().equals("idMunicipio") || b.getParametro().equals("idBairro") || b.getParametro().equals("idPais")) {
                     q.setParameter(b.getParametro(), (Long) b.getValor());
-                } else if (b.getParametro().equals("sexo")) {
+                } 
+                else if (b.getParametro().equals("sexo")) {
                     q.setParameter(b.getParametro(), (Sexo) b.getValor());
                 }
+                else if (b.getParametro().equals("tipoCadastro")) {
+                    q.setParameter(b.getParametro(), (TipoCadastro) b.getValor());
+                }
             }
+            
+            System.out.println("Consulta: "+consulta);
+            
             return q.getResultList();
         } catch (Exception e) {
             throw new DAOException("Erro ao gerar relatório.", e);

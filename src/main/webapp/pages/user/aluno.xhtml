@@ -154,13 +154,22 @@
                                 </h:panelGrid>
                             </div>
 
-                            <div class="ui-g-12 ui-md-12">
+                            <div class="ui-g-12 ui-md-9">
                                 <div class="ui-inputgroup">
                                     <h:panelGroup styleClass="md-inputfield">
                                         <p:inputTextarea  value="#{alunoMB.aluno.informacoesComplementares}" rows="1"/>
                                         <label>Informações complementares:</label>
                                     </h:panelGroup>     
                                 </div>
+                            </div>
+                            
+                            <div class="ui-g-12 ui-md-3">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <label>Tipo Cadastro:</label>
+                                    <p:selectOneMenu id="slctTipoCadastro" value="#{alunoMB.aluno.tipoCadastro}">
+                                        <f:selectItems value="#{alunoMB.tipoCadastro.lista}" var="tc" itemLabel="#{tc.value}" itemValue="#{tc}" />
+                                    </p:selectOneMenu> 
+                                </h:panelGrid>
                             </div>
                         </div>
                     </div>

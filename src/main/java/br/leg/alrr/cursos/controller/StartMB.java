@@ -2,7 +2,6 @@ package br.leg.alrr.cursos.controller;
 
 import br.leg.alrr.cursos.business.Loger;
 import br.leg.alrr.cursos.business.TipoAcao;
-import br.leg.alrr.cursos.model.Acesso;
 import br.leg.alrr.cursos.model.Autorizacao;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.AcessoDAO;
@@ -13,9 +12,6 @@ import br.leg.alrr.cursos.util.Criptografia;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -57,6 +53,8 @@ public class StartMB implements Serializable {
     @PostConstruct
     private void init() {
         usuario = new UsuarioComUnidade();
+        
+        Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
     }
 
     public String logar() {
@@ -115,7 +113,7 @@ public class StartMB implements Serializable {
 
     public String sair() {
         try {
-            Loger.registrar(logSistemaDAO, TipoAcao.SAIR, "O usuário fez saiu do sistema.");
+            Loger.registrar(logSistemaDAO, TipoAcao.SAIR, "O usuário saiu do sistema.");
             FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         } catch (Exception e) {
         }
