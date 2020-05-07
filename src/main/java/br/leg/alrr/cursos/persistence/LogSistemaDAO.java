@@ -1,9 +1,11 @@
 package br.leg.alrr.cursos.persistence;
 
+import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.LogSistema;
 import br.leg.alrr.cursos.model.Usuario;
 import br.leg.alrr.cursos.util.DAOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -74,30 +76,11 @@ public class LogSistemaDAO{
         }
     }
     
-    public Long contarLogsPorData(LocalDate dataLog) throws DAOException{
+    public List listarLogsPorParametro(TipoAcao ta,Usuario u, LocalDateTime data1, LocalDateTime data2) throws DAOException{
         try {
-            Long quantidade = (Long) em.createQuery("select COUNT (o) from LogSistema o where o.dataOperacao = :dataOperacao and o.dataOperacao ")
-                    .setParameter("dataOperacao", dataLog)
-                    .getSingleResult();
-            return quantidade;
-        } catch (Exception e) {
-            throw new DAOException("Erro ao contar acessos por data.", e);
-        }
-    }
-    
-    public List listarLogsPorData(LocalDate dataDeLog) throws DAOException{
-        try {
-            return em.createQuery("select o from LogSistema o where o.dataOperacao = :dataOperacao ORDER BY o.dataDeLog, o.momentoDoLog")
-                    .setParameter("dataDeLog", dataDeLog)
-                    .getResultList();
-        } catch (Exception e) {
-            throw new DAOException("Erro ao listar acessos por data.", e);
-        }
-    }
-    
-    public List listarLogsPorIntervaloDeDatas(LocalDate data1, LocalDate data2) throws DAOException{
-        try {
-            return em.createQuery("select o from LogSistema o where o.dataDeLog BETWEEN :data1 and :data2 ORDER BY o.usuario.login, o.dataDeLog, o.momentoDoLog")
+            return em.createQuery("select o from LogSistema o where o.usuario.id = :idUsuario and o.tipoAcao=:tipoAcao and o.dataOperacao BETWEEN :data1 and :data2 ORDER BY o.dataOperacao")
+                    .setParameter("idUsuario", u.getId())
+                    .setParameter("tipoAcao", ta)
                     .setParameter("data1", data1)
                     .setParameter("data2", data2)
                     .getResultList();
@@ -106,9 +89,21 @@ public class LogSistemaDAO{
         }
     }
     
-    public List listarLogsPorUsuarioEIntervaloDeDatas(Usuario u, LocalDate data1, LocalDate data2) throws DAOException{
+    public List listarLogsPorParametro(TipoAcao ta,LocalDateTime data1, LocalDateTime data2) throws DAOException{
         try {
-            return em.createQuery("select o from LogSistema o where o.usuario .id = :idUsuario and o.dataDeLog BETWEEN :data1 and :data2 ORDER BY o.usuario.login, o.dataDeLog, o.momentoDoLog")
+            return em.createQuery("select o from LogSistema o where o.tipoAcao=:tipoAcao and o.dataOperacao BETWEEN :data1 and :data2 ORDER BY o.dataOperacao, o.usuario.login")
+                    .setParameter("tipoAcao", ta)
+                    .setParameter("data1", data1)
+                    .setParameter("data2", data2)
+                    .getResultList();
+        } catch (Exception e) {
+            throw new DAOException("Erro ao listar acessos por data.", e);
+        }
+    }
+    
+    public List listarLogsPorParametro(Usuario u, LocalDateTime data1, LocalDateTime data2) throws DAOException{
+        try {
+            return em.createQuery("select o from LogSistema o where o.usuario.id = :idUsuario and o.dataOperacao BETWEEN :data1 and :data2 ORDER BY o.dataOperacao")
                     .setParameter("idUsuario", u.getId())
                     .setParameter("data1", data1)
                     .setParameter("data2", data2)
@@ -118,16 +113,60 @@ public class LogSistemaDAO{
         }
     }
     
-    public Long contarLogsPorUsuarioEIntervaloDeDatas(Usuario u, LocalDate data1, LocalDate data2) throws DAOException{
+    public List listarLogsPorParametro(LocalDateTime data1, LocalDateTime data2) throws DAOException{
         try {
-            return (Long) em.createQuery("select COUNT(o) from LogSistema o where o.usuario .id = :idUsuario and o.dataDeLog BETWEEN :data1 and :data2")
-                    .setParameter("idUsuario", u.getId())
+            return em.createQuery("select o from LogSistema o where o.dataOperacao BETWEEN :data1 and :data2 ORDER BY o.dataOperacao")
                     .setParameter("data1", data1)
                     .setParameter("data2", data2)
-                    .getSingleResult();
+                    .getResultList();
         } catch (Exception e) {
             throw new DAOException("Erro ao listar acessos por data.", e);
         }
     }
+    
+//    public Long contarLogsPorData(LocalDate dataLog) throws DAOException{
+//        try {
+//            Long quantidade = (Long) em.createQuery("select COUNT (o) from LogSistema o where o.dataOperacao = :dataOperacao and o.dataOperacao ")
+//                    .setParameter("dataOperacao", dataLog)
+//                    .getSingleResult();
+//            return quantidade;
+//        } catch (Exception e) {
+//            throw new DAOException("Erro ao contar acessos por data.", e);
+//        }
+//    }
+//    
+//    public List listarLogsPorData(LocalDate dataDeLog) throws DAOException{
+//        try {
+//            return em.createQuery("select o from LogSistema o where o.dataOperacao = :dataOperacao ORDER BY o.dataDeLog, o.momentoDoLog")
+//                    .setParameter("dataDeLog", dataDeLog)
+//                    .getResultList();
+//        } catch (Exception e) {
+//            throw new DAOException("Erro ao listar acessos por data.", e);
+//        }
+//    }
+//    
+//    public List listarLogsPorIntervaloDeDatas(LocalDate data1, LocalDate data2) throws DAOException{
+//        try {
+//            return em.createQuery("select o from LogSistema o where o.dataDeLog BETWEEN :data1 and :data2 ORDER BY o.usuario.login, o.dataDeLog, o.momentoDoLog")
+//                    .setParameter("data1", data1)
+//                    .setParameter("data2", data2)
+//                    .getResultList();
+//        } catch (Exception e) {
+//            throw new DAOException("Erro ao listar acessos por data.", e);
+//        }
+//    }
+//    
+//    
+//    public Long contarLogsPorUsuarioEIntervaloDeDatas(Usuario u, LocalDate data1, LocalDate data2) throws DAOException{
+//        try {
+//            return (Long) em.createQuery("select COUNT(o) from LogSistema o where o.usuario .id = :idUsuario and o.dataDeLog BETWEEN :data1 and :data2")
+//                    .setParameter("idUsuario", u.getId())
+//                    .setParameter("data1", data1)
+//                    .setParameter("data2", data2)
+//                    .getSingleResult();
+//        } catch (Exception e) {
+//            throw new DAOException("Erro ao listar acessos por data.", e);
+//        }
+//    }
 
 }

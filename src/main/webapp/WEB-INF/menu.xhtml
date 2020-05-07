@@ -107,11 +107,10 @@
                                 <p:menuitem id="sm_ru_relatorio_u" value="Relatório por Matrícula" icon="assignment" outcome="/pages/user/relatorio" />
                             </p:submenu>
 
-                            
-
-                            <p:submenu id="menu_estatistica" label="Estatísticas" icon="assignment" rendered="#{startMB.superAdmin}">
-                                <p:menuitem id="menu_estatistica_acesso" value="Estatísticas por acesso" icon="pie_chart" outcome="/pages/user/estatistica"/>
-                                <p:menuitem id="menu_estatistica_usuario" value="Estatísticas por usuário" icon="pie_chart" outcome="/pages/user/estatistica-usuario"/>
+                            <p:submenu id="menu_estatistica" label="Log do Sistema" icon="assignment" rendered="#{startMB.superAdmin}">
+                                <p:menuitem id="menu_estatistica_log" value="Log" icon="pie_chart" outcome="/pages/superadmin/log"/>
+                                <p:menuitem id="menu_estatistica_acesso" value="Estatísticas por acesso" icon="pie_chart" outcome="/pages/user/estatistica" rendered="false"/>
+                                <p:menuitem id="menu_estatistica_usuario" value="Estatísticas por usuário" icon="pie_chart" outcome="/pages/user/estatistica-usuario" rendered="false"/>
                             </p:submenu>
 
                         </sm:menu>
