@@ -55,6 +55,18 @@
                 </div>
             </div>
 
+            
+            <p:dialog header="Avisos" widgetVar="modal_excluir" modal="true" minHeight="150" width="700"  visible="#{startMB.mensagens.size() > 0 ? true : false}">
+                <p:dataList value="#{startMB.mensagens}" var="var_msg" type="definition">
+                    <h:outputText value="#{var_msg.titulo}" style="font-weight: bold" escape="false"/>
+                    <br/>
+                    <br/>
+                    <h:outputText value="#{var_msg.conteudo}" escape="false"/>
+                    <hr style="width: 100%; border-style: dashed"/>
+                </p:dataList>
+            </p:dialog>
+            
+            
             <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="sapphire-layout" />
         </h:form>
     </h:body>

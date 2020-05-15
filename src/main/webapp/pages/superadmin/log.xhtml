@@ -80,7 +80,7 @@
 
                         <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
                             <div class="ui-g-12 ui-md-12">
-                                <p:dataTable var="log_var" value="#{logMB.logs}" reflow="true" paginator="true" rows="10" emptyMessage=" ">
+                                <p:dataTable id="log_tbl" var="log_var" value="#{logMB.logs}" reflow="true" paginator="true" rows="10" emptyMessage=" ">
                                     <p:column headerText="Data" style="width: 200px">
                                         <h:outputText value="#{log_var.dataOperacao}">
                                             <f:convertDateTime type="localDate" pattern="dd/MM/yyyy hh:mm:ss" />
@@ -100,6 +100,12 @@
                                     </p:column>
                                     
                                 </p:dataTable>
+                            </div>
+                            <div class="ui-g-12 ui-md-9"/>
+                            <div class="ui-g-12 ui-md-3">
+                                <p:commandButton value="EXCEL" ajax="false" icon="ui-icon-file-download" styleClass="green-btn">
+                                    <p:dataExporter type="xls" target="log_tbl" fileName="relatorio-geral"/>
+                                </p:commandButton>    
                             </div>
                         </div>
                     </div>

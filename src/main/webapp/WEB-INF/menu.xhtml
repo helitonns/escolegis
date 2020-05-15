@@ -86,9 +86,15 @@
                                     <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
                                     <p:menuitem id="sm_cg_usuario" value="Usuário" icon="person" outcome="/pages/admin/usuario" rendered="#{startMB.admin || startMB.superAdmin}"/>
                                     <p:menuitem id="sm_cg_super_usuario" value="Super Usuário" icon="person_add" outcome="/pages/superadmin/superusuario" rendered="#{startMB.superAdmin}"/>
-                                    <p:menuitem id="sm_cg_sistema" value="Sistemas" icon="settings" outcome="/pages/superadmin/sistema" rendered="#{startMB.superAdmin}"/>
-                                    <p:menuitem id="sm_cg_permissao" value="Privilégio" icon="lock" outcome="/pages/superadmin/privilegio" rendered="#{startMB.superAdmin}"/>
-                                    <p:menuitem id="sm_cg_autorizacao" value="Autorizações" icon="lock_outline" outcome="/pages/superadmin/autorizacao" rendered="#{startMB.superAdmin}"/>
+                                    <p:menuitem id="sm_cg_sistema" value="Sistemas" icon="settings" outcome="/pages/superadmin/sistema" rendered="false"/>
+                                    <p:menuitem id="sm_cg_permissao" value="Privilégio" icon="lock" outcome="/pages/superadmin/privilegio" rendered="false"/>
+                                    <p:menuitem id="sm_cg_autorizacao" value="Autorizações" icon="lock_outline" outcome="/pages/superadmin/autorizacao" rendered="false"/>
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                </p:submenu>
+                                
+                                <p:submenu id="t7" label="Outros" rendered="#{startMB.superAdmin}">
+                                    <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
+                                    <p:menuitem id="sm_outos_mensagem" value="Mensagem" icon="chat_bubble_outline" outcome="/pages/admin/mensagem"/>
                                     <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
                                 </p:submenu>
                             </p:submenu>

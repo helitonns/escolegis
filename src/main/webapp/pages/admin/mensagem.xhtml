@@ -1,0 +1,156 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../../WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <li>Páginas</li>
+        <li>/</li>
+        <li><p:link outcome="/pages/user/listar-editar-aluno">Listar / Editar aluno</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <label class="overview-numbers" style="color: #ff9800;font-size: 30px">Mensagens</label>
+                    <div class="card card-w-title" style="margin-top: 5px">
+
+                        <p:messages globalOnly="true" closable="true"/>
+
+                        <div style="margin-left: 20px; color: #999999; font-size: 20px">Gerenciar mensagens</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+
+                            <div class="ui-g-12 ui-md-12">
+                                <h:outputText value="Título da mensagem:"/>
+                                <br/>
+                                <p:editor id="id_duvida_pergunta"  value="#{mensagemMB.mensagem.titulo}" required="true" height="80"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12">
+                                <h:outputText value="Corpo da mensagem:"/>
+                                <br/>
+                                <p:editor id="id_duvida_resposta"  value="#{mensagemMB.mensagem.conteudo}" required="true"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <h:outputText value="Data inicial" />
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <h:outputText value="Data final" />
+                            </div>
+                            <div class="ui-g-12 ui-md-4"/>
+                            
+                            <div class="ui-g-12 ui-md-4">
+                                <p:calendar id="IdDataInicio" value="#{mensagemMB.mensagem.dataDeInicio}"  pattern="dd/MM/yyyy" mask="99/99/9999" showOn="button" required="true" requiredMessage="Campo obrigatório">
+                                    <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                                </p:calendar> 
+                            </div>
+                            
+                            <div class="ui-g-12 ui-md-4">
+                                <p:calendar id="IdDataDataFim" value="#{mensagemMB.mensagem.dataDeFim}"  pattern="dd/MM/yyyy" mask="99/99/9999" showOn="button" required="true" requiredMessage="Campo obrigatório">
+                                    <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                                </p:calendar> 
+                            </div>
+
+                            <div class="ui-g-12 ui-md-4">
+                                <p:selectOneRadio id="idMensagemStatus" value="#{mensagemMB.mensagem.status}" >
+                                    <f:selectItem itemLabel="Mensagem Ativa" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Mensagem Inativa" itemValue="#{false}" />
+                                    <p:tooltip value="Clique para selecoinar o Status" for="idMensagemStatus"/>
+                                </p:selectOneRadio>
+                            </div>
+
+
+                            <div class="ui-g-12 ui-md-6">
+                                <p:commandButton value="Salvar" action="#{mensagemMB.salvarMensagem}" ajax="false" icon="ui-icon-save"/>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-6">
+                                <p:commandButton value="Cancelar" action="#{mensagemMB.cancelar()}" styleClass="blue-grey-btn" icon="ui-icon-cancel" immediate="true"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+
+        <h:form id="form2">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card card-w-title">
+                        <div style="margin-left: 20px; color: #999999; font-size: 20px">Mensagens cadastradas</div>
+
+                        <div class="ui-g ui-fluid form-group" style="margin-top: 20px">
+                            <div class="ui-g-12 ui-md-12">
+                                <p:dataTable id="tbl_mensagens" var="var_mensagem" value="#{mensagemMB.mensagens}" reflow="true" paginator="true" rows="10" emptyMessage=" ">
+
+                                    <p:column headerText="Título" filterBy="#{var_mensagem.titulo}">
+                                        <h:outputText value="#{var_mensagem.titulo}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="Conteúdo" filterBy="#{var_mensagem.conteudo}">
+                                        <h:outputText value="#{var_mensagem.conteudo}" />
+                                    </p:column>
+
+                                    <p:column headerText="Data inicial" filterBy="#{var_mensagem.dataDeInicio}" style="width: 120px">
+                                        <h:outputText value="#{var_mensagem.dataDeInicio}">
+                                            <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Data final" filterBy="#{var_mensagem.dataDeFim}" style="width: 120px">
+                                        <h:outputText value="#{var_mensagem.dataDeFim}">
+                                            <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Status" filterBy="#{var_mensagem.status}" style="width: 120px">
+                                        <h:outputText value="#{var_mensagem.status ? 'Ativa' : 'Inativa'}"/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Ação" style="width: 90px">
+                                        <p:commandButton id="btn_editar" icon="ui-icon-edit" actionListener="#{mensagemMB.setMensagem(var_mensagem)}" update="form" ajax="true">
+                                            <p:tooltip value="Editar" for="btn_editar" />
+                                        </p:commandButton>
+                                        <p:commandButton id="btn_excluir" icon="ui-icon-delete"  styleClass="red-btn" actionListener="#{mensagemMB.setMensagem(var_mensagem)}" onclick="PF('modal_excluir').show();">
+                                            <p:tooltip value="Excluir" for="btn_excluir" />
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+
+                        <p:dialog header="Exclusão" widgetVar="modal_excluir" modal="true" height="100" width="550">
+                            <h:panelGrid columns="2" style="width: 100%">
+                                <h:outputText value="Tem certeza que deseja excluir o item selecionado?" style="width: 100%"/>
+                                <p:selectOneButton value="#{mensagemMB.excluirMensagem}">
+                                    <f:selectItem itemLabel="Sim" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="Não" itemValue="#{false}" />
+                                </p:selectOneButton>
+                            </h:panelGrid>
+
+                            <f:facet name="footer">
+                                <h:panelGrid columns="2" style="width: 100%">
+                                    <p:commandButton value="Excluir" icon="ui-icon-delete" ajax="false" action="#{mensagemMB.excluirMensagem}" style="width: 100%"/>
+                                    <p:button value="Cancelar" styleClass="blue-grey-btn" icon="ui-icon-cancel"  style="width: 100%"/>
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

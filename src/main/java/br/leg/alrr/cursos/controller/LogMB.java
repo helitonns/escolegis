@@ -78,7 +78,7 @@ public class LogMB implements Serializable {
             logs = new ArrayList<>();
             
             LocalDateTime ldt1 = LocalDateTime.of(data1ParaPesquisa, LocalTime.MIN);
-            LocalDateTime ldt2 = LocalDateTime.of(data2ParaPesquisa, LocalTime.MIN);
+            LocalDateTime ldt2 = LocalDateTime.of(data2ParaPesquisa, LocalTime.MAX);
 
             if (idUsuario != 0l && !tipoDeAcao.equals("0")) {
                 logs = (ArrayList<LogSistema>) logSistemaDAO.listarLogsPorParametro(TipoAcao.fromValue(tipoDeAcao), new Usuario(idUsuario), ldt1, ldt2);

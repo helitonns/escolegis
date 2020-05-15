@@ -3,15 +3,19 @@ package br.leg.alrr.cursos.controller;
 import br.leg.alrr.cursos.business.Loger;
 import br.leg.alrr.cursos.business.TipoAcao;
 import br.leg.alrr.cursos.model.Autorizacao;
+import br.leg.alrr.cursos.model.Mensagem;
 import br.leg.alrr.cursos.model.UsuarioComUnidade;
 import br.leg.alrr.cursos.persistence.AcessoDAO;
 import br.leg.alrr.cursos.persistence.AutorizacaoDAO;
 import br.leg.alrr.cursos.persistence.LogSistemaDAO;
+import br.leg.alrr.cursos.persistence.MensagemDAO;
 import br.leg.alrr.cursos.persistence.UsuarioComUnidadeDAO;
 import br.leg.alrr.cursos.util.Criptografia;
 import br.leg.alrr.cursos.util.DAOException;
 import br.leg.alrr.cursos.util.FacesUtils;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -41,9 +45,14 @@ public class StartMB implements Serializable {
     
     @EJB
     private LogSistemaDAO logSistemaDAO;
+    
+    @EJB
+    private MensagemDAO mensagemDAO;
 
     private UsuarioComUnidade usuario;
     private Autorizacao autorizacao;
+    
+    private ArrayList<Mensagem> mensagens;
     
     private String login = "";
     private String senha = "";
@@ -53,8 +62,18 @@ public class StartMB implements Serializable {
     @PostConstruct
     private void init() {
         usuario = new UsuarioComUnidade();
+        listarMensagens();
         
         Loger.registrar(logSistemaDAO, TipoAcao.ACESSAR, "O usuário acessou a página: " + FacesUtils.getURL()+".");
+    }
+    
+    private void listarMensagens() {
+        try {
+            mensagens = new ArrayList<>();
+            mensagens = (ArrayList<Mensagem>) mensagemDAO.listarTodasAsMensagensAtivasParaAData(LocalDate.now());
+        } catch (DAOException e) {
+            FacesUtils.addErrorMessage(e.getMessage());
+        }
     }
 
     public String logar() {
@@ -250,6 +269,10 @@ public class StartMB implements Serializable {
 
     public void setSenha1(String senha1) {
         this.senha1 = senha1;
+    }
+
+    public ArrayList<Mensagem> getMensagens() {
+        return mensagens;
     }
 
 }
