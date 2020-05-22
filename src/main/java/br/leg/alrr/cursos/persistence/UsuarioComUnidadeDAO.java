@@ -83,7 +83,7 @@ public class UsuarioComUnidadeDAO{
 
     public UsuarioComUnidade pesquisarPorLoginESenha(String login, String senha) throws DAOException{
         try {
-            return (UsuarioComUnidade) em.createQuery("select u from UsuarioComUnidade u where u.login =:login and u.senha =:senha")
+            return (UsuarioComUnidade) em.createQuery("select u from UsuarioComUnidade u where u.login =:login and u.senha =:senha and u.status = true and u.bloqueado = false")
                     .setParameter("login", login)
                     .setParameter("senha", senha)
                     .getSingleResult();

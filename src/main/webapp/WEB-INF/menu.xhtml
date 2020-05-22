@@ -88,7 +88,7 @@
                                     <p:menuitem id="sm_cg_super_usuario" value="Super Usuário" icon="person_add" outcome="/pages/superadmin/superusuario" rendered="#{startMB.superAdmin}"/>
                                     <p:menuitem id="sm_cg_sistema" value="Sistemas" icon="settings" outcome="/pages/superadmin/sistema" rendered="false"/>
                                     <p:menuitem id="sm_cg_permissao" value="Privilégio" icon="lock" outcome="/pages/superadmin/privilegio" rendered="false"/>
-                                    <p:menuitem id="sm_cg_autorizacao" value="Autorizações" icon="lock_outline" outcome="/pages/superadmin/autorizacao" rendered="false"/>
+                                    <p:menuitem id="sm_cg_autorizacao" value="Autorizações" icon="lock_outline" outcome="/pages/superadmin/autorizacao"/>
                                     <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
                                 </p:submenu>
                                 
@@ -114,9 +114,11 @@
                             </p:submenu>
 
                             <p:submenu id="menu_estatistica" label="Log do Sistema" icon="assignment" rendered="#{startMB.superAdmin}">
+                                <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
                                 <p:menuitem id="menu_estatistica_log" value="Log" icon="pie_chart" outcome="/pages/superadmin/log"/>
                                 <p:menuitem id="menu_estatistica_acesso" value="Estatísticas por acesso" icon="pie_chart" outcome="/pages/user/estatistica" rendered="false"/>
                                 <p:menuitem id="menu_estatistica_usuario" value="Estatísticas por usuário" icon="pie_chart" outcome="/pages/user/estatistica-usuario" rendered="false"/>
+                                <p:separator style="color: #999999; border-top-style: dashed; border-width: thin; margin-left: 15px; margin-right: 20px;"/>
                             </p:submenu>
 
                         </sm:menu>
